@@ -52,7 +52,6 @@ testem.log
 Thumbs.db
 bin
 obj
-*.db
 Migrations
 .DS_Store
 .vscode
