@@ -6,8 +6,7 @@ namespace ListaccFinance.API.Data.Model
     public class Expenditure
     {
         public int Id {get;set;}
-        public Client Recepient {get;set;}
-        public int RecepientId { get; set; }
+        public string Recepient {get;set;}
         public DateTime Date {get;set;}
         public string Description {get;set;}
         public double Amount {get;set;}
@@ -15,7 +14,7 @@ namespace ListaccFinance.API.Data.Model
         public CostCategory CostCategory {get;set;}
         public int ProjectId {get;set;}
         public Project Project {get;set;}
-        public int IssuerId {get;set;}
+        public int UserId {get;set;}
         public User Issuer {get;set;}
 
     }
