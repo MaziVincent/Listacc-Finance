@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="Listacc_Finanace_Desktop.jnlp">
+  <information>
+    <title>Listacc_Finanace_Desktop</title>
+    <vendor>Agozie</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="Listacc_Finanace_Desktop.jar" size="484645" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="800" height="600" main-class="listacc_finanace_desktop.Listacc_Finanace_Desktop"  name="Listacc_Finanace_Desktop" />
+  <update check="always"/>
+</jnlp>
