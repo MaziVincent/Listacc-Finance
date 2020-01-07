@@ -89,36 +89,384 @@
    <center>
       <AnchorPane prefHeight="713.0" prefWidth="1292.0" BorderPane.alignment="CENTER">
          <children>
-            <TabPane fx:id="adminPane" prefHeight="710.0" prefWidth="1289.0" tabClosingPolicy="UNAVAILABLE" visible="false">
+            <TabPane fx:id="adminPane" layoutY="-3.0" prefHeight="713.0" prefWidth="1296.0" tabClosingPolicy="UNAVAILABLE">
                <tabs>
                   <Tab text="Department">
                      <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <AnchorPane fx:id="formAnchorPane2" layoutX="14.0" layoutY="44.0" prefHeight="416.0" prefWidth="558.0">
+                                 <children>
+                                    <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
+                                    <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="249.0" prefWidth="550.0">
+                                       <children>
+                                          <TextField fx:id="dptTextName" layoutX="44.0" layoutY="70.0" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
+                                          <Button layoutX="389.0" layoutY="220.0" mnemonicParsing="false" onAction="#CreateDepartment" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
+                                          <Line fx:id="departmentCreateLine" endX="100.0" layoutX="208.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
+                                             <effect>
+                                                <Bloom />
+                                             </effect>
+                                          </Line>
+                                          <Line fx:id="departmentEditLine" endX="100.0" layoutX="348.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
+                                             <effect>
+                                                <Bloom />
+                                             </effect>
+                                          </Line>
+                                       </children>
+                                    </AnchorPane>
+                                    <Label fx:id="departmentEditLabel" layoutX="340.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Edit" textFill="WHITE">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
+                                    <Label fx:id="departmentCreateLabel" layoutX="190.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Create" textFill="WHITE">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
+                                    <Label fx:id="departmentInfoLabel" layoutX="73.0" layoutY="357.0" prefHeight="17.0" prefWidth="230.0" text="Select an item from the table to edit " textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Circle fx:id="departmentInfoBullet" fill="WHITE" layoutX="57.0" layoutY="367.0" radius="5.0" stroke="WHITE" strokeType="INSIDE">
+                                       <effect>
+                                          <Bloom />
+                                       </effect>
+                                    </Circle>
+                                 </children>
+                              </AnchorPane>
+                              <TableView fx:id="departmentListTable" layoutX="621.0" layoutY="44.0" prefHeight="414.0" prefWidth="654.0">
+                                 <columns>
+                                    <TableColumn fx:id="dptColSerial" prefWidth="40.0" text="S/N" />
+                                    <TableColumn fx:id="dptColName" prefWidth="621.0" style="-fx-alignment: center;" text="Name" />
+                                    <TableColumn fx:id="dptColId" minWidth="0.0" prefWidth="53.0" text="Id" visible="false" />
+                                 </columns>
+                              </TableView>
+                           </children></AnchorPane>
                      </content>
                   </Tab>
                   <Tab text="Project">
                      <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TableView fx:id="projectListTable" layoutX="621.0" layoutY="44.0" prefHeight="414.0" prefWidth="654.0">
+                                 <columns>
+                                    <TableColumn fx:id="prjColSerial" prefWidth="40.0" text="S/N" />
+                                    <TableColumn fx:id="prjColName" prefWidth="318.0" style="-fx-alignment: center;" text="Name" />
+                                    <TableColumn fx:id="prjColDepartment" minWidth="0.0" prefWidth="246.0" style="-fx-alignment: center;" text="Department" />
+                                    <TableColumn fx:id="prjColId" prefWidth="49.0" text="Id" visible="false" />
+                                 </columns>
+                              </TableView>
+                              <AnchorPane fx:id="formAnchorPane21" layoutX="14.0" layoutY="44.0" prefHeight="416.0" prefWidth="558.0">
+                                 <children>
+                                    <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
+                                    <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="249.0" prefWidth="550.0">
+                                       <children>
+                                          <TextField layoutX="44.0" layoutY="70.0" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
+                                          <Button layoutX="389.0" layoutY="220.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
+                                          <Line fx:id="projectCreateLine" endX="100.0" layoutX="208.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
+                                             <effect>
+                                                <Bloom />
+                                             </effect>
+                                          </Line>
+                                          <Line fx:id="projectEditLine" endX="100.0" layoutX="348.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
+                                             <effect>
+                                                <Bloom />
+                                             </effect>
+                                          </Line>
+                                          <ComboBox layoutX="44.0" layoutY="132.0" prefHeight="25.0" prefWidth="224.0" />
+                                          <Label layoutX="44.0" layoutY="108.0" text="Department:" textFill="WHITE" />
+                                          <TextArea layoutX="294.0" layoutY="68.0" prefHeight="80.0" prefWidth="191.0" promptText="Description" />
+                                       </children>
+                                    </AnchorPane>
+                                    <Label fx:id="projectEditLabel" layoutX="340.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Edit" textFill="WHITE">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="projectCreateLabel" layoutX="190.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Create" textFill="WHITE">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="projectInfoLabel" layoutX="73.0" layoutY="357.0" prefHeight="17.0" prefWidth="230.0" text="Select an item from the table to edit " textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Circle fx:id="projectInfoBullet" fill="WHITE" layoutX="57.0" layoutY="367.0" radius="5.0" stroke="WHITE" strokeType="INSIDE">
+                                       <effect>
+                                          <Bloom />
+                                       </effect>
+                                    </Circle>
+                                 </children>
+                              </AnchorPane>
+                           </children></AnchorPane>
                      </content>
                   </Tab>
                   <Tab text="Service">
                      <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TableView fx:id="serviceListTable" layoutX="621.0" layoutY="44.0" prefHeight="414.0" prefWidth="654.0">
+                                 <columns>
+                                    <TableColumn fx:id="srvColSerial" prefWidth="40.0" text="S/N" />
+                                    <TableColumn fx:id="srvColName" prefWidth="237.0" style="-fx-alignment: CENTER;" text="Name" />
+                                    <TableColumn fx:id="srvColAmount" prefWidth="90.0" style="-fx-alignment: center;" text="Amount" />
+                                    <TableColumn fx:id="srvColProject" prefWidth="201.0" style="-fx-alignment: center;" text="Project" />
+                                    <TableColumn fx:id="srvColId" prefWidth="75.0" text="Id" visible="false" />
+                                 </columns>
+                              </TableView>
+                              <AnchorPane fx:id="formAnchorPane212" layoutX="14.0" layoutY="44.0" prefHeight="416.0" prefWidth="558.0">
+                                 <children>
+                                    <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
+                                    <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="249.0" prefWidth="550.0">
+                                       <children>
+                                          <TextField layoutX="44.0" layoutY="70.0" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
+                                          <Button layoutX="389.0" layoutY="220.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
+                                          <Line fx:id="serviceCreateLine" endX="100.0" layoutX="208.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
+                                             <effect>
+                                                <Bloom />
+                                             </effect>
+                                          </Line>
+                                          <Line fx:id="serviceEditLine" endX="100.0" layoutX="348.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
+                                             <effect>
+                                                <Bloom />
+                                             </effect>
+                                          </Line>
+                                          <TextArea layoutX="303.0" layoutY="70.0" prefHeight="80.0" prefWidth="191.0" promptText="Description" />
+                                          <TextField layoutX="44.0" layoutY="112.0" prefHeight="25.0" prefWidth="223.0" promptText="Amount : NGN" />
+                                          <Label layoutX="47.0" layoutY="149.0" text="Project :" textFill="WHITE" />
+                                          <ComboBox layoutX="47.0" layoutY="173.0" prefHeight="25.0" prefWidth="224.0" />
+                                       </children>
+                                    </AnchorPane>
+                                    <Label fx:id="serviceEditLabel" layoutX="340.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Edit" textFill="WHITE">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="serviceCreateLabel" layoutX="190.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Create" textFill="WHITE">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="serviceInfoLabel" layoutX="73.0" layoutY="357.0" prefHeight="17.0" prefWidth="230.0" text="Select an item from the table to edit " textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Circle fx:id="serviceInfoBullet" fill="WHITE" layoutX="57.0" layoutY="367.0" radius="5.0" stroke="WHITE" strokeType="INSIDE">
+                                       <effect>
+                                          <Bloom />
+                                       </effect>
+                                    </Circle>
+                                 </children>
+                              </AnchorPane>
+                           </children></AnchorPane>
                      </content>
                   </Tab>
                   <Tab text="Cost Category">
                      <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TableView fx:id="costCategoryListTable" layoutX="621.0" layoutY="44.0" prefHeight="414.0" prefWidth="654.0">
+                                 <columns>
+                                    <TableColumn fx:id="cctgColSerial" prefWidth="40.0" text="S/N" />
+                                    <TableColumn fx:id="cctgColName" prefWidth="263.0" style="-fx-alignment: center;" text="Name" />
+                                    <TableColumn fx:id="cctgColType" prefWidth="208.0" style="-fx-alignment: center;" text="Type" />
+                                    <TableColumn fx:id="cctgColId" prefWidth="97.0" text="Id" visible="false" />
+                                 </columns>
+                              </TableView>
+                              <AnchorPane fx:id="formAnchorPane2121" layoutX="14.0" layoutY="44.0" prefHeight="416.0" prefWidth="558.0">
+                                 <children>
+                                    <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
+                                    <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="249.0" prefWidth="550.0">
+                                       <children>
+                                          <TextField layoutX="44.0" layoutY="135.0" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
+                                          <Button layoutX="389.0" layoutY="220.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
+                                          <Line fx:id="costCategoryCreateLine" endX="100.0" layoutX="208.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
+                                             <effect>
+                                                <Bloom />
+                                             </effect>
+                                          </Line>
+                                          <Line fx:id="costCategoryEditLine" endX="100.0" layoutX="348.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
+                                             <effect>
+                                                <Bloom />
+                                             </effect>
+                                          </Line>
+                                          <ComboBox layoutX="44.0" layoutY="86.0" prefHeight="25.0" prefWidth="222.0" />
+                                          <Label layoutX="44.0" layoutY="59.0" text="Type:" textFill="WHITE" />
+                                          <TextArea layoutX="289.0" layoutY="68.0" prefHeight="94.0" prefWidth="202.0" promptText="Description" />
+                                       </children>
+                                    </AnchorPane>
+                                    <Label fx:id="costCategoryEditLabel" layoutX="340.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Edit" textFill="WHITE">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="costCategoryCreateLabel" layoutX="190.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Create" textFill="WHITE">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="costCategoryInfoLabel" layoutX="73.0" layoutY="357.0" prefHeight="17.0" prefWidth="230.0" text="Select an item from the table to edit " textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Circle fx:id="costCategoryInfoBullet" fill="WHITE" layoutX="57.0" layoutY="367.0" radius="5.0" stroke="WHITE" strokeType="INSIDE">
+                                       <effect>
+                                          <Bloom />
+                                       </effect>
+                                    </Circle>
+                                 </children>
+                              </AnchorPane>
+                           </children></AnchorPane>
                      </content>
                   </Tab>
                   <Tab text="User">
                      <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TableView layoutX="621.0" layoutY="45.0" prefHeight="414.0" prefWidth="654.0">
+                                 <columns>
+                                    <TableColumn prefWidth="75.0" text="C1" />
+                                    <TableColumn prefWidth="75.0" text="C2" />
+                                 </columns>
+                              </TableView>
+                              <AnchorPane fx:id="formAnchorPane21211" layoutX="14.0" layoutY="45.0" prefHeight="416.0" prefWidth="558.0">
+                                 <children>
+                                    <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
+                                    <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="249.0" prefWidth="550.0">
+                                       <children>
+                                          <TextField layoutX="44.0" layoutY="70.0" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
+                                          <Button layoutX="389.0" layoutY="220.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
+                                          <Line fx:id="userCreateLine" endX="100.0" layoutX="208.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
+                                             <effect>
+                                                <Bloom />
+                                             </effect>
+                                          </Line>
+                                          <Line fx:id="userEditLine" endX="100.0" layoutX="348.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
+                                             <effect>
+                                                <Bloom />
+                                             </effect>
+                                          </Line>
+                                       </children>
+                                    </AnchorPane>
+                                    <Label fx:id="userEditLabel" layoutX="340.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Edit" textFill="WHITE">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="userCreateLabel" layoutX="190.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Create" textFill="WHITE">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="userInfoLabel" layoutX="73.0" layoutY="357.0" prefHeight="17.0" prefWidth="230.0" text="Select an item from the table to edit " textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Circle fx:id="userInfoBullet" fill="WHITE" layoutX="57.0" layoutY="367.0" radius="5.0" stroke="WHITE" strokeType="INSIDE">
+                                       <effect>
+                                          <Bloom />
+                                       </effect>
+                                    </Circle>
+                                 </children>
+                              </AnchorPane>
+                           </children></AnchorPane>
                      </content>
                   </Tab>
                   <Tab text="Business">
                      <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TableView layoutX="621.0" layoutY="44.0" prefHeight="414.0" prefWidth="654.0">
+                                 <columns>
+                                    <TableColumn prefWidth="75.0" text="C1" />
+                                    <TableColumn prefWidth="75.0" text="C2" />
+                                 </columns>
+                              </TableView>
+                              <AnchorPane fx:id="formAnchorPane212111" layoutX="14.0" layoutY="44.0" prefHeight="416.0" prefWidth="558.0">
+                                 <children>
+                                    <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
+                                    <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="249.0" prefWidth="550.0">
+                                       <children>
+                                          <TextField layoutX="44.0" layoutY="70.0" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
+                                          <Button layoutX="389.0" layoutY="220.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
+                                          <Line fx:id="businessCreateLine" endX="100.0" layoutX="208.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
+                                             <effect>
+                                                <Bloom />
+                                             </effect>
+                                          </Line>
+                                          <Line fx:id="businessEditLine" endX="100.0" layoutX="348.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
+                                             <effect>
+                                                <Bloom />
+                                             </effect>
+                                          </Line>
+                                       </children>
+                                    </AnchorPane>
+                                    <Label fx:id="businessEditLabel" layoutX="340.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Edit" textFill="WHITE">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="businessCreateLabel" layoutX="190.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Create" textFill="WHITE">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="businessInfoLabel" layoutX="73.0" layoutY="357.0" prefHeight="17.0" prefWidth="230.0" text="Select an item from the table to edit " textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Circle fx:id="businessInfoBullet" fill="WHITE" layoutX="57.0" layoutY="367.0" radius="5.0" stroke="WHITE" strokeType="INSIDE">
+                                       <effect>
+                                          <Bloom />
+                                       </effect>
+                                    </Circle>
+                                 </children>
+                              </AnchorPane>
+                           </children></AnchorPane>
                      </content>
                   </Tab>
                </tabs>

@@ -22,7 +22,7 @@ import model.AppModel;
  * @author Agozie
  */
 public class Listacc_Finanace_Desktop extends Application {
-    final AppModel model = new AppModel() ;
+    
     @Override
     public void start(Stage primaryStage) {
         Button btn = new Button();
@@ -36,6 +36,7 @@ public class Listacc_Finanace_Desktop extends Application {
         });
         try{
         FXMLLoader firstLoader = new FXMLLoader(getClass().getResource("/fxml/MainUI.fxml"));
+                                final AppModel model = new AppModel(primaryStage) ;
                                firstLoader.setController(new MaiinUI(model));
                                Parent root = firstLoader.load();
                                Scene scene = new Scene(root, 1366, 768);
@@ -43,9 +44,6 @@ public class Listacc_Finanace_Desktop extends Application {
                                primaryStage.setScene(scene);
                                primaryStage.show();
         }catch(Exception exc){exc.printStackTrace();}
-        
-        
-        
         
     }
 
