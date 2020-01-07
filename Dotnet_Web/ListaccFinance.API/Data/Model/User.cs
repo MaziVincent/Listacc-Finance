@@ -11,6 +11,8 @@ namespace ListaccFinance.API.Data.Model
         public string Password {get;set;}
         public ICollection<Expenditure> Expenditures {get;set;}
         public ICollection<Income> Incomes {get;set;}
+        public Department Department { get; set; }
+        public int? DepartmentId { get; set; }
         
     }
 }

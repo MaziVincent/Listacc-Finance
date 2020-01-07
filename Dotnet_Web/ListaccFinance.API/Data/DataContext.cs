@@ -1,3 +1,4 @@
+using ListaccFinance.Api.Data.Model;
 using ListaccFinance.API.Data.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -35,6 +36,9 @@ namespace ListaccFinance.API.Data
             public DbSet<Person> Persons { get; set; }
             public DbSet<Project> Projects { get; set; }
             public DbSet<Service> Services { get; set; }
+            public DbSet<Admin> Admins { get; set; }
+            public DbSet<Member> Members { get; set; }
+
            // public DbSet<User> Users { get; set; }
     }
 }
