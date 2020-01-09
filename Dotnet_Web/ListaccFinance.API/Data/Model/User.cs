@@ -12,7 +12,8 @@ namespace ListaccFinance.API.Data.Model
         public ICollection<Expenditure> Expenditures {get;set;}
         public ICollection<Income> Incomes {get;set;}
         public Department Department { get; set; }
-        public int? DepartmentId { get; set; }
-        
+        public int DepartmentId { get; set; }
+        public Person Person { get; set; }
+        public int PersonId { get; set; }
     }
 }
