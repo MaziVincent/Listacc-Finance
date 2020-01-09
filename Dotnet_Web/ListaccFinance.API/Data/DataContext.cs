@@ -22,7 +22,7 @@ namespace ListaccFinance.API.Data
             modelBuilder.Entity<User>().ToTable("Users");
 
                 exp.HasOne(a => a.Issuer).WithMany(e => e.Expenditures).HasForeignKey(f => f.IssuerId);
-                exp.HasOne(a => a.Recepient).WithMany(v => v.Expenditures).HasForeignKey(f => f.RecepientId);
+                exp.HasOne(a => a.Client).WithMany(v => v.Expenditures).HasForeignKey(f => f.ClientId);
             });
 
             
@@ -39,6 +39,6 @@ namespace ListaccFinance.API.Data
             public DbSet<Admin> Admins { get; set; }
             public DbSet<Member> Members { get; set; }
 
-           // public DbSet<User> Users { get; set; }
+            // public DbSet<User> Users { get; set; }
     }
 }
