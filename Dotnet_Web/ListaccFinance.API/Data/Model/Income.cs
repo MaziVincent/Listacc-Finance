@@ -16,7 +16,7 @@ namespace ListaccFinance.API.Data.Model
         public string PaymentType {get;set;}
         public double AmountReceivable {get;set;}
         public DateTime DateDue {get;set;}
-        public int ProjectId {get;set;}
+        public int?  ProjectId {get;set;}
         public Project Project {get;set;}
         public int UserId {get;set;}
         public User User {get;set;}

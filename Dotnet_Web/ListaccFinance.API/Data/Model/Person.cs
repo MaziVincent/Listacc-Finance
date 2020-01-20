@@ -10,6 +10,6 @@ namespace ListaccFinance.API.Data.Model
         public string LastName {get;set;}
         public string Gender {get;set;}
         public ICollection<Client> Clients { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
     }
 }
