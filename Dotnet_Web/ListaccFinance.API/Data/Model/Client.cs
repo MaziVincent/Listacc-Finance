@@ -15,5 +15,6 @@ namespace ListaccFinance.API.Data.Model
         public Person Person {get;set;}
         public int? PersonId { get; set; }
         public ICollection<Expenditure> Expenditures { get; set; }
+        
     }
 }
