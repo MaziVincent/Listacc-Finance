@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Agozie
  */
 @Entity
-@Table(name = "Incomes", catalog = "", schema = "")
+@Table(name = "Incomes")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Incomes.findAll", query = "SELECT i FROM Incomes i"),
@@ -40,7 +40,7 @@ public class Incomes implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
     @Column(name = "Id")
     private Integer id;
@@ -55,27 +55,26 @@ public class Incomes implements Serializable {
     @Basic(optional = false)
     @Column(name = "Discount")
     private double discount;
-    @Basic(optional = false)
     @Column(name = "PaymentType")
-    private int paymentType;
+    private String paymentType;
     @Basic(optional = false)
     @Column(name = "AmountReceivable")
     private double amountReceivable;
     @Basic(optional = false)
     @Column(name = "DateDue")
     private String dateDue;
-    @JoinColumn(name = "ClientID", referencedColumnName = "Id")
+    @JoinColumn(name = "ClientId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Clients clientID;
-    @JoinColumn(name = "ProjectID", referencedColumnName = "Id")
+    private Clients clientId;
+    @JoinColumn(name = "ProjectId", referencedColumnName = "Id")
+    @ManyToOne
+    private Projects projectId;
+    @JoinColumn(name = "ServiceId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Projects projectID;
-    @JoinColumn(name = "ServiceID", referencedColumnName = "Id")
+    private Services serviceId;
+    @JoinColumn(name = "UserId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Services serviceID;
-    @JoinColumn(name = "UserID", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private Users userID;
+    private Users userId;
 
     public Incomes() {
     }
@@ -84,12 +83,11 @@ public class Incomes implements Serializable {
         this.id = id;
     }
 
-    public Incomes(Integer id, String date, double amountReceived, double discount, int paymentType, double amountReceivable, String dateDue) {
+    public Incomes(Integer id, String date, double amountReceived, double discount, double amountReceivable, String dateDue) {
         this.id = id;
         this.date = date;
         this.amountReceived = amountReceived;
         this.discount = discount;
-        this.paymentType = paymentType;
         this.amountReceivable = amountReceivable;
         this.dateDue = dateDue;
     }
@@ -134,11 +132,11 @@ public class Incomes implements Serializable {
         this.discount = discount;
     }
 
-    public int getPaymentType() {
+    public String getPaymentType() {
         return paymentType;
     }
 
-    public void setPaymentType(int paymentType) {
+    public void setPaymentType(String paymentType) {
         this.paymentType = paymentType;
     }
 
@@ -158,36 +156,36 @@ public class Incomes implements Serializable {
         this.dateDue = dateDue;
     }
 
-    public Clients getClientID() {
-        return clientID;
+    public Clients getClientId() {
+        return clientId;
     }
 
-    public void setClientID(Clients clientID) {
-        this.clientID = clientID;
+    public void setClientId(Clients clientId) {
+        this.clientId = clientId;
     }
 
-    public Projects getProjectID() {
-        return projectID;
+    public Projects getProjectId() {
+        return projectId;
     }
 
-    public void setProjectID(Projects projectID) {
-        this.projectID = projectID;
+    public void setProjectId(Projects projectId) {
+        this.projectId = projectId;
     }
 
-    public Services getServiceID() {
-        return serviceID;
+    public Services getServiceId() {
+        return serviceId;
     }
 
-    public void setServiceID(Services serviceID) {
-        this.serviceID = serviceID;
+    public void setServiceId(Services serviceId) {
+        this.serviceId = serviceId;
     }
 
-    public Users getUserID() {
-        return userID;
+    public Users getUserId() {
+        return userId;
     }
 
-    public void setUserID(Users userID) {
-        this.userID = userID;
+    public void setUserId(Users userId) {
+        this.userId = userId;
     }
 
     @Override

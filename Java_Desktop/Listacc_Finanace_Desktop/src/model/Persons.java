@@ -8,6 +8,7 @@ package model;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,28 +26,33 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Agozie
  */
 @Entity
-@Table(name = "Persons", catalog = "", schema = "")
+@Table(name = "Persons")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Persons.findAll", query = "SELECT p FROM Persons p"),
     @NamedQuery(name = "Persons.findById", query = "SELECT p FROM Persons p WHERE p.id = :id"),
-    @NamedQuery(name = "Persons.findBySurname", query = "SELECT p FROM Persons p WHERE p.surname = :surname"),
+    @NamedQuery(name = "Persons.findByFirstName", query = "SELECT p FROM Persons p WHERE p.firstName = :firstName"),
     @NamedQuery(name = "Persons.findByLastName", query = "SELECT p FROM Persons p WHERE p.lastName = :lastName"),
-    @NamedQuery(name = "Persons.findByGendar", query = "SELECT p FROM Persons p WHERE p.gendar = :gendar")})
+    @NamedQuery(name = "Persons.findByGender", query = "SELECT p FROM Persons p WHERE p.gender = :gender"),
+    @NamedQuery(name = "Persons.findByDateOfBirth", query = "SELECT p FROM Persons p WHERE p.dateOfBirth = :dateOfBirth")})
 public class Persons implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
     @Column(name = "Id")
     private Integer id;
-    @Column(name = "Surname")
-    private String surname;
+    @Column(name = "firstName")
+    private String firstName;
     @Column(name = "LastName")
     private String lastName;
-    @Column(name = "Gendar")
-    private String gendar;
+    @Column(name = "Gender")
+    private String gender;
+    @Column(name = "DateOfBirth")
+    private String dateOfBirth;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personId")
+    private Collection<Users> usersCollection;
     @OneToMany(mappedBy = "personId")
     private Collection<Clients> clientsCollection;
 
@@ -65,12 +71,12 @@ public class Persons implements Serializable {
         this.id = id;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
@@ -81,12 +87,29 @@ public class Persons implements Serializable {
         this.lastName = lastName;
     }
 
-    public String getGendar() {
-        return gendar;
+    public String getGender() {
+        return gender;
     }
 
-    public void setGendar(String gendar) {
-        this.gendar = gendar;
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    @XmlTransient
+    public Collection<Users> getUsersCollection() {
+        return usersCollection;
+    }
+
+    public void setUsersCollection(Collection<Users> usersCollection) {
+        this.usersCollection = usersCollection;
     }
 
     @XmlTransient

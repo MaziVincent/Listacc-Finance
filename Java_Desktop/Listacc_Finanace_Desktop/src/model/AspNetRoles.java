@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Agozie
  */
 @Entity
-@Table(name = "AspNetRoles", catalog = "", schema = "")
+@Table(name = "AspNetRoles")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AspNetRoles.findAll", query = "SELECT a FROM AspNetRoles a"),

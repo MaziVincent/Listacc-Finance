@@ -16,6 +16,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import model.AppModel;
+import model.Users;
+import services.data.UserService;
 
 /**
  *
@@ -36,7 +38,8 @@ public class Listacc_Finanace_Desktop extends Application {
         });
         try{
         FXMLLoader firstLoader = new FXMLLoader(getClass().getResource("/fxml/MainUI.fxml"));
-                                final AppModel model = new AppModel(primaryStage) ;
+                                 Users user = new UserService().getUserById(1);
+                                final AppModel model = new AppModel(primaryStage, user) ;
                                firstLoader.setController(new MaiinUI(model));
                                Parent root = firstLoader.load();
                                Scene scene = new Scene(root, 1366, 768);

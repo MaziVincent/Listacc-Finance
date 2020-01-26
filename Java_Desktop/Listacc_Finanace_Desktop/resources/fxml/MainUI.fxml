@@ -89,7 +89,7 @@
    <center>
       <AnchorPane prefHeight="713.0" prefWidth="1292.0" BorderPane.alignment="CENTER">
          <children>
-            <TabPane fx:id="adminPane" layoutY="-3.0" prefHeight="713.0" prefWidth="1296.0" tabClosingPolicy="UNAVAILABLE">
+            <TabPane fx:id="adminPane" layoutY="-3.0" prefHeight="713.0" prefWidth="1296.0" tabClosingPolicy="UNAVAILABLE" visible="false">
                <tabs>
                   <Tab text="Department">
                      <content>
@@ -100,8 +100,8 @@
                                     <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
                                     <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="249.0" prefWidth="550.0">
                                        <children>
-                                          <TextField fx:id="dptTextName" layoutX="44.0" layoutY="70.0" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
-                                          <Button layoutX="389.0" layoutY="220.0" mnemonicParsing="false" onAction="#CreateDepartment" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
+                                          <TextField fx:id="dptTextName" layoutX="44.0" layoutY="70.0" onKeyTyped="#validateDepartmentForm" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
+                                          <Button fx:id="dptBtnSave" layoutX="389.0" layoutY="220.0" mnemonicParsing="false" onAction="#saveDepartment" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
                                           <Line fx:id="departmentCreateLine" endX="100.0" layoutX="208.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
                                              <effect>
                                                 <Bloom />
@@ -169,8 +169,8 @@
                                     <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
                                     <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="249.0" prefWidth="550.0">
                                        <children>
-                                          <TextField layoutX="44.0" layoutY="70.0" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
-                                          <Button layoutX="389.0" layoutY="220.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
+                                          <TextField fx:id="prjTextName" layoutX="44.0" layoutY="70.0" onKeyTyped="#validateProjectForm" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
+                                          <Button fx:id="prjBtnSave" layoutX="389.0" layoutY="220.0" mnemonicParsing="false" onAction="#saveProject" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
                                           <Line fx:id="projectCreateLine" endX="100.0" layoutX="208.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
                                              <effect>
                                                 <Bloom />
@@ -181,9 +181,9 @@
                                                 <Bloom />
                                              </effect>
                                           </Line>
-                                          <ComboBox layoutX="44.0" layoutY="132.0" prefHeight="25.0" prefWidth="224.0" />
+                                          <ComboBox fx:id="prjComboDepartment" layoutX="44.0" layoutY="132.0" prefHeight="25.0" prefWidth="224.0" />
                                           <Label layoutX="44.0" layoutY="108.0" text="Department:" textFill="WHITE" />
-                                          <TextArea layoutX="294.0" layoutY="68.0" prefHeight="80.0" prefWidth="191.0" promptText="Description" />
+                                          <TextArea fx:id="prjTextDescription" layoutX="294.0" layoutY="68.0" onKeyTyped="#validateProjectForm" prefHeight="80.0" prefWidth="191.0" promptText="Description" />
                                        </children>
                                     </AnchorPane>
                                     <Label fx:id="projectEditLabel" layoutX="340.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Edit" textFill="WHITE">
@@ -235,8 +235,8 @@
                                     <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
                                     <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="249.0" prefWidth="550.0">
                                        <children>
-                                          <TextField layoutX="44.0" layoutY="70.0" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
-                                          <Button layoutX="389.0" layoutY="220.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
+                                          <TextField fx:id="srvTextName" layoutX="44.0" layoutY="70.0" onKeyTyped="#validateServiceForm" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
+                                          <Button fx:id="srvBtnSave" layoutX="395.0" layoutY="223.0" mnemonicParsing="false" onAction="#saveService" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
                                           <Line fx:id="serviceCreateLine" endX="100.0" layoutX="208.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
                                              <effect>
                                                 <Bloom />
@@ -247,10 +247,10 @@
                                                 <Bloom />
                                              </effect>
                                           </Line>
-                                          <TextArea layoutX="303.0" layoutY="70.0" prefHeight="80.0" prefWidth="191.0" promptText="Description" />
-                                          <TextField layoutX="44.0" layoutY="112.0" prefHeight="25.0" prefWidth="223.0" promptText="Amount : NGN" />
+                                          <TextArea fx:id="srvTextDescription" layoutX="303.0" layoutY="70.0" onKeyTyped="#validateServiceForm" prefHeight="80.0" prefWidth="191.0" promptText="Description" />
+                                          <TextField fx:id="srvTextAmount" layoutX="44.0" layoutY="112.0" onKeyTyped="#validateServiceForm" prefHeight="25.0" prefWidth="223.0" promptText="Amount : NGN" />
                                           <Label layoutX="47.0" layoutY="149.0" text="Project :" textFill="WHITE" />
-                                          <ComboBox layoutX="47.0" layoutY="173.0" prefHeight="25.0" prefWidth="224.0" />
+                                          <ComboBox fx:id="srvComboProject" layoutX="44.0" layoutY="175.0" prefHeight="25.0" prefWidth="223.0" />
                                        </children>
                                     </AnchorPane>
                                     <Label fx:id="serviceEditLabel" layoutX="340.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Edit" textFill="WHITE">
@@ -301,8 +301,8 @@
                                     <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
                                     <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="249.0" prefWidth="550.0">
                                        <children>
-                                          <TextField layoutX="44.0" layoutY="135.0" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
-                                          <Button layoutX="389.0" layoutY="220.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
+                                          <TextField fx:id="cctgTextName" layoutX="44.0" layoutY="135.0" onKeyTyped="#validateCctgForm" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
+                                          <Button fx:id="cctgBtnSave" layoutX="389.0" layoutY="220.0" mnemonicParsing="false" onAction="#saveCostCategory" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
                                           <Line fx:id="costCategoryCreateLine" endX="100.0" layoutX="208.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
                                              <effect>
                                                 <Bloom />
@@ -313,9 +313,9 @@
                                                 <Bloom />
                                              </effect>
                                           </Line>
-                                          <ComboBox layoutX="44.0" layoutY="86.0" prefHeight="25.0" prefWidth="222.0" />
+                                          <ComboBox fx:id="cctgComboType" layoutX="44.0" layoutY="86.0" prefHeight="25.0" prefWidth="222.0" />
                                           <Label layoutX="44.0" layoutY="59.0" text="Type:" textFill="WHITE" />
-                                          <TextArea layoutX="289.0" layoutY="68.0" prefHeight="94.0" prefWidth="202.0" promptText="Description" />
+                                          <TextArea fx:id="cctgTextDescription" layoutX="289.0" layoutY="68.0" onKeyTyped="#validateCctgForm" prefHeight="94.0" prefWidth="202.0" promptText="Description" />
                                        </children>
                                     </AnchorPane>
                                     <Label fx:id="costCategoryEditLabel" layoutX="340.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Edit" textFill="WHITE">
@@ -353,19 +353,25 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <TableView layoutX="621.0" layoutY="45.0" prefHeight="414.0" prefWidth="654.0">
+                              <TableView fx:id="userListTable" layoutX="621.0" layoutY="45.0" prefHeight="414.0" prefWidth="654.0">
                                  <columns>
-                                    <TableColumn prefWidth="75.0" text="C1" />
-                                    <TableColumn prefWidth="75.0" text="C2" />
+                                    <TableColumn fx:id="userColSerial" prefWidth="40.0" text="S/N" />
+                                    <TableColumn fx:id="userColLastName" prefWidth="115.0" style="-fx-alignment: center;" text="Last Name" />
+                                    <TableColumn fx:id="userColFirstName" prefWidth="115.0" style="-fx-alignment: center;" text="First Name" />
+                                    <TableColumn fx:id="userColEmail" prefWidth="115.0" style="-fx-alignment: center;" text="Email" />
+                                    <TableColumn fx:id="userColPhone" prefWidth="107.0" style="-fx-alignment: center;" text="Phone" />
+                                    <TableColumn fx:id="userColDepartment" prefWidth="87.0" text="Department" />
+                                    <TableColumn fx:id="userColRole" prefWidth="79.0" style="-fx-alignment: center;" text="Role" />
+                                    <TableColumn fx:id="userColId" prefWidth="75.0" text="Id" visible="false" />
                                  </columns>
                               </TableView>
                               <AnchorPane fx:id="formAnchorPane21211" layoutX="14.0" layoutY="45.0" prefHeight="416.0" prefWidth="558.0">
                                  <children>
                                     <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
-                                    <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="249.0" prefWidth="550.0">
+                                    <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="366.0" prefWidth="550.0">
                                        <children>
-                                          <TextField layoutX="44.0" layoutY="70.0" prefHeight="25.0" prefWidth="223.0" promptText="Name" />
-                                          <Button layoutX="389.0" layoutY="220.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
+                                          <TextField layoutX="46.0" layoutY="70.0" prefHeight="25.0" prefWidth="191.0" promptText="Last Name" />
+                                          <Button layoutX="367.0" layoutY="327.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Save" textFill="WHITE" />
                                           <Line fx:id="userCreateLine" endX="100.0" layoutX="208.0" layoutY="32.0" scaleX="0.5" startX="-100.0" stroke="#5e70e4">
                                              <effect>
                                                 <Bloom />
@@ -376,6 +382,18 @@
                                                 <Bloom />
                                              </effect>
                                           </Line>
+                                          <TextField layoutX="275.0" layoutY="68.0" prefHeight="25.0" prefWidth="191.0" promptText="First Name" />
+                                          <ComboBox layoutX="46.0" layoutY="126.0" prefHeight="25.0" prefWidth="190.0" />
+                                          <Label layoutX="46.0" layoutY="109.0" text="Gender: " textFill="WHITE" />
+                                          <TextField layoutX="275.0" layoutY="126.0" prefHeight="25.0" prefWidth="191.0" promptText="Email" />
+                                          <TextField layoutX="46.0" layoutY="176.0" prefHeight="25.0" prefWidth="190.0" promptText="Email" />
+                                          <TextField layoutX="276.0" layoutY="176.0" prefHeight="25.0" prefWidth="190.0" promptText="Phone" />
+                                          <Label layoutX="47.0" layoutY="213.0" text="Department: " textFill="WHITE" />
+                                          <ComboBox layoutX="47.0" layoutY="230.0" prefHeight="25.0" prefWidth="190.0" />
+                                          <Label layoutX="276.0" layoutY="213.0" text="Role:" textFill="WHITE" />
+                                          <ComboBox layoutX="276.0" layoutY="230.0" prefHeight="25.0" prefWidth="190.0" />
+                                          <PasswordField layoutX="49.0" layoutY="279.0" prefHeight="25.0" prefWidth="190.0" promptText="Password" />
+                                          <PasswordField layoutX="278.0" layoutY="279.0" prefHeight="25.0" prefWidth="190.0" promptText="Confirm Password" />
                                        </children>
                                     </AnchorPane>
                                     <Label fx:id="userEditLabel" layoutX="340.0" layoutY="10.0" onMouseClicked="#switchCreateEditView" text="Edit" textFill="WHITE">
@@ -394,12 +412,12 @@
                                           <Font size="15.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="userInfoLabel" layoutX="73.0" layoutY="357.0" prefHeight="17.0" prefWidth="230.0" text="Select an item from the table to edit " textFill="WHITE">
+                                    <Label fx:id="userInfoLabel" layoutX="74.0" layoutY="370.0" prefHeight="17.0" prefWidth="230.0" text="Select an item from the table to edit " textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Circle fx:id="userInfoBullet" fill="WHITE" layoutX="57.0" layoutY="367.0" radius="5.0" stroke="WHITE" strokeType="INSIDE">
+                                    <Circle fx:id="userInfoBullet" fill="WHITE" layoutX="58.0" layoutY="380.0" radius="5.0" stroke="WHITE" strokeType="INSIDE">
                                        <effect>
                                           <Bloom />
                                        </effect>
@@ -409,14 +427,18 @@
                            </children></AnchorPane>
                      </content>
                   </Tab>
-                  <Tab text="Business">
+                  <Tab text="Client">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <TableView layoutX="621.0" layoutY="44.0" prefHeight="414.0" prefWidth="654.0">
+                              <TableView fx:id="clientListTable" layoutX="621.0" layoutY="44.0" prefHeight="414.0" prefWidth="654.0">
                                  <columns>
-                                    <TableColumn prefWidth="75.0" text="C1" />
-                                    <TableColumn prefWidth="75.0" text="C2" />
+                                    <TableColumn fx:id="clientColSerial" prefWidth="40.0" text="S/N" />
+                                    <TableColumn fx:id="clientColName" prefWidth="188.0" text="Name" />
+                                    <TableColumn fx:id="clientColPhone" prefWidth="114.0" text="Phone" />
+                                    <TableColumn fx:id="clientColEmail" prefWidth="127.0" text="Email" />
+                                    <TableColumn fx:id="clientColAddress" prefWidth="114.0" text="Address" />
+                                    <TableColumn fx:id="clientColId" prefWidth="75.0" text="Id" visible="false" />
                                  </columns>
                               </TableView>
                               <AnchorPane fx:id="formAnchorPane212111" layoutX="14.0" layoutY="44.0" prefHeight="416.0" prefWidth="558.0">
@@ -471,18 +493,21 @@
                   </Tab>
                </tabs>
             </TabPane>
-            <AnchorPane id="incomePane" fx:id="incomePane" prefHeight="713.0" prefWidth="1292.0" visible="false">
+            <AnchorPane id="incomePane" fx:id="incomePane" prefHeight="713.0" prefWidth="1292.0">
                <children>
-                  <TableView layoutX="605.0" layoutY="38.0" prefHeight="545.0" prefWidth="677.0">
+                  <TableView fx:id="incomeListTable" layoutX="605.0" layoutY="38.0" prefHeight="545.0" prefWidth="677.0">
                     <columns>
-                      <TableColumn prefWidth="75.0" text="C1" />
-                      <TableColumn prefWidth="75.0" text="C2" />
+                        <TableColumn fx:id="incomeColSerial" prefWidth="40.0" text="S/N" />
+                      <TableColumn fx:id="incomeColService" prefWidth="147.0" style="-fx-alignment: center;" text="Service" />
+                      <TableColumn fx:id="incomeColClient" prefWidth="158.0" style="-fx-alignment: center;" text="Client" />
+                        <TableColumn fx:id="incomeColAmount" prefWidth="117.0" style="-fx-alignment: center;" text="Amount" />
+                        <TableColumn fx:id="incomeColDate" prefWidth="94.0" style="-fx-alignment: center;" text="Date" />
+                        <TableColumn fx:id="incomeColPaymentType" prefWidth="129.0" style="-fx-alignment: center;" text="Payment Type" />
+                        <TableColumn fx:id="incomeColId" prefWidth="44.0" text="Id" visible="false" />
                     </columns>
                   </TableView>
-                  <Label layoutX="606.0" layoutY="21.0" prefHeight="17.0" prefWidth="150.0" text="Transaction History From: " textFill="#ff8208" />
-                  <Label layoutX="776.0" layoutY="21.0" prefHeight="17.0" prefWidth="65.0" text="Date" textFill="#3dc375" />
-                  <Label layoutX="931.0" layoutY="21.0" text="Date" textFill="#3dc375" />
-                  <Label layoutX="856.0" layoutY="21.0" text="to" />
+                  <Label layoutX="606.0" layoutY="11.0" prefHeight="17.0" prefWidth="101.0" text="Transaction From: " textFill="#ff8208" />
+                  <Label layoutX="806.0" layoutY="11.0" text="to:" textFill="#ff8208" />
                   <LineChart layoutX="10.0" layoutY="459.0" prefHeight="150.0" prefWidth="567.0">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" />
@@ -494,65 +519,75 @@
                   <AnchorPane fx:id="formAnchorPane" layoutX="19.0" layoutY="38.0" prefHeight="416.0" prefWidth="558.0">
                      <children>
                         <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
-                        <Button layoutX="445.0" layoutY="377.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Enter" />
-                        <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="186.0" prefWidth="550.0">
+                        <Button fx:id="incomeBtnSave" layoutX="435.0" layoutY="377.0" mnemonicParsing="false" onAction="#saveIncome" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Enter" />
+                        <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="199.0" prefWidth="550.0">
                            <children>
-                              <Label layoutX="378.0" layoutY="112.0" prefHeight="17.0" prefWidth="172.0" text="Balance: NGN" />
-                              <ChoiceBox id="paymentType" layoutX="44.0" layoutY="152.0" prefWidth="150.0" />
-                              <TextField layoutX="218.0" layoutY="151.0" promptText="Due Date for Collection" />
-                              <TextField layoutX="218.0" layoutY="108.0" promptText="Discount" />
-                              <TextField layoutX="44.0" layoutY="108.0" promptText="Amount Received" />
-                              <RadioButton layoutX="44.0" layoutY="31.0" mnemonicParsing="false" selected="true" text="New" textFill="#07bf7c">
+                              <Label layoutX="378.0" layoutY="112.0" prefHeight="17.0" prefWidth="86.0" text="Received:  NGN" />
+                              <TextField fx:id="incomeTxtDiscount" layoutX="218.0" layoutY="108.0" onKeyTyped="#validateIncomeForm" promptText="Discount" />
+                              <TextField fx:id="incomeTxtAmount" editable="false" layoutX="44.0" layoutY="108.0" onKeyTyped="#validateIncomeForm" promptText="Amount " />
+                              <RadioButton fx:id="incomeRadioNewIncome" layoutX="44.0" layoutY="21.0" mnemonicParsing="false" selected="true" text="New" textFill="#07bf7c">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="IncomeType" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton layoutX="127.0" layoutY="31.0" mnemonicParsing="false" text="Balance Payment" textFill="#ff8208">
-                                 <toggleGroup>
-                                    <ToggleGroup fx:id="IncomeType1" />
-                                 </toggleGroup>
-                              </RadioButton>
-                              <TextField layoutX="44.0" layoutY="60.0" promptText="Service" />
-                              <Label layoutX="253.0" layoutY="6.0" text="Income" textFill="WHITE">
+                              <RadioButton layoutX="127.0" layoutY="21.0" mnemonicParsing="false" text="Balance Payment" textFill="#ff8208" toggleGroup="$IncomeType" />
+                              <Label layoutX="253.0" layoutY="-4.0" text="Income" textFill="WHITE">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </Label>
-                              <DatePicker layoutX="218.0" layoutY="60.0" prefHeight="25.0" prefWidth="149.0" />
+                              <DatePicker fx:id="incomeTxtDate" editable="false" layoutX="218.0" layoutY="70.0" prefHeight="25.0" prefWidth="149.0" />
+                              <ComboBox fx:id="incomeComboService" layoutX="44.0" layoutY="70.0" onAction="#setIncomeAmount" prefWidth="150.0" />
+                              <Label layoutX="44.0" layoutY="53.0" text="Service:" textFill="WHITE" />
+                              <Label layoutX="218.0" layoutY="53.0" text="Date:" textFill="#fffbfb" />
+                              <DatePicker fx:id="IncomeTxtDueDate" editable="false" layoutX="218.0" layoutY="162.0" prefHeight="25.0" prefWidth="149.0" />
+                              <Label layoutX="44.0" layoutY="143.0" text="Payment Type:" textFill="#fcfcfc" />
+                              <Label layoutX="218.0" layoutY="143.0" text="Due Date for Balance:" textFill="WHITE" />
+                              <ComboBox fx:id="incomeComboPType" layoutX="44.0" layoutY="162.0" prefWidth="150.0" />
+                              <Label fx:id="incomeLabelAmountRecieved" layoutX="464.0" layoutY="112.0" prefHeight="17.0" prefWidth="100.0" textFill="#e8e1e1" />
                            </children>
                         </AnchorPane>
                         <AnchorPane layoutX="4.0" layoutY="195.0" prefHeight="182.0" prefWidth="550.0">
                            <children>
-                              <ChoiceBox id="paymentType" layoutX="44.0" layoutY="60.0" prefWidth="150.0" />
-                              <TextField layoutX="218.0" layoutY="151.0" promptText="UID 2" />
-                              <TextField layoutX="218.0" layoutY="108.0" promptText="Email" />
-                              <TextField layoutX="44.0" layoutY="108.0" promptText="Phone" />
-                              <TextField layoutX="218.0" layoutY="60.0" promptText="Last Name" />
-                              <RadioButton layoutX="45.0" layoutY="31.0" mnemonicParsing="false" selected="true" text="New" textFill="#07bf7c">
+                              <TextField fx:id="incomeTxtEmail" layoutX="218.0" layoutY="108.0" onKeyTyped="#validateIncomeForm" promptText="Email" />
+                              <TextField fx:id="incomeTxtPhone" layoutX="44.0" layoutY="108.0" onKeyTyped="#validateIncomeForm" promptText="Phone" />
+                              <TextField fx:id="IncomeTxtLName" layoutX="44.0" layoutY="60.0" onKeyTyped="#validateIncomeForm" promptText="Last Name" />
+                              <RadioButton fx:id="incomeRadioNew" layoutX="45.0" layoutY="31.0" mnemonicParsing="false" onAction="#newClient" selected="true" text="New" textFill="#07bf7c">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="clientType" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton layoutX="128.0" layoutY="31.0" mnemonicParsing="false" text="Exisiting" textFill="#ff8208" toggleGroup="$clientType" />
-                              <TextField layoutX="44.0" layoutY="151.0" promptText="UID 1" />
-                              <TextField layoutX="387.0" layoutY="60.0" promptText="First Name" />
-                              <TextArea layoutX="388.0" layoutY="108.0" prefHeight="62.0" prefWidth="147.0" promptText="Address" />
+                              <RadioButton fx:id="existingClientRadio" layoutX="128.0" layoutY="31.0" mnemonicParsing="false" onAction="#showClientListPopup" text="Exisiting" textFill="#ff8208" toggleGroup="$clientType" />
+                              <TextField fx:id="incomeTxtUid" layoutX="220.0" layoutY="151.0" onKeyTyped="#validateIncomeForm" prefHeight="25.0" prefWidth="147.0" promptText="UID" />
+                              <TextField fx:id="incomeTxtFName" layoutX="218.0" layoutY="60.0" onKeyTyped="#validateIncomeForm" promptText="First Name" />
+                              <TextArea fx:id="incomeTxtAdd" layoutX="383.0" layoutY="101.0" prefHeight="75.0" prefWidth="147.0" promptText="Address" />
                               <Label layoutX="249.0" layoutY="4.0" text="Client Details" textFill="WHITE">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </Label>
                               <Separator layoutX="200.0" layoutY="30.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="4.0" />
-                              <RadioButton layoutX="302.0" layoutY="32.0" mnemonicParsing="false" text="Business" textFill="#ff8208">
+                              <RadioButton fx:id="incomeRadioBusiness" layoutX="302.0" layoutY="32.0" mnemonicParsing="false" onAction="#personBusinessSelect" text="Business" textFill="#ff8208">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="personBusiness" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton layoutX="219.0" layoutY="32.0" mnemonicParsing="false" selected="true" text="Person" textFill="#07bf7c" toggleGroup="$personBusiness" />
+                              <RadioButton fx:id="incomeRadioPerson" layoutX="219.0" layoutY="32.0" mnemonicParsing="false" onAction="#personBusinessSelect" selected="true" text="Person" textFill="#07bf7c" toggleGroup="$personBusiness" />
+                              <DatePicker fx:id="incomeTxtDob" editable="false" layoutX="44.0" layoutY="151.0" prefHeight="25.0" prefWidth="149.0" promptText="Date of Birth" />
+                              <RadioButton fx:id="incomeRadioMale" layoutX="383.0" layoutY="64.0" mnemonicParsing="false" selected="true" text="Male" textFill="WHITE">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="gender" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="incomeRadioFemale" layoutX="445.0" layoutY="64.0" mnemonicParsing="false" text="Female" textFill="WHITE" toggleGroup="$gender" />
                            </children>
                         </AnchorPane>
                      </children>
                   </AnchorPane>
+                  <TextField layoutX="939.0" layoutY="9.0" prefHeight="25.0" prefWidth="193.0" promptText="Search Client" />
+                  <DatePicker fx:id="incomeFromDate" editable="false" layoutX="707.0" layoutY="9.0" onAction="#filterIncomeTable" prefHeight="25.0" prefWidth="95.0" />
+                  <DatePicker fx:id="incomeToDate" editable="false" layoutX="828.0" layoutY="9.0" onAction="#filterIncomeTable" prefHeight="25.0" prefWidth="95.0" />
+                  <Button fx:id="inocmePrintBtn" disable="true" layoutX="1177.0" layoutY="9.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="103.0" text="Print Receipt" />
                </children>
             </AnchorPane>
             <AnchorPane id="expenditurePane" fx:id="expenditurePane" prefHeight="713.0" prefWidth="1292.0" visible="false">

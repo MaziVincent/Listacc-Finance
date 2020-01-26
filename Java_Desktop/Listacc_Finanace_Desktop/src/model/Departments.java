@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Agozie
  */
 @Entity
-@Table(name = "Departments", catalog = "", schema = "")
+@Table(name = "Departments")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Departments.findAll", query = "SELECT d FROM Departments d"),
@@ -36,7 +36,7 @@ public class Departments implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
     @Column(name = "Id")
     private Integer id;
@@ -45,6 +45,8 @@ public class Departments implements Serializable {
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "departmentId")
     private Collection<Projects> projectsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "departmentId")
+    private Collection<Users> usersCollection;
 
     public Departments() {
     }
@@ -81,6 +83,15 @@ public class Departments implements Serializable {
 
     public void setProjectsCollection(Collection<Projects> projectsCollection) {
         this.projectsCollection = projectsCollection;
+    }
+
+    @XmlTransient
+    public Collection<Users> getUsersCollection() {
+        return usersCollection;
+    }
+
+    public void setUsersCollection(Collection<Users> usersCollection) {
+        this.usersCollection = usersCollection;
     }
 
     @Override

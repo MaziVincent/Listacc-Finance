@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Agozie
  */
 @Entity
-@Table(name = "AspNetUserTokens", catalog = "", schema = "")
+@Table(name = "AspNetUserTokens")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AspNetUserTokens.findAll", query = "SELECT a FROM AspNetUserTokens a"),

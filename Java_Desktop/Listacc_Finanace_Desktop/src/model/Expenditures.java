@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Agozie
  */
 @Entity
-@Table(name = "Expenditures", catalog = "", schema = "")
+@Table(name = "Expenditures")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Expenditures.findAll", query = "SELECT e FROM Expenditures e"),
@@ -36,7 +36,7 @@ public class Expenditures implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
     @Column(name = "Id")
     private Integer id;
@@ -48,9 +48,9 @@ public class Expenditures implements Serializable {
     @Basic(optional = false)
     @Column(name = "Amount")
     private double amount;
-    @JoinColumn(name = "RecepientId", referencedColumnName = "Id")
+    @JoinColumn(name = "ClientId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Clients recepientId;
+    private Clients clientId;
     @JoinColumn(name = "CostCategoryId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private CostCategories costCategoryId;
@@ -106,12 +106,12 @@ public class Expenditures implements Serializable {
         this.amount = amount;
     }
 
-    public Clients getRecepientId() {
-        return recepientId;
+    public Clients getClientId() {
+        return clientId;
     }
 
-    public void setRecepientId(Clients recepientId) {
-        this.recepientId = recepientId;
+    public void setClientId(Clients clientId) {
+        this.clientId = clientId;
     }
 
     public CostCategories getCostCategoryId() {

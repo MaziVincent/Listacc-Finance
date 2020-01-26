@@ -11,6 +11,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.FieldResult;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,16 +21,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import model.display.DisplayClient;
 
 /**
  *
  * @author Agozie
  */
 @Entity
-@Table(name = "Clients", catalog = "", schema = "")
+@Table(name = "Clients")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Clients.findAll", query = "SELECT c FROM Clients c"),
@@ -40,19 +44,19 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Clients.findByUId", query = "SELECT c FROM Clients c WHERE c.uId = :uId"),
     @NamedQuery(name = "Clients.findByUId2", query = "SELECT c FROM Clients c WHERE c.uId2 = :uId2"),
     @NamedQuery(name = "Clients.findByAmountReceivable", query = "SELECT c FROM Clients c WHERE c.amountReceivable = :amountReceivable")})
+    
 public class Clients implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
     @Column(name = "Id")
     private Integer id;
     @Column(name = "BusinessName")
     private String businessName;
-    @Basic(optional = false)
     @Column(name = "Phone")
-    private int phone;
+    private String phone;
     @Column(name = "Email")
     private String email;
     @Column(name = "Address")
@@ -64,12 +68,12 @@ public class Clients implements Serializable {
     @Basic(optional = false)
     @Column(name = "AmountReceivable")
     private double amountReceivable;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clientID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clientId")
     private Collection<Incomes> incomesCollection;
     @JoinColumn(name = "PersonId", referencedColumnName = "Id")
     @ManyToOne
     private Persons personId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recepientId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clientId")
     private Collection<Expenditures> expendituresCollection;
 
     public Clients() {
@@ -79,9 +83,8 @@ public class Clients implements Serializable {
         this.id = id;
     }
 
-    public Clients(Integer id, int phone, double amountReceivable) {
+    public Clients(Integer id, double amountReceivable) {
         this.id = id;
-        this.phone = phone;
         this.amountReceivable = amountReceivable;
     }
 
@@ -101,11 +104,11 @@ public class Clients implements Serializable {
         this.businessName = businessName;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 

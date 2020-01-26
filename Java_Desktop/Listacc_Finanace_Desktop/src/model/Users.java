@@ -14,7 +14,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -27,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Agozie
  */
 @Entity
-@Table(name = "Users", catalog = "", schema = "")
+@Table(name = "Users")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u"),
@@ -48,12 +50,13 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Users.findByAccessFailedCount", query = "SELECT u FROM Users u WHERE u.accessFailedCount = :accessFailedCount"),
     @NamedQuery(name = "Users.findByPhone", query = "SELECT u FROM Users u WHERE u.phone = :phone"),
     @NamedQuery(name = "Users.findByAddress", query = "SELECT u FROM Users u WHERE u.address = :address"),
-    @NamedQuery(name = "Users.findByPassword", query = "SELECT u FROM Users u WHERE u.password = :password")})
+    @NamedQuery(name = "Users.findByPassword", query = "SELECT u FROM Users u WHERE u.password = :password"),
+    @NamedQuery(name = "Users.findByDiscriminator", query = "SELECT u FROM Users u WHERE u.discriminator = :discriminator")})
 public class Users implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
     @Column(name = "Id")
     private Integer id;
@@ -90,19 +93,27 @@ public class Users implements Serializable {
     @Basic(optional = false)
     @Column(name = "AccessFailedCount")
     private int accessFailedCount;
-    @Basic(optional = false)
     @Column(name = "Phone")
-    private int phone;
+    private String phone;
     @Column(name = "Address")
     private String address;
     @Column(name = "Password")
     private String password;
+    @Basic(optional = false)
+    @Column(name = "Discriminator")
+    private String discriminator;
     @ManyToMany(mappedBy = "usersCollection")
     private Collection<AspNetRoles> aspNetRolesCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Collection<Incomes> incomesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Collection<AspNetUserLogins> aspNetUserLoginsCollection;
+    @JoinColumn(name = "DepartmentId", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Departments departmentId;
+    @JoinColumn(name = "PersonId", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Persons personId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "users")
     private Collection<AspNetUserTokens> aspNetUserTokensCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
@@ -117,14 +128,14 @@ public class Users implements Serializable {
         this.id = id;
     }
 
-    public Users(Integer id, int emailConfirmed, int phoneNumberConfirmed, int twoFactorEnabled, int lockoutEnabled, int accessFailedCount, int phone) {
+    public Users(Integer id, int emailConfirmed, int phoneNumberConfirmed, int twoFactorEnabled, int lockoutEnabled, int accessFailedCount, String discriminator) {
         this.id = id;
         this.emailConfirmed = emailConfirmed;
         this.phoneNumberConfirmed = phoneNumberConfirmed;
         this.twoFactorEnabled = twoFactorEnabled;
         this.lockoutEnabled = lockoutEnabled;
         this.accessFailedCount = accessFailedCount;
-        this.phone = phone;
+        this.discriminator = discriminator;
     }
 
     public Integer getId() {
@@ -247,11 +258,11 @@ public class Users implements Serializable {
         this.accessFailedCount = accessFailedCount;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -269,6 +280,14 @@ public class Users implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getDiscriminator() {
+        return discriminator;
+    }
+
+    public void setDiscriminator(String discriminator) {
+        this.discriminator = discriminator;
     }
 
     @XmlTransient
@@ -296,6 +315,22 @@ public class Users implements Serializable {
 
     public void setAspNetUserLoginsCollection(Collection<AspNetUserLogins> aspNetUserLoginsCollection) {
         this.aspNetUserLoginsCollection = aspNetUserLoginsCollection;
+    }
+
+    public Departments getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Departments departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public Persons getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(Persons personId) {
+        this.personId = personId;
     }
 
     @XmlTransient
