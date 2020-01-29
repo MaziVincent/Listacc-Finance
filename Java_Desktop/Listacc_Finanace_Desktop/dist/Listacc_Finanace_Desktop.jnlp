@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Listacc_Finanace_Desktop.jar" size="6637593" download="eager" />
+    <jar href="Listacc_Finanace_Desktop.jar" size="6638237" download="eager" />
     <jar href="lib\javax.persistence-2.1.0.jar" size="162126" download="eager" />
     <jar href="lib\org.eclipse.persistence.antlr-2.5.2.jar" size="189645" download="eager" />
     <jar href="lib\org.eclipse.persistence.asm-2.5.2.jar" size="271204" download="eager" />

@@ -28,7 +28,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -103,6 +107,7 @@ public class MaiinUI implements Initializable {
             incomePane.visibleProperty().bind(incomeDisplayProp);
             expenditurePane.visibleProperty().bind(expenditureDisplayProp);
             settingsPane.visibleProperty().bind(settingsDisplayProp);
+            totalLabel.textProperty().bind(incomeTotalProp);
             initializeAdminComponents();
             initializeButtonEnableProp();
             populateTables();
@@ -133,6 +138,7 @@ public class MaiinUI implements Initializable {
                refreshProjectView();
                refreshServiceView();
                refreshCostCategoryView();
+               refreshExpenditureView();
                refreshIncomeView(false);
             });
                 
@@ -293,18 +299,21 @@ public class MaiinUI implements Initializable {
                 calendar2.set(Calendar.HOUR_OF_DAY, 23);
                  calendar2.set(Calendar.MINUTE, 59);
                  calendar2.set(Calendar.SECOND, 59);
-                 
+                   totalIncome = 0;
                  FilteredList<DisplayIncome> filtered = new FilteredList(serviceData,(p -> true ));
                  filtered.setPredicate(p -> {
                      try{
                      long time = Long.parseLong(p.getDate().trim());
-                     Calendar cal = Calendar.getInstance();
-                     cal.setTimeInMillis(time);
-                     return calendar.before(cal) && calendar2.after(cal);
+                       boolean valid = time >= calendar.getTimeInMillis() && time <= calendar2.getTimeInMillis();
+                       if(valid)
+                            totalIncome += p.getAmountReceived();
+                     return valid;
                     }catch(Exception exc){}
                      return true;
                  });
-                 
+                    NumberFormat formatter = new DecimalFormat("#,###.##"); 
+                    String amountStr = formatter.format(totalIncome);
+                    incomeTotalProp.set("Total NGN "+ amountStr);
                  return filtered;
          }
         private void refreshCostCategoryView(){
@@ -316,6 +325,7 @@ public class MaiinUI implements Initializable {
             ObservableList<String> costCategoryTypesData
             = FXCollections.observableArrayList(new String[]{"Direct Cost", "Indirect Cost", "Capital Cost"});
                         cctgComboType.setItems(costCategoryTypesData);
+                        expComboCostCategory.setItems(costCategoryData);
         }
         private void refreshServiceView()
         {
@@ -336,6 +346,7 @@ public class MaiinUI implements Initializable {
                        projectListTable.setItems(projectsFiltered);
                        prjSaveBtnDisableProp.set(true);
                        srvComboProject.setItems(projectData);
+                       expComboProject.setItems(projectData);
              srvComboProject.setConverter(new PrjStringConverter(srvComboProject));
         }
         private void refreshDepartmentTable(){
@@ -696,6 +707,24 @@ public class MaiinUI implements Initializable {
              incomeRadioPerson.setDisable(disable);
         }
         
+         @FXML 
+        private void searchIncome(KeyEvent evt){
+           Platform.runLater(() -> {
+               try
+                   {
+               String search = incomeTxtSearch.getText().toLowerCase().trim();
+                    incomesFiltered.setPredicate(
+                        p -> p.getClientName().toLowerCase().contains(search.trim()) ||
+                        p.getServiceName().toLowerCase().contains(search.trim()) ||
+                        p.getDisplayPaymentType().toLowerCase().contains(search.trim()) || 
+                        (p.getAmountReceived()+"").contains(search.trim()));
+                    incomeListTable.setItems(incomesFiltered); 
+                   }catch(Exception exc){
+                   exc.printStackTrace();}
+           });
+            
+        }
+        
         @FXML
         private void validateDepartmentForm(KeyEvent evt)
         {
@@ -956,8 +985,8 @@ public class MaiinUI implements Initializable {
             }
             }catch(Exception ex){}
         }
-        
-         List<DisplayClient> clientList;
+        static double totalIncome;
+        List<DisplayClient> clientList;
         private Label infoLabel;
         Popup popup = new Popup();
         Region popupRegion = new Region();
@@ -976,7 +1005,7 @@ public class MaiinUI implements Initializable {
                  userCreateLabel, userEditLabel, userInfoLabel,businessCreateLabel, businessEditLabel, businessInfoLabel,
                  incomeLabelAmountRecieved;
          @FXML
-         Label incomeLabel, expenditureLabel, settingsLabel;
+         Label incomeLabel, expenditureLabel, settingsLabel, totalLabel;
         
          @FXML
          Line departmentCreateLine, departmentEditLine, projectCreateLine, projectEditLine,serviceCreateLine, serviceEditLine, costCategoryCreateLine, 
@@ -987,30 +1016,32 @@ public class MaiinUI implements Initializable {
          @FXML
          TextField dptTextName, prjTextName, srvTextName, srvTextAmount, cctgTextName, 
                  incomeTxtAmount, incomeTxtDiscount, IncomeTxtLName, incomeTxtFName,
-                 incomeTxtPhone, incomeTxtEmail, incomeTxtUid;
+                 incomeTxtPhone, incomeTxtEmail, incomeTxtUid, incomeTxtSearch;
          @FXML
          TextArea prjTextDescription, srvTextDescription, cctgTextDescription, incomeTxtAdd;
           
-        private BooleanProperty adminDisplayProp = new SimpleBooleanProperty();
-        private BooleanProperty incomeDisplayProp = new SimpleBooleanProperty();
-        private BooleanProperty expenditureDisplayProp = new SimpleBooleanProperty();
-        private BooleanProperty settingsDisplayProp = new SimpleBooleanProperty();
-        private BooleanProperty departmentCreateProp = new SimpleBooleanProperty();
-        private BooleanProperty projectCreateProp = new SimpleBooleanProperty();
-        private BooleanProperty serviceCreateProp = new SimpleBooleanProperty();
-        private BooleanProperty costCategoryCreateProp = new SimpleBooleanProperty();
-        private BooleanProperty userCreateProp = new SimpleBooleanProperty();
-        private BooleanProperty businessCreateProp = new SimpleBooleanProperty();
-        private BooleanProperty dptSaveBtnDisableProp = new SimpleBooleanProperty();
-        private BooleanProperty prjSaveBtnDisableProp = new SimpleBooleanProperty();
-        private BooleanProperty srvSaveBtnDisableProp = new SimpleBooleanProperty();
-        private BooleanProperty cctgSaveBtnDisableProp = new SimpleBooleanProperty();
-        private BooleanProperty incomeSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final BooleanProperty adminDisplayProp = new SimpleBooleanProperty();
+        private final BooleanProperty incomeDisplayProp = new SimpleBooleanProperty();
+        private final BooleanProperty expenditureDisplayProp = new SimpleBooleanProperty();
+        private final BooleanProperty settingsDisplayProp = new SimpleBooleanProperty();
+        private final BooleanProperty departmentCreateProp = new SimpleBooleanProperty();
+        private final BooleanProperty projectCreateProp = new SimpleBooleanProperty();
+        private final BooleanProperty serviceCreateProp = new SimpleBooleanProperty();
+        private final BooleanProperty costCategoryCreateProp = new SimpleBooleanProperty();
+        private final BooleanProperty userCreateProp = new SimpleBooleanProperty();
+        private final BooleanProperty businessCreateProp = new SimpleBooleanProperty();
+        private final BooleanProperty dptSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final BooleanProperty prjSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final BooleanProperty srvSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final BooleanProperty cctgSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final BooleanProperty incomeSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final StringProperty incomeTotalProp = new SimpleStringProperty();
         
         
         
         public static FilteredList departmentsFiltered, projectsFiltered, servicesFiltered, costCategoriesFiltered,
-                                               usersFiltered, clientsFiltered, incomesFiltered;
+                                               usersFiltered, clientsFiltered;
+        private static FilteredList<DisplayIncome> incomesFiltered;
         @FXML
         private TableColumn dptColSerial, dptColName, dptColId, prjColSerial, prjColName, prjColDepartment, prjColId,
                             srvColSerial, srvColName, srvColProject, srvColAmount, srvColId, cctgColSerial, cctgColName,
@@ -1024,13 +1055,18 @@ public class MaiinUI implements Initializable {
         @FXML
         private ComboBox<Departments> prjComboDepartment ;
          @FXML
-        private ComboBox<DisplayProject> srvComboProject ;
+        private ComboBox<DisplayProject> srvComboProject, expComboProject ;
          @FXML
         private ComboBox<DisplayService> incomeComboService;
          @FXML
+         private ComboBox<CostCategories> expComboCostCategory;
+         
+         
+         @FXML
             private ComboBox<String> cctgComboType, incomeComboPType ;
          @FXML 
-         private DatePicker incomeTxtDate, IncomeTxtDueDate, incomeTxtDob, incomeFromDate, incomeToDate;
+         private DatePicker incomeTxtDate, IncomeTxtDueDate, incomeTxtDob, incomeFromDate, incomeToDate,
+                 expTxtDate;
          @FXML
          private RadioButton incomeRadioNew, incomeRadioPerson, incomeRadioBusiness, incomeRadioMale, incomeRadioFemale, 
                  incomeRadioNewIncome, existingClientRadio;

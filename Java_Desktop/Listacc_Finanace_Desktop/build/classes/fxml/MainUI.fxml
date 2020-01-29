@@ -495,7 +495,7 @@
             </TabPane>
             <AnchorPane id="incomePane" fx:id="incomePane" prefHeight="713.0" prefWidth="1292.0">
                <children>
-                  <TableView fx:id="incomeListTable" layoutX="605.0" layoutY="38.0" prefHeight="545.0" prefWidth="677.0">
+                  <TableView fx:id="incomeListTable" layoutX="605.0" layoutY="38.0" prefHeight="525.0" prefWidth="677.0">
                     <columns>
                         <TableColumn fx:id="incomeColSerial" prefWidth="40.0" text="S/N" />
                       <TableColumn fx:id="incomeColService" prefWidth="147.0" style="-fx-alignment: center;" text="Service" />
@@ -584,10 +584,11 @@
                         </AnchorPane>
                      </children>
                   </AnchorPane>
-                  <TextField layoutX="939.0" layoutY="9.0" prefHeight="25.0" prefWidth="193.0" promptText="Search Client" />
+                  <TextField fx:id="incomeTxtSearch" layoutX="939.0" layoutY="9.0" onKeyPressed="#searchIncome" prefHeight="25.0" prefWidth="193.0" promptText="Search Income List" />
                   <DatePicker fx:id="incomeFromDate" editable="false" layoutX="707.0" layoutY="9.0" onAction="#filterIncomeTable" prefHeight="25.0" prefWidth="95.0" />
                   <DatePicker fx:id="incomeToDate" editable="false" layoutX="828.0" layoutY="9.0" onAction="#filterIncomeTable" prefHeight="25.0" prefWidth="95.0" />
                   <Button fx:id="inocmePrintBtn" disable="true" layoutX="1177.0" layoutY="9.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="103.0" text="Print Receipt" />
+                  <Label fx:id="totalLabel" layoutX="604.0" layoutY="563.0" prefHeight="26.0" prefWidth="678.0" style="-fx-background-color: Grey;" textFill="#f5f5f5" />
                </children>
             </AnchorPane>
             <AnchorPane id="expenditurePane" fx:id="expenditurePane" prefHeight="713.0" prefWidth="1292.0" visible="false">
