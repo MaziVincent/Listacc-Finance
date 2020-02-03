@@ -493,11 +493,11 @@
                   </Tab>
                </tabs>
             </TabPane>
-            <AnchorPane id="incomePane" fx:id="incomePane" prefHeight="713.0" prefWidth="1292.0" visible="false">
+            <AnchorPane id="incomePane" fx:id="incomePane" prefHeight="713.0" prefWidth="1292.0">
                <children>
                   <TableView fx:id="incomeListTable" layoutX="605.0" layoutY="38.0" prefHeight="525.0" prefWidth="677.0">
                     <columns>
-                        <TableColumn fx:id="expColSerial" prefWidth="40.0" text="S/N" />
+                        <TableColumn fx:id="incomeColSerial" prefWidth="40.0" text="S/N" />
                       <TableColumn fx:id="incomeColService" prefWidth="147.0" style="-fx-alignment: center;" text="Service" />
                       <TableColumn fx:id="incomeColClient" prefWidth="158.0" style="-fx-alignment: center;" text="Client" />
                         <TableColumn fx:id="incomeColAmount" prefWidth="117.0" style="-fx-alignment: center;" text="Amount" />
@@ -507,7 +507,7 @@
                     </columns>
                   </TableView>
                   <Label layoutX="606.0" layoutY="11.0" prefHeight="17.0" prefWidth="101.0" text="Transaction From: " textFill="#ff8208" />
-                  <Label layoutX="806.0" layoutY="11.0" text="to:" textFill="#ff8208" />
+                  <Label layoutX="818.0" layoutY="11.0" text="to:" textFill="#ff8208" />
                   <LineChart layoutX="10.0" layoutY="459.0" prefHeight="150.0" prefWidth="567.0">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" />
@@ -552,7 +552,7 @@
                               <TextField fx:id="incomeTxtEmail" layoutX="218.0" layoutY="108.0" onKeyTyped="#validateIncomeForm" promptText="Email" />
                               <TextField fx:id="incomeTxtPhone" layoutX="44.0" layoutY="108.0" onKeyTyped="#validateIncomeForm" promptText="Phone" />
                               <TextField fx:id="IncomeTxtLName" layoutX="44.0" layoutY="60.0" onKeyTyped="#validateIncomeForm" promptText="Last Name" />
-                              <RadioButton fx:id="incomeRadioNew" layoutX="45.0" layoutY="31.0" mnemonicParsing="false" onAction="#newClient" selected="true" text="New" textFill="#07bf7c">
+                              <RadioButton fx:id="incomeRadioNew" layoutX="45.0" layoutY="31.0" mnemonicParsing="false" onAction="#newIncomeClient" selected="true" text="New" textFill="#07bf7c">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="clientType" />
                                  </toggleGroup>
@@ -584,23 +584,23 @@
                         </AnchorPane>
                      </children>
                   </AnchorPane>
-                  <TextField fx:id="incomeTxtSearch" layoutX="939.0" layoutY="9.0" onKeyPressed="#searchIncome" prefHeight="25.0" prefWidth="193.0" promptText="Search Income List" />
-                  <DatePicker fx:id="incomeFromDate" editable="false" layoutX="707.0" layoutY="9.0" onAction="#filterIncomeTable" prefHeight="25.0" prefWidth="95.0" />
-                  <DatePicker fx:id="incomeToDate" editable="false" layoutX="828.0" layoutY="9.0" onAction="#filterIncomeTable" prefHeight="25.0" prefWidth="95.0" />
+                  <TextField fx:id="incomeTxtSearch" layoutX="959.0" layoutY="9.0" onKeyTyped="#searchIncome" prefHeight="25.0" prefWidth="193.0" promptText="Search Income List" />
+                  <DatePicker fx:id="incomeFromDate" editable="false" layoutX="707.0" layoutY="9.0" onAction="#filterIncomeTable" prefHeight="25.0" prefWidth="105.0" />
+                  <DatePicker fx:id="incomeToDate" editable="false" layoutX="838.0" layoutY="9.0" onAction="#filterIncomeTable" prefHeight="25.0" prefWidth="110.0" />
                   <Button fx:id="inocmePrintBtn" disable="true" layoutX="1177.0" layoutY="9.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="103.0" text="Print Receipt" />
-                  <Label fx:id="totalLabel" layoutX="604.0" layoutY="563.0" prefHeight="26.0" prefWidth="678.0" style="-fx-background-color: Grey;" textFill="#f5f5f5" />
+                  <Label fx:id="totalLabel" layoutX="604.0" layoutY="563.0" prefHeight="26.0" prefWidth="678.0" style="-fx-background-color: Green;" textFill="#f5f5f5" />
                </children>
             </AnchorPane>
-            <AnchorPane id="expenditurePane" fx:id="expenditurePane" prefHeight="713.0" prefWidth="1292.0">
+            <AnchorPane id="expenditurePane" fx:id="expenditurePane" prefHeight="713.0" prefWidth="1292.0" visible="false">
                <children>
-                  <TableView layoutX="605.0" layoutY="38.0" prefHeight="522.0" prefWidth="677.0">
+                  <TableView fx:id="expenditureListTable" layoutX="605.0" layoutY="38.0" prefHeight="522.0" prefWidth="677.0">
                      <columns>
-                        <TableColumn prefWidth="40.0" text="S/N" />
-                        <TableColumn fx:id="expColRecipient" prefWidth="162.0" text="Recipient" />
-                        <TableColumn fx:id="expColProject" prefWidth="109.0" text="Project" />
-                        <TableColumn fx:id="expColCostCat" prefWidth="119.0" text="Cost Category" />
-                        <TableColumn fx:id="expColAmt" prefWidth="97.0" text="Amount" />
-                        <TableColumn fx:id="expColDate" prefWidth="109.0" text="Date" />
+                        <TableColumn fx:id="expColSerial" prefWidth="40.0" text="S/N" />
+                        <TableColumn fx:id="expColRecipient" prefWidth="145.0" style="-fx-alignment: center;" text="Recipient" />
+                        <TableColumn fx:id="expColProject" prefWidth="108.0" style="-fx-alignment: center;" text="Project" />
+                        <TableColumn fx:id="expColCostCat" prefWidth="113.0" style="-fx-alignment: center;" text="Cost Category" />
+                        <TableColumn fx:id="expColAmt" prefWidth="96.0" style="-fx-alignment: center;" text="Amount" />
+                        <TableColumn fx:id="expColDate" prefWidth="134.0" style="center: center;" text="Date" />
                         <TableColumn fx:id="expIdCol" prefWidth="75.0" text="Id" visible="false" />
                      </columns>
                   </TableView>
@@ -615,56 +615,66 @@
                   <AnchorPane fx:id="formAnchorPane1" layoutX="19.0" layoutY="38.0" prefHeight="416.0" prefWidth="558.0">
                      <children>
                         <Region prefHeight="413.0" prefWidth="571.0" style="-fx-background-color: Gray;" />
-                        <Button layoutX="441.0" layoutY="347.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Enter" />
                         <AnchorPane layoutX="4.0" layoutY="4.0" prefHeight="186.0" prefWidth="550.0">
                            <children>
-                              <TextField fx:id="expTxtAmount" layoutX="44.0" layoutY="108.0" promptText="Amount Issued" />
+                              <TextField fx:id="expTxtAmount" layoutX="44.0" layoutY="108.0" onKeyTyped="#validateExpenditureForm" promptText="Amount Issued" />
                               <Label layoutX="236.0" layoutY="4.0" text="Expenditure" textFill="WHITE">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </Label>
-                              <ChoiceBox id="paymentType" fx:id="expComboCostCategory" layoutX="44.0" layoutY="60.0" prefWidth="150.0" />
-                              <TextArea fx:id="expTxtDescription" layoutX="219.0" layoutY="108.0" prefHeight="69.0" prefWidth="147.0" promptText="Description" />
-                              <DatePicker fx:id="expTxtDate" editable="false" layoutX="386.0" layoutY="60.0" prefHeight="25.0" prefWidth="147.0" />
-                              <ChoiceBox id="paymentType" fx:id="expComboProject" layoutX="221.0" layoutY="60.0" prefWidth="150.0" />
+                              <TextArea fx:id="expTxtDescription" layoutX="220.0" layoutY="108.0" onKeyTyped="#validateExpenditureForm" prefHeight="69.0" prefWidth="147.0" promptText="Purpose / Description" />
+                              <DatePicker fx:id="expTxtDate" layoutX="386.0" layoutY="60.0" prefHeight="25.0" prefWidth="147.0" />
                               <Label layoutX="44.0" layoutY="43.0" text="Cost Category:" textFill="WHITE" />
                               <Label layoutX="221.0" layoutY="43.0" text="Project:" textFill="WHITE" />
-                              <ChoiceBox id="paymentType" fx:id="expComboIssuer" layoutX="44.0" layoutY="152.0" prefHeight="25.0" prefWidth="148.0" />
                               <Label layoutX="44.0" layoutY="134.0" text="Issuer:" textFill="WHITE" />
+                              <ComboBox fx:id="expComboCost" layoutX="44.0" layoutY="60.0" prefWidth="150.0" />
+                              <ComboBox fx:id="expComboProject" layoutX="221.0" layoutY="60.0" prefHeight="25.0" prefWidth="144.0" />
+                              <ComboBox fx:id="expComboIssuer" layoutX="44.0" layoutY="151.0" prefWidth="150.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="4.0" layoutY="195.0" prefHeight="182.0" prefWidth="550.0">
+                        <AnchorPane layoutX="4.0" layoutY="195.0" prefHeight="198.0" prefWidth="550.0">
                            <children>
-                              <TextField layoutX="218.0" layoutY="108.0" promptText="Email" />
-                              <TextField layoutX="44.0" layoutY="108.0" promptText="Phone" />
-                              <TextField layoutX="48.0" layoutY="60.0" promptText="Last Name" />
-                              <RadioButton layoutX="45.0" layoutY="31.0" mnemonicParsing="false" selected="true" text="New" textFill="#07bf7c">
+                              <TextField fx:id="expTxtEmail" layoutX="218.0" layoutY="118.0" promptText="Email" />
+                              <TextField fx:id="expTxtPhone" layoutX="48.0" layoutY="118.0" prefHeight="25.0" prefWidth="149.0" promptText="Phone" />
+                              <TextField fx:id="expTxtLastName" layoutX="48.0" layoutY="60.0" onKeyTyped="#validateExpenditureForm" promptText="Last Name" />
+                              <RadioButton fx:id="expRadioNew" layoutX="45.0" layoutY="31.0" mnemonicParsing="false" onAction="#newExpenditureClient" selected="true" text="New" textFill="#07bf7c">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="clientType1" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton layoutX="128.0" layoutY="31.0" mnemonicParsing="false" text="Exisiting" textFill="#ff8208" toggleGroup="$clientType1" />
-                              <TextField layoutX="217.0" layoutY="60.0" prefHeight="25.0" prefWidth="148.0" promptText="First Name" />
-                              <TextArea layoutX="388.0" layoutY="58.0" prefHeight="62.0" prefWidth="147.0" promptText="Address" />
+                              <RadioButton fx:id="expRadioExisting" layoutX="128.0" layoutY="31.0" mnemonicParsing="false" onAction="#showClientListExp" text="Exisiting" textFill="#ff8208" toggleGroup="$clientType1" />
+                              <TextField fx:id="expFirstName" layoutX="217.0" layoutY="60.0" onKeyTyped="#validateExpenditureForm" prefHeight="25.0" prefWidth="148.0" promptText="First Name" />
+                              <TextArea fx:id="expTxtAddress" layoutX="388.0" layoutY="95.0" prefHeight="50.0" prefWidth="147.0" promptText="Address" />
                               <Label layoutX="249.0" layoutY="4.0" text="Recipient Details" textFill="WHITE">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </Label>
                               <Separator layoutX="200.0" layoutY="30.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="4.0" />
-                              <RadioButton layoutX="302.0" layoutY="32.0" mnemonicParsing="false" text="Business" textFill="#ff8208">
+                              <RadioButton fx:id="expRadioBusiness" layoutX="302.0" layoutY="32.0" mnemonicParsing="false" onAction="#personBusinessSelect" text="Business" textFill="#ff8208">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="personBusiness1" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton layoutX="219.0" layoutY="32.0" mnemonicParsing="false" selected="true" text="Person" textFill="#07bf7c" toggleGroup="$personBusiness1" />
-                              <RadioButton layoutX="388.0" layoutY="32.0" mnemonicParsing="false" text="Vendor" textFill="#ff8208" toggleGroup="$personBusiness1" />
+                              <RadioButton fx:id="expRadioPerson" layoutX="219.0" layoutY="32.0" mnemonicParsing="false" onAction="#personBusinessSelect" selected="true" text="Person" textFill="#07bf7c" toggleGroup="$personBusiness1" />
+                              <RadioButton fx:id="expRadioMale" layoutX="388.0" layoutY="60.0" mnemonicParsing="false" selected="true" text="Male" textFill="WHITE">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="expGender" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="expRadioFemale" layoutX="462.0" layoutY="60.0" mnemonicParsing="false" text="Female" textFill="#fffefe" toggleGroup="$expGender" />
                            </children>
                         </AnchorPane>
+                        <Button fx:id="expBtnEnter" disable="true" layoutX="441.0" layoutY="357.0" mnemonicParsing="false" onAction="#saveExpenditure" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #4FA0c8;" text="Enter" />
                      </children>
                   </AnchorPane>
-                  <Label fx:id="totalLabel1" layoutX="605.0" layoutY="560.0" prefHeight="26.0" prefWidth="678.0" style="-fx-background-color: Grey;" textFill="#f5f5f5" />
+                  <Label fx:id="totalLabel1" layoutX="605.0" layoutY="560.0" prefHeight="26.0" prefWidth="678.0" style="-fx-background-color: red;" textFill="WHITE" />
+                  <DatePicker fx:id="expFromDate" editable="false" layoutX="715.0" layoutY="10.0" onAction="#filterExpenditureTable" prefHeight="25.0" prefWidth="109.0" />
+                  <DatePicker fx:id="expToDate" editable="false" layoutX="869.0" layoutY="10.0" onAction="#filterExpenditureTable" prefHeight="25.0" prefWidth="111.0" />
+                  <TextField fx:id="expenditureTxtSearch" layoutX="1004.0" layoutY="10.0" onKeyTyped="#searchExpenditure" prefHeight="25.0" prefWidth="193.0" promptText="Search Expenditure List" />
+                  <Label layoutX="605.0" layoutY="14.0" prefHeight="17.0" prefWidth="101.0" text="Transaction From: " textFill="#ff8208" />
+                  <Label layoutX="838.0" layoutY="14.0" prefHeight="17.0" prefWidth="23.0" text="To:" textFill="#ff8208" />
                </children>
             </AnchorPane>
             <TabPane fx:id="settingsPane" prefHeight="710.0" prefWidth="1289.0" tabClosingPolicy="UNAVAILABLE" visible="false">
@@ -682,11 +692,6 @@
                   </Tab>
                </tabs>
             </TabPane>
-            <DatePicker fx:id="incomeToDate1" editable="false" layoutX="838.0" layoutY="9.0" onAction="#filterIncomeTable" prefHeight="25.0" prefWidth="95.0" />
-            <DatePicker fx:id="incomeFromDate1" editable="false" layoutX="717.0" layoutY="9.0" onAction="#filterIncomeTable" prefHeight="25.0" prefWidth="95.0" />
-            <TextField fx:id="incomeTxtSearch1" layoutX="949.0" layoutY="9.0" onKeyPressed="#searchIncome" prefHeight="25.0" prefWidth="193.0" promptText="Search Income List" />
-            <Label layoutX="816.0" layoutY="11.0" text="to:" textFill="#ff8208" />
-            <Label layoutX="616.0" layoutY="11.0" prefHeight="17.0" prefWidth="101.0" text="Expenses From: " textFill="#ff8208" />
          </children>
       </AnchorPane>
    </center>

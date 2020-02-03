@@ -15,10 +15,15 @@ import model.display.DisplayUser;
  * @author Agozie
  */
 public class UserService extends DataService {
-    public List<DisplayUser> getAllUsers()
+    public List<DisplayUser> getAllDisplayUsers()
     {
         
          return em.createQuery("SELECT new model.display.DisplayUser(a.id, a.departmentId.id, a.personId.id, a.personId.lastName, a.personId.firstName, a.phoneNumber, a.email,a.discriminator, a.departmentId.name) FROM Users a").getResultList();
+    }
+    
+    public List<Users> getAllUsers()
+    {
+         return em.createQuery("SELECT a FROM Users a", Users.class).getResultList();
     }
     
     public Users getUserById(int id)

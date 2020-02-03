@@ -6,12 +6,14 @@
 package controllers;
 
 //import java.awt.event.ActionEvent;
+import com.sun.deploy.util.SessionState.Client;
+import helpers.CostCatStringConverter;
 import helpers.DeptStringConverter;
 import helpers.NumberChangeListener;
 import helpers.PrjStringConverter;
 import helpers.SrvStringConverter;
+import helpers.UserStringConverter;
 import javafx.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -77,6 +79,7 @@ import model.Persons;
 import model.Projects;
 import model.Users;
 import model.display.DisplayClient;
+import model.display.DisplayExpenditure;
 import model.display.DisplayIncome;
 import model.display.DisplayProject;
 import model.display.DisplayService;
@@ -84,6 +87,7 @@ import model.display.DisplayUser;
 import services.data.ClientService;
 import services.data.CostCategoryService;
 import services.data.DepartmentService;
+import services.data.ExpenditureService;
 import services.data.IncomeService;
 import services.data.ProjectService;
 import services.data.ServiceService;
@@ -108,6 +112,7 @@ public class MaiinUI implements Initializable {
             expenditurePane.visibleProperty().bind(expenditureDisplayProp);
             settingsPane.visibleProperty().bind(settingsDisplayProp);
             totalLabel.textProperty().bind(incomeTotalProp);
+            totalLabel1.textProperty().bind(expendtureTotalProp);
             initializeAdminComponents();
             initializeButtonEnableProp();
             populateTables();
@@ -121,6 +126,7 @@ public class MaiinUI implements Initializable {
             srvBtnSave.disableProperty().bind(srvSaveBtnDisableProp);
             cctgBtnSave.disableProperty().bind(cctgSaveBtnDisableProp);
             incomeBtnSave.disableProperty().bind(incomeSaveBtnDisableProp);
+            expBtnEnter.disableProperty().bind(expenditureSaveBtnDisableProp);
             prjComboDepartment.valueProperty().addListener((obs, oldval, newval) -> {validateProjectForm();});
             srvComboProject.valueProperty().addListener((obs, oldval, newval) -> {validateServiceForm();});
             cctgComboType.valueProperty().addListener((obs, oldval, newval) -> {validateCctgForm();});
@@ -130,30 +136,42 @@ public class MaiinUI implements Initializable {
             incomeComboService.valueProperty().addListener((obs, oldval, newval) -> {validateIncomeForm();});
             incomeTxtDate.valueProperty().addListener((obs, oldval, newval) -> {validateIncomeForm();});
             incomeTxtDob.valueProperty().addListener((obs, oldval, newval) -> {validateIncomeForm();});
+            expComboCost.valueProperty().addListener((obs, oldval, newval) -> {validateExpenditureForm();});
+            expComboProject.valueProperty().addListener((obs, oldval, newval) -> {validateExpenditureForm();});
+            expComboIssuer.valueProperty().addListener((obs, oldval, newval) -> {validateExpenditureForm();});
+            expComboCost.valueProperty().addListener((obs, oldval, newval) -> {validateExpenditureForm();});
+            
         }
         private void populateTables()
         {
-            Platform.runLater(() -> {
-               refreshDepartmentTable();
-               refreshProjectView();
-               refreshServiceView();
-               refreshCostCategoryView();
-               refreshExpenditureView();
-               refreshIncomeView(false);
-            });
-                
-               List<DisplayUser> usersList = new UserService().getAllUsers();
+             Platform.runLater(() -> {refreshDepartmentTable();});
+              Platform.runLater(() -> {refreshProjectView();});
+               Platform.runLater(() -> {refreshServiceView();});
+                Platform.runLater(() -> {refreshCostCategoryView();});
+                Platform.runLater(() -> {refreshIncomeView(false);});
+                 Platform.runLater(() -> {refreshExpenditureView(false);});
+                  Platform.runLater(() -> {refreshUserView();});
               clientList = new ClientService().getAllClients();
         
-        ObservableList<DisplayUser> userData
-            = FXCollections.observableArrayList(usersList);
-                       usersFiltered =  new FilteredList(userData,(p -> true ));
+        
         ObservableList<DisplayClient> clientData
             = FXCollections.observableArrayList(clientList);
                        clientsFiltered =  new FilteredList(clientData,(p -> true ));
-       userListTable.setItems(usersFiltered);
+       
        clientListTable.setItems(clientsFiltered);
             initializeTableCells();
+        }
+        
+        private void refreshUserView(){
+                           List<DisplayUser> usersDisplayList = new UserService().getAllDisplayUsers();
+                       
+            ObservableList<DisplayUser> userDisplayData
+            = FXCollections.observableArrayList(usersDisplayList);
+           
+                       usersFiltered =  new FilteredList(userDisplayData,(p -> true ));
+                       userListTable.setItems(usersFiltered);
+                       expComboIssuer.setItems(usersFiltered);
+                       expComboIssuer.setConverter(new UserStringConverter(expComboIssuer));
         }
         public void initializeTableCells(){
             //departments
@@ -200,6 +218,14 @@ public class MaiinUI implements Initializable {
             incomeColAmount.setCellValueFactory(new PropertyValueFactory<DisplayIncome, String>("amountReceived"));
             incomeColDate.setCellValueFactory(new PropertyValueFactory<DisplayIncome, String>("dateString"));
             incomeColPaymentType.setCellValueFactory(new PropertyValueFactory<DisplayIncome, String>("displayPaymentType"));
+            //Expenditures
+             expColSerial.setCellFactory(indexCellFactory());
+            expIdCol.setCellValueFactory(new PropertyValueFactory<DisplayIncome, String>("id"));
+            expColRecipient.setCellValueFactory(new PropertyValueFactory<DisplayIncome, String>("businessName"));
+            expColProject.setCellValueFactory(new PropertyValueFactory<DisplayIncome, String>("projectName"));
+            expColCostCat.setCellValueFactory(new PropertyValueFactory<DisplayIncome, String>("costCategoryName"));
+            expColAmt.setCellValueFactory(new PropertyValueFactory<DisplayIncome, String>("amount"));
+            expColDate.setCellValueFactory(new PropertyValueFactory<DisplayIncome, String>("dateString"));
             
         }
        
@@ -233,6 +259,32 @@ public class MaiinUI implements Initializable {
             incomeTxtDiscount.textProperty().addListener(new NumberChangeListener(incomeTxtDiscount));
             srvTextAmount.textProperty().addListener(new NumberChangeListener(srvTextAmount));
             incomeTxtPhone.textProperty().addListener(new NumberChangeListener(incomeTxtPhone));
+            expTxtPhone.textProperty().addListener(new NumberChangeListener(expTxtPhone));
+            expTxtAmount.textProperty().addListener(new NumberChangeListener(expTxtAmount));
+        }
+        private void refreshExpenditureView(boolean filter){
+            Platform.runLater(() -> {
+                    Date date = new Date();
+                       SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                        String strDate= formatter.format(date);
+                        expTxtDate.setValue(LOCAL_DATE(strDate));
+                       expTxtAmount.setText("");
+                        expTxtDescription.setText("");
+                        expRadioNew.setSelected(true);
+                        expRadioPerson.setSelected(true);
+                        newExpenditureClient();
+                        expenditureSaveBtnDisableProp.set(true);
+                if(!filter)
+                        {
+                            expFromDate.setValue(LOCAL_DATE(strDate));
+                            expToDate.setValue(LOCAL_DATE(strDate));
+                        }
+                 List<DisplayExpenditure> expList = new ExpenditureService().getAllExpenditures();
+            ObservableList<DisplayExpenditure> serviceData
+            = FXCollections.observableArrayList(expList);
+                       expenditureFiltered =  filterDateforExpenditureView(serviceData);
+                       expenditureListTable.setItems(expenditureFiltered);
+            });
         }
          private void refreshIncomeView(boolean filter)
         {
@@ -316,6 +368,41 @@ public class MaiinUI implements Initializable {
                     incomeTotalProp.set("Total NGN "+ amountStr);
                  return filtered;
          }
+         private FilteredList<DisplayExpenditure> filterDateforExpenditureView(ObservableList<DisplayExpenditure> serviceData){
+             LocalDate localDate = expFromDate.getValue();
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.DATE, localDate.getDayOfMonth());
+                calendar.set(Calendar.MONTH, localDate.getMonthValue()-1);
+                calendar.set(Calendar.YEAR, localDate.getYear());
+                 calendar.set(Calendar.HOUR_OF_DAY, 0);
+                 calendar.set(Calendar.MINUTE, 0);
+                 calendar.set(Calendar.SECOND, 0);
+                
+                LocalDate localDate2 = expToDate.getValue();
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.set(Calendar.DATE, localDate2.getDayOfMonth());
+                calendar2.set(Calendar.MONTH, localDate2.getMonthValue()-1);
+                calendar2.set(Calendar.YEAR, localDate2.getYear());
+                calendar2.set(Calendar.HOUR_OF_DAY, 23);
+                 calendar2.set(Calendar.MINUTE, 59);
+                 calendar2.set(Calendar.SECOND, 59);
+                    totalExpenditure = 0;
+                 FilteredList<DisplayExpenditure> filtered = new FilteredList(serviceData,(p -> true ));
+                 filtered.setPredicate(p -> {
+                     try{
+                     long time = Long.parseLong(p.getDate().trim());
+                       boolean valid = time >= calendar.getTimeInMillis() && time <= calendar2.getTimeInMillis();
+                       if(valid)
+                            totalExpenditure += p.getAmount();
+                     return valid;
+                    }catch(Exception exc){}
+                     return true;
+                 });
+                    NumberFormat formatter = new DecimalFormat("#,###.##"); 
+                    String amountStr = formatter.format(totalExpenditure);
+                    expendtureTotalProp.set("Total NGN "+ amountStr);
+                 return filtered;
+         }
         private void refreshCostCategoryView(){
              List<CostCategories> costCategoryList = new CostCategoryService().getAllCostCategories();
         ObservableList<CostCategories> costCategoryData
@@ -325,7 +412,8 @@ public class MaiinUI implements Initializable {
             ObservableList<String> costCategoryTypesData
             = FXCollections.observableArrayList(new String[]{"Direct Cost", "Indirect Cost", "Capital Cost"});
                         cctgComboType.setItems(costCategoryTypesData);
-                        expComboCostCategory.setItems(costCategoryData);
+                        expComboCost.setItems(costCategoryData);
+                        expComboCost.setConverter(new CostCatStringConverter(expComboCost));
         }
         private void refreshServiceView()
         {
@@ -346,8 +434,9 @@ public class MaiinUI implements Initializable {
                        projectListTable.setItems(projectsFiltered);
                        prjSaveBtnDisableProp.set(true);
                        srvComboProject.setItems(projectData);
-                       expComboProject.setItems(projectData);
              srvComboProject.setConverter(new PrjStringConverter(srvComboProject));
+             expComboProject.setConverter(new PrjStringConverter(expComboProject));
+             expComboProject.setItems(projectData);
         }
         private void refreshDepartmentTable(){
              List<Departments> departmentList = new DepartmentService().getAllDepartments();
@@ -427,18 +516,31 @@ public class MaiinUI implements Initializable {
         @FXML
         private void personBusinessSelect(ActionEvent event)
         {
-            if(incomeRadioPerson.isSelected())
+            RadioButton rdb = (RadioButton)event.getSource();
+            if(incomeRadioPerson == rdb)
             {
                 IncomeTxtLName.setDisable(false);
                 incomeTxtFName.setPromptText("First Name");
                 incomeRadioMale.setDisable(false);
                 incomeRadioFemale.setDisable(false);
             }
-            else{
+            else if(incomeRadioBusiness == rdb){
                 IncomeTxtLName.setDisable(true);
                 incomeTxtFName.setPromptText("Business Name");
                 incomeRadioMale.setDisable(true);
                 incomeRadioFemale.setDisable(true);
+            }
+            else if(expRadioBusiness == rdb){
+                 expTxtLastName.setDisable(true);
+                expFirstName.setPromptText("Business Name");
+                expRadioMale.setDisable(true);
+                expRadioFemale.setDisable(true);
+            }
+            else{
+                expTxtLastName.setDisable(false);
+                expFirstName.setPromptText("First Name");
+                expRadioMale.setDisable(false);
+                expRadioFemale.setDisable(false);
             }
         }
         @FXML
@@ -595,7 +697,7 @@ public class MaiinUI implements Initializable {
              double amount  = incomeComboService.getSelectionModel().getSelectedItem().getAmount();
             double discount = 0;
             try{ 
-                discount = Double.parseDouble(incomeTxtDiscount.getText());
+                discount = Double.parseDouble(incomeTxtDiscount.getText().trim());
             }catch(Exception exc){}
             NumberFormat formatter = new DecimalFormat("#,###.00"); 
             String amountStr = formatter.format(amount);
@@ -626,20 +728,20 @@ public class MaiinUI implements Initializable {
                       
                         double amount = (incomeComboService.getSelectionModel().getSelectedItem().getAmount());
                         double discount = 0;
-                         String fname = incomeTxtFName.getText(); 
-                        String discountString = incomeTxtDiscount.getText();
+                         String fname = incomeTxtFName.getText().trim(); 
+                        String discountString = incomeTxtDiscount.getText().trim();
                         if(incomeRadioPerson.isSelected()){
-                            String lname = IncomeTxtLName.getText();
+                            String lname = IncomeTxtLName.getText().trim();
                             incomePerson.setFirstName(fname);
                             incomePerson.setLastName(lname);
                             incomePerson.setDateOfBirth(dob);
                             incomePerson.setGender(incomeRadioMale.isSelected() ? "Male": "Female"  );
                         }
-                        String email = incomeTxtEmail.getText();
-                        String phone = incomeTxtPhone.getText();
-                        String uid = incomeTxtUid.getText();
+                        String email = incomeTxtEmail.getText().trim();
+                        String phone = incomeTxtPhone.getText().trim();
+                        String uid = incomeTxtUid.getText().trim();
                         //incomeClient.setPersonId(incomePerson);
-                        String add = incomeTxtAdd.getText();
+                        String add = incomeTxtAdd.getText().trim();
                          if(null == incomeClient)
                          {
                             incomeClient = new Clients();
@@ -664,7 +766,7 @@ public class MaiinUI implements Initializable {
                     error("Invalid Email address");
                     return;
                 }
-                if(incomeTxtPhone.getText().length() != 11)
+                if(incomeTxtPhone.getText().trim().length() != 11)
                 {
                      error("Invalid  phone number");
                      return;
@@ -680,7 +782,7 @@ public class MaiinUI implements Initializable {
         }
         
         @FXML 
-        private void newClient(ActionEvent evt)
+        private void newIncomeClient(ActionEvent evt)
         {
             incomeClient = null;
              incomeTxtEmail.setText("");
@@ -694,6 +796,21 @@ public class MaiinUI implements Initializable {
              
         }
         
+        @FXML
+        private void newExpenditureClient(ActionEvent evt)
+        {
+                        newExpenditureClient();
+                       
+        }
+        private void newExpenditureClient(){
+                        disableExpForm(false);
+                        expTxtLastName.setText("");
+                        expFirstName.setText("");
+                        expTxtAddress.setText("");
+                        expTxtPhone.setText("");
+                        expTxtEmail.setText("");
+                        expenditureClient = null;
+        }
         private void disableIncomeClientForm(boolean disable){
              incomeTxtEmail.setDisable(disable);
              incomeTxtPhone.setDisable(disable);
@@ -719,6 +836,26 @@ public class MaiinUI implements Initializable {
                         p.getDisplayPaymentType().toLowerCase().contains(search.trim()) || 
                         (p.getAmountReceived()+"").contains(search.trim()));
                     incomeListTable.setItems(incomesFiltered); 
+                   }catch(Exception exc){
+                   exc.printStackTrace();}
+           });
+            
+        }
+        
+         @FXML 
+        private void searchExpenditure(KeyEvent evt){
+           Platform.runLater(() -> {
+               try
+                   {
+               String search = expenditureTxtSearch.getText().toLowerCase().trim();
+                    expenditureFiltered.setPredicate(
+                        p -> 
+                                //p.getDescription().toLowerCase().contains(search.trim()) ||
+                        p.getBusinessName().contains(search.trim()) ||
+                        p.getFirstName().toLowerCase().contains(search.trim()) || 
+                        p.getLastName().toLowerCase().contains(search.trim()) || 
+                        (p.getAmount()+"").contains(search.trim()));
+                    expenditureListTable.setItems(expenditureFiltered); 
                    }catch(Exception exc){
                    exc.printStackTrace();}
            });
@@ -761,6 +898,113 @@ public class MaiinUI implements Initializable {
                 Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
                 return matcher.find();
         }
+        
+        private void validateExpenditureForm()
+        {
+            String amountStr = expTxtAmount.getText().trim();    
+            String description = expTxtDescription.getText().trim();
+            String lastName = expTxtLastName.getText().trim();
+            String firstName = expFirstName.getText().trim();
+            boolean invalid = true;
+            try{
+                double amount = Double.parseDouble(amountStr);
+                    invalid = expComboCost.getSelectionModel().isEmpty() || 
+                                expComboProject.getSelectionModel().isEmpty() ||
+                                expComboIssuer.getSelectionModel().isEmpty() ||
+                                amount < 1 ||  description.length() < 2 || 
+                                (expRadioNew.isSelected() && (lastName.length() <  1 ||
+                                     firstName.length() < 1 )) ||
+                            (expRadioBusiness.isSelected() && ( firstName.length() < 1));
+                    expenditureSaveBtnDisableProp.set(invalid);
+            }catch(Exception exc)
+            {
+                expenditureSaveBtnDisableProp.set(true);
+                exc.printStackTrace();
+            }
+            expenditureSaveBtnDisableProp.set(invalid);
+                            
+        }
+        @FXML
+        private void saveExpenditure(ActionEvent actEvt){
+            try{
+                int costCatId = expComboCost.getSelectionModel().getSelectedItem().getId();
+                int prjId = expComboProject.getSelectionModel().getSelectedItem().getId();
+                int userId = expComboIssuer.getSelectionModel().getSelectedItem().getId();
+                double amount = Double.parseDouble(expTxtAmount.getText().trim());
+                Persons person; 
+                Clients client;
+                String description = expTxtDescription.getText().trim();
+                String phone =  expTxtPhone.getText().trim();
+                String email = expTxtEmail.getText().trim();
+                String firstName = expFirstName.getText().trim();
+                String lastName = expTxtLastName.getText().trim();
+                if(phone.length() != 11 && phone.length() > 0)
+                {
+                    error("Phone number should be 11 digits");
+                    return ;
+                }
+                if(email.length() > 0 && !validateEmail(email) )
+                {
+                    error("Invalid Email.");
+                    return ;
+                } 
+                ExpenditureService expService = new ExpenditureService();
+                LocalDate localDate = expTxtDate.getValue();
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.DATE, localDate.getDayOfMonth());
+                calendar.set(Calendar.MONTH, localDate.getMonthValue()-1);
+                calendar.set(Calendar.YEAR, localDate.getYear());
+                 DisplayExpenditure ds = new DisplayExpenditure(costCatId,prjId,userId,null  == expenditureClient?0:expenditureClient.getId() ,amount, description);
+                 ds.setDate(calendar.getTimeInMillis()+"");
+                 if(expRadioNew.isSelected())
+                 {
+                     client = new Clients();
+                     person = new Persons();
+                     
+                     client.setEmail(email);
+                     client.setPhone(phone);
+                     client.setUId("");
+                     if(expRadioBusiness.isSelected())
+                     client.setBusinessName(firstName);
+                        if(expRadioPerson.isSelected())
+                        {
+                            person.setFirstName(firstName);
+                            person.setLastName(lastName);
+                            person.setGender(expRadioMale.isSelected()?"Male":"Female" );
+                            ds.setPerson(person);
+                        }
+                     ds.setClient(client);
+                    
+                 }
+                 
+                if(expService.createExpenditure(ds))
+                {
+                    refreshExpenditureView(false);
+                    info("Expenditure saved successfully");
+                }
+                    else
+                        error("There was a problem entering the expenditure");
+            }catch(Exception ec)
+            {
+                error("There was a problem saving the expenditure");
+                ec.printStackTrace();
+            }
+        }
+        
+        private void disableExpForm(boolean disable)
+        {
+            expRadioPerson.setDisable(disable);
+            expRadioBusiness.setDisable(disable);
+            expTxtLastName.setDisable(disable);
+            expFirstName.setDisable(disable);
+            expTxtEmail.setDisable(disable);
+            expTxtPhone.setDisable(disable);
+            expTxtAddress.setDisable(disable);
+            expRadioMale.setDisable(disable);
+            expRadioFemale.setDisable(disable);
+        }
+        
+       
         private void validateServiceForm(){
             try{
             boolean disable = srvTextName.getText().trim().length() < 1
@@ -777,6 +1021,10 @@ public class MaiinUI implements Initializable {
         @FXML
         private void filterIncomeTable(ActionEvent evt){
             refreshIncomeView(true);
+        }
+         @FXML
+        private void filterExpenditureTable(ActionEvent evt){
+            refreshExpenditureView(true);
         }
         @FXML
         private void showClientListPopup(ActionEvent Evt){
@@ -811,6 +1059,7 @@ public class MaiinUI implements Initializable {
                             if(null == incomeClient.getPersonId())
                                  incomeRadioBusiness.setSelected(true);
                          });
+                         
                     }
                     else 
                     {
@@ -823,6 +1072,58 @@ public class MaiinUI implements Initializable {
                 incomeRadioNew.setSelected(true);
                 disableIncomeClientForm(false);
                    }
+                validateIncomeForm();
+            }
+            
+            
+        }
+        
+         @FXML
+        private void showClientListExp(ActionEvent Evt){
+            if(expRadioExisting.isSelected()){ 
+                try{
+                    disableExpForm(true);
+                Stage stage;
+                Parent root;
+                stage = new Stage();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ClientPopupList.fxml"));
+                ClientListPopup popupController = new ClientListPopup(clientList);
+                loader.setController(popupController);
+                root = loader.load();
+                
+                stage.setScene(new Scene(root));
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.initOwner(existingClientRadio.getScene().getWindow());
+                stage.setTitle("Select Client from the list");
+                    stage.showAndWait();
+                    if (popupController.isConfirmed()) {
+                        DisplayClient client =  popupController.getClient();
+                        expTxtEmail.setText(client.getEmail());
+                        expTxtPhone.setText(client.getPhone());
+                        expTxtAddress.setText(client.getAddress());
+                        expTxtLastName.setText( client.getLastName());
+                        expFirstName.setText((null == client.getFirstName() 
+                                || client.getFirstName().trim().length() < 1)
+                                    ?client.getBusinessName() : client.getFirstName() );
+                         Platform.runLater(() -> {
+                            expenditureClient = new ClientService().getClientById(client.getId());
+                            if(null == expenditureClient.getPersonId())
+                                 expRadioBusiness.setSelected(true);
+                         });
+                        
+                    }
+                    else 
+                    {
+                        expRadioNew.setSelected(true);
+                        disableExpForm(false);
+                    }
+                    
+                    stage.close();
+                }catch(Exception exc){
+                expRadioNew.setSelected(true);
+                disableExpForm(false);
+                   }
+                 validateExpenditureForm();
             }
             
             
@@ -841,12 +1142,21 @@ public class MaiinUI implements Initializable {
             cctgSaveBtnDisableProp.set(disable);
         }
         
-         @FXML
+        @FXML
         private void validateIncomeForm(KeyEvent evt)
         {
              Platform.runLater(() -> {
                   validateIncomeForm();
                   setIncomeAmount();
+             });
+           
+        }
+        
+        @FXML
+        private void validateExpenditureForm(KeyEvent evt)
+        {
+             Platform.runLater(() -> {
+                  validateExpenditureForm();
              });
            
         }
@@ -856,12 +1166,12 @@ public class MaiinUI implements Initializable {
                   try{
                     double amount = (incomeComboService.getSelectionModel().getSelectedItem().getAmount());
                     double discount = 0;
-                    String discountString = incomeTxtDiscount.getText();
-                    String lname = IncomeTxtLName.getText();
-                    String fname = incomeTxtFName.getText();
-                    String email = incomeTxtEmail.getText();
-                    String phone = incomeTxtPhone.getText();
-                    String uid = incomeTxtUid.getText();
+                    String discountString = incomeTxtDiscount.getText().trim();
+                    String lname = IncomeTxtLName.getText().trim();
+                    String fname = incomeTxtFName.getText().trim();
+                    String email = incomeTxtEmail.getText().trim();
+                    String phone = incomeTxtPhone.getText().trim();
+                    String uid = incomeTxtUid.getText().trim();
                    // String dob = localDobDate.toString();
 
                     try{
@@ -985,18 +1295,18 @@ public class MaiinUI implements Initializable {
             }
             }catch(Exception ex){}
         }
-        static double totalIncome;
+        static double totalIncome, totalExpenditure;
         List<DisplayClient> clientList;
         private Label infoLabel;
         Popup popup = new Popup();
         Region popupRegion = new Region();
-        Clients incomeClient;
+        Clients incomeClient, expenditureClient;
         final AppModel model;
          @FXML
          TableView departmentListTable, projectListTable, serviceListTable, costCategoryListTable, 
-                 userListTable, clientListTable, incomeListTable;
+                 userListTable, clientListTable, incomeListTable, expenditureListTable;
          @FXML
-         TabPane adminPane, settingsPane;
+         TabPane adminPane, settingsPane; 
          @FXML
          AnchorPane incomePane, expenditurePane;
          @FXML
@@ -1005,7 +1315,7 @@ public class MaiinUI implements Initializable {
                  userCreateLabel, userEditLabel, userInfoLabel,businessCreateLabel, businessEditLabel, businessInfoLabel,
                  incomeLabelAmountRecieved;
          @FXML
-         Label incomeLabel, expenditureLabel, settingsLabel, totalLabel;
+         Label incomeLabel, expenditureLabel, settingsLabel, totalLabel, totalLabel1;
         
          @FXML
          Line departmentCreateLine, departmentEditLine, projectCreateLine, projectEditLine,serviceCreateLine, serviceEditLine, costCategoryCreateLine, 
@@ -1016,9 +1326,11 @@ public class MaiinUI implements Initializable {
          @FXML
          TextField dptTextName, prjTextName, srvTextName, srvTextAmount, cctgTextName, 
                  incomeTxtAmount, incomeTxtDiscount, IncomeTxtLName, incomeTxtFName,
-                 incomeTxtPhone, incomeTxtEmail, incomeTxtUid, incomeTxtSearch;
+                 incomeTxtPhone, incomeTxtEmail, incomeTxtUid, incomeTxtSearch, expenditureTxtSearch,
+                 expTxtAmount, expTxtLastName, expFirstName, expTxtEmail, expTxtPhone;
          @FXML
-         TextArea prjTextDescription, srvTextDescription, cctgTextDescription, incomeTxtAdd;
+         TextArea prjTextDescription, srvTextDescription, cctgTextDescription, incomeTxtAdd, 
+                 expTxtDescription, expTxtAddress;
           
         private final BooleanProperty adminDisplayProp = new SimpleBooleanProperty();
         private final BooleanProperty incomeDisplayProp = new SimpleBooleanProperty();
@@ -1035,41 +1347,50 @@ public class MaiinUI implements Initializable {
         private final BooleanProperty srvSaveBtnDisableProp = new SimpleBooleanProperty();
         private final BooleanProperty cctgSaveBtnDisableProp = new SimpleBooleanProperty();
         private final BooleanProperty incomeSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final BooleanProperty expenditureSaveBtnDisableProp = new SimpleBooleanProperty();
         private final StringProperty incomeTotalProp = new SimpleStringProperty();
+        private final StringProperty expendtureTotalProp = new SimpleStringProperty();
+        
         
         
         
         public static FilteredList departmentsFiltered, projectsFiltered, servicesFiltered, costCategoriesFiltered,
                                                usersFiltered, clientsFiltered;
         private static FilteredList<DisplayIncome> incomesFiltered;
+        private static FilteredList<DisplayExpenditure> expenditureFiltered;
         @FXML
         private TableColumn dptColSerial, dptColName, dptColId, prjColSerial, prjColName, prjColDepartment, prjColId,
                             srvColSerial, srvColName, srvColProject, srvColAmount, srvColId, cctgColSerial, cctgColName,
                             cctgColType, cctgColId, userColId, userColFirstName, userColLastName, userColEmail, userColPhone,
                             userColRole, userColSerial, userColDepartment, clientColSerial, clientColName, clientColPhone, 
                             clientColEmail, clientColAddress, clientColId, incomeColSerial, incomeColService, incomeColClient,
-                            incomeColAmount, incomeColDate, incomeColPaymentType, incomeColId;
+                            incomeColAmount, incomeColDate, incomeColPaymentType, incomeColId, expColSerial,expColRecipient, 
+                            expColProject, expColCostCat, expColAmt, expColDate, expIdCol;
         @FXML
-        private Button dptBtnSave, prjBtnSave, srvBtnSave, cctgBtnSave, incomeBtnSave, inocmePrintBtn;
+        private Button dptBtnSave, prjBtnSave,expBtnEnter, srvBtnSave, cctgBtnSave, incomeBtnSave, inocmePrintBtn;
         
         @FXML
         private ComboBox<Departments> prjComboDepartment ;
          @FXML
-        private ComboBox<DisplayProject> srvComboProject, expComboProject ;
+        private ComboBox<DisplayProject> srvComboProject ;
          @FXML
         private ComboBox<DisplayService> incomeComboService;
+        @FXML
+        private ComboBox<CostCategories> expComboCost;
+        @FXML
+        private ComboBox<DisplayProject> expComboProject;
+        @FXML
+        private ComboBox<DisplayUser> expComboIssuer;
          @FXML
-         private ComboBox<CostCategories> expComboCostCategory;
-         
-         
-         @FXML
-            private ComboBox<String> cctgComboType, incomeComboPType ;
+         private ComboBox<String> cctgComboType, incomeComboPType ;
          @FXML 
-         private DatePicker incomeTxtDate, IncomeTxtDueDate, incomeTxtDob, incomeFromDate, incomeToDate,
-                 expTxtDate;
+         private DatePicker incomeTxtDate, IncomeTxtDueDate, incomeTxtDob, incomeFromDate, 
+                 expTxtDate, incomeToDate, expFromDate, expToDate;
          @FXML
-         private RadioButton incomeRadioNew, incomeRadioPerson, incomeRadioBusiness, incomeRadioMale, incomeRadioFemale, 
-                 incomeRadioNewIncome, existingClientRadio;
+         private RadioButton incomeRadioNew, incomeRadioPerson, incomeRadioBusiness, 
+                 incomeRadioMale, incomeRadioFemale,  expRadioNew, expRadioBusiness , 
+                 incomeRadioNewIncome, existingClientRadio, expRadioPerson, 
+                 expRadioMale, expRadioFemale, expRadioExisting;
          double amountReceived;
         
         
