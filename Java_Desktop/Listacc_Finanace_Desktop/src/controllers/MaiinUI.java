@@ -255,7 +255,7 @@ public class MaiinUI implements Initializable {
         }
         
         private void initializeNumberFields(){
-           // incomeTxtAmount.textProperty().addListener(new NumberChangeListener(incomeTxtAmount));
+            incomeTxtAmount.textProperty().addListener(new NumberChangeListener(incomeTxtAmount));
             incomeTxtDiscount.textProperty().addListener(new NumberChangeListener(incomeTxtDiscount));
             srvTextAmount.textProperty().addListener(new NumberChangeListener(srvTextAmount));
             incomeTxtPhone.textProperty().addListener(new NumberChangeListener(incomeTxtPhone));
@@ -690,19 +690,24 @@ public class MaiinUI implements Initializable {
         }
         @FXML 
         private void setIncomeAmount(ActionEvent event){
+            try{
+             double amount  = incomeComboService.getSelectionModel().getSelectedItem().getAmount();
+             incomeTxtAmount.setText( amount+"" );
+             
             setIncomeAmount();
+            }catch(Exception exc){}
         }
         
         private void setIncomeAmount(){
-             double amount  = incomeComboService.getSelectionModel().getSelectedItem().getAmount();
+            
             double discount = 0;
             try{ 
                 discount = Double.parseDouble(incomeTxtDiscount.getText().trim());
             }catch(Exception exc){}
             NumberFormat formatter = new DecimalFormat("#,###.00"); 
-            String amountStr = formatter.format(amount);
-            incomeTxtAmount.setText("NGN "+ amountStr );
+            double amount = Double.parseDouble(incomeTxtAmount.getText()); 
             amountReceived = amount - discount;
+            if(!incomeRadioPart.isSelected())
             incomeLabelAmountRecieved.setText("NGN "+ formatter.format(amountReceived));
         }
         @FXML
@@ -726,10 +731,10 @@ public class MaiinUI implements Initializable {
                       Persons incomePerson = new Persons();
                      
                       
-                        double amount = (incomeComboService.getSelectionModel().getSelectedItem().getAmount());
-                        double discount = 0;
+                        double amount = Double.parseDouble(incomeTxtAmount.getText());
+                      
                          String fname = incomeTxtFName.getText().trim(); 
-                        String discountString = incomeTxtDiscount.getText().trim();
+                        
                         if(incomeRadioPerson.isSelected()){
                             String lname = IncomeTxtLName.getText().trim();
                             incomePerson.setFirstName(fname);
@@ -754,7 +759,8 @@ public class MaiinUI implements Initializable {
                         income.setPerson(incomeRadioPerson.isSelected()? incomePerson : null);
                        income.setClient(incomeClient);
                        income.setAmountReceived(amount);
-                       income.setDiscount(discount);
+                     
+                       
                        income.setDate(""+calendar.getTimeInMillis());
                        income.setDateDue(dueDate);
                        income.setType(incomeRadioNewIncome.isSelected() ?"New" :"Balance");
@@ -771,6 +777,27 @@ public class MaiinUI implements Initializable {
                      error("Invalid  phone number");
                      return;
                 }
+                
+                double discount = 0 ;
+                    try{
+                        if(incomeRadioPart.isSelected()){
+                        discount =  Double.parseDouble(incomeTxtDiscount.getText().trim());
+                        income.setAmountReceivable(discount);
+                             
+                }else
+                        {income.setDiscount(discount);
+                            if(discount >= amount)
+                             {
+                                 error("Can not have a discount higher than the amount received ");
+                             }
+                        }
+                        
+                    }catch(Exception exc)
+                    {
+                        error("Enter");
+                        return;
+                    }
+               
            }catch(Exception x){ x.printStackTrace();}
             
             if(new IncomeService().createIncome(income))
@@ -1164,7 +1191,7 @@ public class MaiinUI implements Initializable {
             
             
                   try{
-                    double amount = (incomeComboService.getSelectionModel().getSelectedItem().getAmount());
+                    double amount = Double.parseDouble(incomeTxtAmount.getText().trim());
                     double discount = 0;
                     String discountString = incomeTxtDiscount.getText().trim();
                     String lname = IncomeTxtLName.getText().trim();
@@ -1172,6 +1199,7 @@ public class MaiinUI implements Initializable {
                     String email = incomeTxtEmail.getText().trim();
                     String phone = incomeTxtPhone.getText().trim();
                     String uid = incomeTxtUid.getText().trim();
+                    
                    // String dob = localDobDate.toString();
 
                     try{
@@ -1209,6 +1237,28 @@ public class MaiinUI implements Initializable {
            Matcher m = p.matcher(text);
            boolean found = m.find();
            return found;
+        }
+        
+        @FXML 
+        private void fullPartIncome(ActionEvent act)
+        {
+            RadioButton src = (RadioButton)act.getSource();
+            if(src == incomeRadioFull)
+            {
+                incomeTxtAmount.setPromptText("Amount");
+                incomeTxtAmount.setText("");
+                incomeTxtDiscount.setText("");
+                incomeTxtDiscount.setPromptText("Discount");
+            }
+            else if(src == incomeRadioPart)
+            {
+                incomeTxtAmount.setPromptText("Amount Received");
+                incomeTxtAmount.setText("");
+                incomeTxtDiscount.setText("");
+                incomeTxtDiscount.setPromptText("Balance To be paid");
+                incomeLabelAmountRecieved.setText("");
+            }
+            validateIncomeForm();
         }
         
         @FXML
@@ -1390,7 +1440,7 @@ public class MaiinUI implements Initializable {
          private RadioButton incomeRadioNew, incomeRadioPerson, incomeRadioBusiness, 
                  incomeRadioMale, incomeRadioFemale,  expRadioNew, expRadioBusiness , 
                  incomeRadioNewIncome, existingClientRadio, expRadioPerson, 
-                 expRadioMale, expRadioFemale, expRadioExisting;
+                 expRadioMale, expRadioFemale, expRadioExisting, incomeRadioFull, incomeRadioPart;
          double amountReceived;
         
         

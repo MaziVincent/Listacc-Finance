@@ -17,6 +17,7 @@
     <class>model.Services</class>
     <class>model.AspNetRoles</class>
     <class>model.Persons</class>
+    <class>model.Changes</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:sqlite:C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/ListaccFinance.db"/>
       <property name="javax.persistence.jdbc.user" value=""/>

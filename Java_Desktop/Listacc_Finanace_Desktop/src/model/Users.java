@@ -51,6 +51,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Users.findByPhone", query = "SELECT u FROM Users u WHERE u.phone = :phone"),
     @NamedQuery(name = "Users.findByAddress", query = "SELECT u FROM Users u WHERE u.address = :address"),
     @NamedQuery(name = "Users.findByPassword", query = "SELECT u FROM Users u WHERE u.password = :password"),
+    @NamedQuery(name = "Users.findByOnlineEntryId", query = "SELECT u FROM Users u WHERE u.onlineEntryId = :onlineEntryId"),
     @NamedQuery(name = "Users.findByDiscriminator", query = "SELECT u FROM Users u WHERE u.discriminator = :discriminator")})
 public class Users implements Serializable {
 
@@ -99,11 +100,15 @@ public class Users implements Serializable {
     private String address;
     @Column(name = "Password")
     private String password;
+    @Column(name = "OnlineEntryId")
+    private Integer onlineEntryId;
     @Basic(optional = false)
     @Column(name = "Discriminator")
     private String discriminator;
     @ManyToMany(mappedBy = "usersCollection")
     private Collection<AspNetRoles> aspNetRolesCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Collection<Changes> changesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Collection<Incomes> incomesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
@@ -282,6 +287,14 @@ public class Users implements Serializable {
         this.password = password;
     }
 
+    public Integer getOnlineEntryId() {
+        return onlineEntryId;
+    }
+
+    public void setOnlineEntryId(Integer onlineEntryId) {
+        this.onlineEntryId = onlineEntryId;
+    }
+
     public String getDiscriminator() {
         return discriminator;
     }
@@ -297,6 +310,15 @@ public class Users implements Serializable {
 
     public void setAspNetRolesCollection(Collection<AspNetRoles> aspNetRolesCollection) {
         this.aspNetRolesCollection = aspNetRolesCollection;
+    }
+
+    @XmlTransient
+    public Collection<Changes> getChangesCollection() {
+        return changesCollection;
+    }
+
+    public void setChangesCollection(Collection<Changes> changesCollection) {
+        this.changesCollection = changesCollection;
     }
 
     @XmlTransient

@@ -35,7 +35,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Services.findById", query = "SELECT s FROM Services s WHERE s.id = :id"),
     @NamedQuery(name = "Services.findByName", query = "SELECT s FROM Services s WHERE s.name = :name"),
     @NamedQuery(name = "Services.findByDescription", query = "SELECT s FROM Services s WHERE s.description = :description"),
-    @NamedQuery(name = "Services.findByAmount", query = "SELECT s FROM Services s WHERE s.amount = :amount")})
+    @NamedQuery(name = "Services.findByAmount", query = "SELECT s FROM Services s WHERE s.amount = :amount"),
+    @NamedQuery(name = "Services.findByOnlineEntryId", query = "SELECT s FROM Services s WHERE s.onlineEntryId = :onlineEntryId")})
 public class Services implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,6 +52,8 @@ public class Services implements Serializable {
     @Basic(optional = false)
     @Column(name = "Amount")
     private double amount;
+    @Column(name = "OnlineEntryId")
+    private Integer onlineEntryId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "serviceId")
     private Collection<Incomes> incomesCollection;
     @JoinColumn(name = "ProjectId", referencedColumnName = "Id")
@@ -99,6 +102,14 @@ public class Services implements Serializable {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public Integer getOnlineEntryId() {
+        return onlineEntryId;
+    }
+
+    public void setOnlineEntryId(Integer onlineEntryId) {
+        this.onlineEntryId = onlineEntryId;
     }
 
     @XmlTransient

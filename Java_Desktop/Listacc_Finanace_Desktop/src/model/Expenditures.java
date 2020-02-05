@@ -31,7 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Expenditures.findById", query = "SELECT e FROM Expenditures e WHERE e.id = :id"),
     @NamedQuery(name = "Expenditures.findByDate", query = "SELECT e FROM Expenditures e WHERE e.date = :date"),
     @NamedQuery(name = "Expenditures.findByDescription", query = "SELECT e FROM Expenditures e WHERE e.description = :description"),
-    @NamedQuery(name = "Expenditures.findByAmount", query = "SELECT e FROM Expenditures e WHERE e.amount = :amount")})
+    @NamedQuery(name = "Expenditures.findByAmount", query = "SELECT e FROM Expenditures e WHERE e.amount = :amount"),
+    @NamedQuery(name = "Expenditures.findByOnlineEntryId", query = "SELECT e FROM Expenditures e WHERE e.onlineEntryId = :onlineEntryId")})
 public class Expenditures implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,6 +49,8 @@ public class Expenditures implements Serializable {
     @Basic(optional = false)
     @Column(name = "Amount")
     private double amount;
+    @Column(name = "OnlineEntryId")
+    private Integer onlineEntryId;
     @JoinColumn(name = "ClientId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Clients clientId;
@@ -104,6 +107,14 @@ public class Expenditures implements Serializable {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public Integer getOnlineEntryId() {
+        return onlineEntryId;
+    }
+
+    public void setOnlineEntryId(Integer onlineEntryId) {
+        this.onlineEntryId = onlineEntryId;
     }
 
     public Clients getClientId() {

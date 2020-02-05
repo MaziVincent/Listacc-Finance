@@ -6,6 +6,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,8 +17,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -35,7 +38,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Incomes.findByDiscount", query = "SELECT i FROM Incomes i WHERE i.discount = :discount"),
     @NamedQuery(name = "Incomes.findByPaymentType", query = "SELECT i FROM Incomes i WHERE i.paymentType = :paymentType"),
     @NamedQuery(name = "Incomes.findByAmountReceivable", query = "SELECT i FROM Incomes i WHERE i.amountReceivable = :amountReceivable"),
-    @NamedQuery(name = "Incomes.findByDateDue", query = "SELECT i FROM Incomes i WHERE i.dateDue = :dateDue")})
+    @NamedQuery(name = "Incomes.findByDateDue", query = "SELECT i FROM Incomes i WHERE i.dateDue = :dateDue"),
+    @NamedQuery(name = "Incomes.findByOnlineEntryId", query = "SELECT i FROM Incomes i WHERE i.onlineEntryId = :onlineEntryId")})
 public class Incomes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -63,9 +67,16 @@ public class Incomes implements Serializable {
     @Basic(optional = false)
     @Column(name = "DateDue")
     private String dateDue;
+    @Column(name = "OnlineEntryId")
+    private Integer onlineEntryId;
     @JoinColumn(name = "ClientId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Clients clientId;
+    @OneToMany(mappedBy = "incomeId")
+    private Collection<Incomes> incomesCollection;
+    @JoinColumn(name = "IncomeId", referencedColumnName = "Id")
+    @ManyToOne
+    private Incomes incomeId;
     @JoinColumn(name = "ProjectId", referencedColumnName = "Id")
     @ManyToOne
     private Projects projectId;
@@ -156,12 +167,37 @@ public class Incomes implements Serializable {
         this.dateDue = dateDue;
     }
 
+    public Integer getOnlineEntryId() {
+        return onlineEntryId;
+    }
+
+    public void setOnlineEntryId(Integer onlineEntryId) {
+        this.onlineEntryId = onlineEntryId;
+    }
+
     public Clients getClientId() {
         return clientId;
     }
 
     public void setClientId(Clients clientId) {
         this.clientId = clientId;
+    }
+
+    @XmlTransient
+    public Collection<Incomes> getIncomesCollection() {
+        return incomesCollection;
+    }
+
+    public void setIncomesCollection(Collection<Incomes> incomesCollection) {
+        this.incomesCollection = incomesCollection;
+    }
+
+    public Incomes getIncomeId() {
+        return incomeId;
+    }
+
+    public void setIncomeId(Incomes incomeId) {
+        this.incomeId = incomeId;
     }
 
     public Projects getProjectId() {

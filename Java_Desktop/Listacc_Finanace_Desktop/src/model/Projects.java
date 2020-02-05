@@ -34,7 +34,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Projects.findAll", query = "SELECT p FROM Projects p"),
     @NamedQuery(name = "Projects.findById", query = "SELECT p FROM Projects p WHERE p.id = :id"),
     @NamedQuery(name = "Projects.findByName", query = "SELECT p FROM Projects p WHERE p.name = :name"),
-    @NamedQuery(name = "Projects.findByDescription", query = "SELECT p FROM Projects p WHERE p.description = :description")})
+    @NamedQuery(name = "Projects.findByDescription", query = "SELECT p FROM Projects p WHERE p.description = :description"),
+    @NamedQuery(name = "Projects.findByOnlineEntryId", query = "SELECT p FROM Projects p WHERE p.onlineEntryId = :onlineEntryId")})
 public class Projects implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,6 +49,8 @@ public class Projects implements Serializable {
     private String name;
     @Column(name = "Description")
     private String description;
+    @Column(name = "OnlineEntryId")
+    private Integer onlineEntryId;
     @OneToMany(mappedBy = "projectId")
     private Collection<Incomes> incomesCollection;
     @JoinColumn(name = "DepartmentId", referencedColumnName = "Id")
@@ -92,6 +95,14 @@ public class Projects implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getOnlineEntryId() {
+        return onlineEntryId;
+    }
+
+    public void setOnlineEntryId(Integer onlineEntryId) {
+        this.onlineEntryId = onlineEntryId;
     }
 
     @XmlTransient
