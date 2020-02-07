@@ -1,21 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ListaccFinance.API.Data;
+using System.Text;
+using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
+using ListaccFinance.API.Interfaces;
+using ListaccFinance.API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
-namespace ListaccFinance.Api
+namespace ListaccFinance.API
 {
     public class Startup
     {
@@ -30,6 +31,31 @@ namespace ListaccFinance.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            //DI
+            services.AddSingleton<IConfiguration>(Configuration);
+
+            services.AddScoped<ITokenGenerator, TokenGenerator>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IDesktopService, DesktopService>();
+            //DBContext
+            services.AddDbContext<DataContext>(con => con.UseSqlite(
+                Configuration.GetConnectionString("DefaultConnection")));
+
+
+
+            services.AddMvc(opt => {
+                opt.EnableEndpointRouting = false;
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
+            })
+                .SetCompatibilityVersion(CompatibilityVersion.Latest).AddJsonOptions(Options =>
+                            {
+
+                            });
+
+
+            // Identity Builder
             IdentityBuilder builder = services.AddIdentityCore<User>(opt => {
                     opt.Password.RequireDigit = false;
                     opt.Password.RequiredLength = 6;
@@ -39,9 +65,30 @@ namespace ListaccFinance.Api
             builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
             builder.AddEntityFrameworkStores<DataContext>();
             builder.AddRoleValidator<RoleValidator<Role>>();
-             services.AddDbContext<DataContext>(x => x.UseSqlite(
+            services.AddDbContext<DataContext>(x => x.UseSqlite(
             Configuration.GetConnectionString("DefaultConnection"))
             );
+
+
+            // Token Verification 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+            Options =>
+            {
+                Options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.ASCII.GetBytes(Configuration.GetSection("LoginSettings:Key").Value)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+            services.AddCors();
+
+
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,12 +103,19 @@ namespace ListaccFinance.Api
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
-            app.UseEndpoints(endpoints =>
+
+            app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseMvc();
+
+            /*app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });
+            });*/
+
+
         }
     }
 }

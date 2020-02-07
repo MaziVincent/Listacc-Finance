@@ -1,10 +1,9 @@
-using ListaccFinance.Api.Data.Model;
 using ListaccFinance.API.Data.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ListaccFinance.API.Data
+namespace ListaccFinance.Api.Data
 {
     public class DataContext: IdentityDbContext<User, Role, int, 
     IdentityUserClaim<int>, UserRole, IdentityUserLogin<int>, IdentityRoleClaim<int>, 
@@ -28,7 +27,7 @@ namespace ListaccFinance.API.Data
             
         }
 
-        public DbSet<Client> Clients { get; set; }
+            public DbSet<Client> Clients { get; set; }
             public DbSet<CostCategory> CostCategories { get; set; }
             public DbSet<Department> Departments { get; set; }
             public DbSet<Expenditure> Expenditures { get; set; }
@@ -38,6 +37,9 @@ namespace ListaccFinance.API.Data
             public DbSet<Service> Services { get; set; }
             public DbSet<Admin> Admins { get; set; }
             public DbSet<Member> Members { get; set; }
+
+            public DbSet<Change> Changes {get; set;} 
+            public DbSet<DesktopClient> DesktopClients {get; set;}
 
             // public DbSet<User> Users { get; set; }
     }
