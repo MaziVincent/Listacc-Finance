@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace ListaccFinance.Api.Controllers
+namespace ListaccFinance.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]

@@ -8,9 +8,12 @@ package controllers;
 //import java.awt.event.ActionEvent;
 import helpers.CostCatStringConverter;
 import helpers.DeptStringConverter;
+import helpers.DoubleValuChangeListener;
+import helpers.FocusChangeListener;
 import helpers.NumberChangeListener;
 import helpers.PrjStringConverter;
 import helpers.SrvStringConverter;
+import helpers.UnitNumberChangeListener;
 import helpers.UserStringConverter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -50,6 +53,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -79,6 +83,12 @@ import model.Clients;
 import model.CostCategories;
 import model.Departments;
 import model.Persons;
+<<<<<<< HEAD
+=======
+import model.Projects;
+import model.Services;
+import model.Users;
+>>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
 import model.display.DisplayClient;
 import model.display.DisplayExpenditure;
 import model.display.DisplayIncome;
@@ -146,9 +156,23 @@ public class MaiinUI implements Initializable {
             });
         }, 0, 10, TimeUnit.SECONDS);
         
+<<<<<<< HEAD
         // run synchronization download operation
         /*ScheduledExecutorService synDownExec = Executors.newSingleThreadScheduledExecutor();
         synDownExec.scheduleAtFixedRate(() -> {
+=======
+        private void initializeNumberFields(){
+            incomeTxtAmount.textProperty().addListener(new DoubleValuChangeListener(incomeTxtAmount));
+            incomeTxtDiscount.textProperty().addListener(new DoubleValuChangeListener(incomeTxtDiscount));
+            srvTextAmount.textProperty().addListener(new NumberChangeListener(srvTextAmount));
+            incomeTxtPhone.textProperty().addListener(new NumberChangeListener(incomeTxtPhone));
+            expTxtPhone.textProperty().addListener(new NumberChangeListener(expTxtPhone));
+            expTxtAmount.textProperty().addListener(new NumberChangeListener(expTxtAmount));
+            incomeTxtUnit.textProperty().addListener(new UnitNumberChangeListener(incomeTxtUnit));
+            incomeTxtUnit.focusedProperty().addListener(new FocusChangeListener(incomeTxtUnit));
+        }
+        private void refreshExpenditureView(boolean filter){
+>>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
             Platform.runLater(() -> {
                 SynchronizationDownloadService conn = new SynchronizationDownloadService(activitySp);
                 conn.execute();
@@ -322,6 +346,7 @@ public class MaiinUI implements Initializable {
                     newExpenditureClient();
                     expenditureSaveBtnDisableProp.set(true);
             if(!filter)
+<<<<<<< HEAD
                     {
                         expFromDate.setValue(LOCAL_DATE(strDate));
                         expToDate.setValue(LOCAL_DATE(strDate));
@@ -373,6 +398,45 @@ public class MaiinUI implements Initializable {
             }
             else 
                 inocmePrintBtn.setDisable(true);
+=======
+                        {
+                            incomeFromDate.setValue(LOCAL_DATE(strDate));
+                            incomeToDate.setValue(LOCAL_DATE(strDate));
+                        }
+            
+       
+            incomeList = new IncomeService().getAllIncomes();
+            ObservableList<DisplayIncome> serviceData
+            = FXCollections.observableArrayList(incomeList);
+                       incomesFiltered =  filterDateforIncomeView(serviceData);
+                       incomeListTable.setItems(incomesFiltered);
+                       incomeSaveBtnDisableProp.set(true);
+                        incomeTxtDate.setValue(LOCAL_DATE(strDate));
+                        IncomeTxtDueDate.setValue(LOCAL_DATE(strDate));
+                        ObservableList<String> PaymentTypesData
+            = FXCollections.observableArrayList(new String[]{"Cash", "Cheque", "Transfer"});
+                        incomeComboPType.setItems(PaymentTypesData);
+                        //incomeTxtAmount.setText("");
+                        incomeTxtDiscount.setText("");
+                        IncomeTxtLName.setText("");
+                        incomeTxtFName.setText("");
+                        incomeTxtPhone.setText("");
+                        incomeTxtEmail.setText("");
+                        incomeTxtDob.setValue(null);
+                        incomeTxtAdd.setText("");
+                        incomeTxtUid.setText("");
+                        amountReceived =0;
+                        try{
+                incomeListTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null ) {
+                    inocmePrintBtn.setDisable(false);
+                }
+                else 
+                    inocmePrintBtn.setDisable(true);
+                });
+                }catch(Exception ex){ex.printStackTrace();}
+                        
+>>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
             });
             }catch(Exception ex){ex.printStackTrace();}
 
@@ -685,6 +749,7 @@ public class MaiinUI implements Initializable {
        {
            error("Name should be created without any symbol");
            return;
+<<<<<<< HEAD
        }
        if(prjService.projectNameExists(prjName))
        {
@@ -711,12 +776,63 @@ public class MaiinUI implements Initializable {
        if(deptName.length() < 2)
        {
            error("Name should be at least 2 characters");
+=======
+           }
+           try{
+               
+           amount = Double.parseDouble(srvTextAmount.getText().trim());
+           if(amount < 10)
+                error("Enter a valid amount greater than 10");
+                  }catch(Exception ec){
+                      error("Enter a valid amount greater than zero");
+                      return;
+                  }
+           try{
+                if(srvService.createService(servName,
+                        amount,
+                        srvTextDescription.getText().trim(),
+                        srvComboProject.getSelectionModel().getSelectedItem().getId()
+                        ,adminServCheckFixed.isSelected() ))
+                    {
+                    info("Service created successfully ");
+                    refreshServiceView();
+                    srvTextName.setText("");
+                    srvTextAmount.setText("");
+                    srvTextDescription.setText("");
+                    adminServCheckFixed.setSelected(false);
+                }
+           }catch(Exception exc)
+           {
+               exc.printStackTrace();
+           }
+        }
+        
+        @FXML
+        private void saveProject(ActionEvent event)
+        {
+            ProjectService prjService = new ProjectService();
+           String prjName = prjTextName.getText().trim();
+           if(prjName.length() < 2)
+           {
+               error("Name should be at least 2 characters");
+               return;
+           }
+           if(symbolPresent(prjName) )
+           {
+               error("Name should be created without any symbol");
+               return;
+           }
+           if(prjService.projectNameExists(prjName))
+           {
+           error("Project name already exists");
+>>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
            return;
        }
        if(symbolPresent(deptName) )
        {
            error("Name should be created without any symbol");
            return;
+<<<<<<< HEAD
        }
        if(ccService.costCategoryNameExists(deptName))
        {
@@ -840,18 +956,260 @@ public class MaiinUI implements Initializable {
                     }
 
                 }catch(Exception exc)
+=======
+           }
+           if(ccService.createCategories(deptName, cctgTextDescription.getText().trim(),
+                   cctgComboType.getSelectionModel().getSelectedItem()))
+           {
+               info("Cost Category created successfully ");
+               refreshCostCategoryView();
+               cctgTextName.setText("");
+               cctgTextDescription.setText("");     
+           }
+           else{
+               error("Could not create Department");
+           }
+        }
+        @FXML 
+        private void setIncomeAmount(ActionEvent event){
+            try{
+            incomeTxtUnit.setText("1");
+            try{
+                Services service = incomeComboService.getSelectionModel().getSelectedItem();
+                if(null != service)
+                {
+                    //if(incomeRadioNewIncome.isSelected())
+                    incomeTxtAmount.setText(service.getAmount()+"");
+                    if(incomeRadioNewIncome.isSelected())
+                    incomeTxtAmount.setDisable((service.getFixedAmount() == 1));
+                    
+                }
+            }catch(Exception e){}
+            setIncomeAmount();
+            }catch(Exception exc){}
+        }
+        
+        private void setIncomeAmount(){
+            
+           
+            double discount = 0;
+            double amount  = 0;
+            int unit = 1;
+             NumberFormat formatter = new DecimalFormat("#,###.00"); 
+            try{
+                amount  = Double.parseDouble(incomeTxtAmount.getText().trim());
+                
+            }catch(Exception e){}
+            try{
+                 unit = Integer.parseInt(incomeTxtUnit.getText().trim());
+            }catch(Exception e){}
+            try{
+                 discount = Double.parseDouble(incomeTxtDiscount.getText().trim());
+                 
+            }catch(Exception e){}            
+            amountReceived = amount*unit - discount;
+           // if(!incomeRadioPart.isSelected())
+            incomeLabelAmountRecieved.setText("NGN "+ formatter.format(amountReceived));
+        }
+        @FXML
+        private void saveIncome(ActionEvent event){
+            DisplayIncome income = new DisplayIncome();
+                  try{
+                      
+            LocalDate localDate = incomeTxtDate.getValue();
+                
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.DATE, localDate.getDayOfMonth());
+                calendar.set(Calendar.MONTH, localDate.getMonthValue()-1);
+                calendar.set(Calendar.YEAR, localDate.getYear());
+                   
+                
+                LocalDate localDobDate = incomeTxtDob.getValue();
+                
+            String dob = null == localDobDate ? null :localDobDate.toString();
+             LocalDate localDueDate = IncomeTxtDueDate.getValue();
+            String dueDate = localDueDate.toString();
+                      Persons incomePerson = new Persons();
+                      
+                         String fname = incomeTxtFName.getText().trim(); 
+                        
+                        if(incomeRadioPerson.isSelected()){
+                            String lname = IncomeTxtLName.getText().trim();
+                            incomePerson.setFirstName(fname);
+                            incomePerson.setLastName(lname);
+                            incomePerson.setDateOfBirth(dob);
+                            incomePerson.setGender(incomeRadioMale.isSelected() ? "Male": "Female"  );
+                        }
+                        String email = incomeTxtEmail.getText().trim();
+                        String phone = incomeTxtPhone.getText().trim();
+                        String uid = incomeTxtUid.getText().trim();
+                        //incomeClient.setPersonId(incomePerson);
+                        String add = incomeTxtAdd.getText();
+                         if(null == incomeClient)
+                         {
+                            incomeClient = new Clients();
+                            incomeClient.setUId(uid);
+                            incomeClient.setAddress(null == add?null:add.trim() );
+                            incomeClient.setPhone(phone);
+                            incomeClient.setEmail(email);
+                            incomeClient.setId(0);
+                            incomeClient.setBusinessName(incomeRadioBusiness.isSelected() ? fname : null);
+                         }
+                        income.setPerson(incomeRadioPerson.isSelected()? incomePerson : null);
+                       income.setClient(incomeClient);
+                       income.setAmountReceived(amountReceived);                   
+                       income.setDate(""+calendar.getTimeInMillis());
+                       income.setDateDue(dueDate);
+                       income.setType(incomeRadioNewIncome.isSelected() ?"New" :"Balance");
+                       income.setPaymentType(incomeComboPType.getSelectionModel().getSelectedItem());
+                       income.setUserId(model.getUser());
+                       income.setServiceIdnum(incomeComboService.getSelectionModel().getSelectedItem().getId());
+                if(!validateEmail(incomeClient.getEmail()))
+>>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
                 {
                     error("Enter");
                     return;
                 }
+<<<<<<< HEAD
 
        }catch(Exception x){ x.printStackTrace();}
 
         if(new IncomeService().createIncome(income))
+=======
+                if(incomeTxtPhone.getText().trim().length() != 11)
+                {
+                     error("Invalid  phone number");
+                     return;
+                }
+                
+                double discount = 0 ;
+                    try{
+                        if(incomeRadioPart.isSelected()){
+                        discount =  Double.parseDouble(incomeTxtDiscount.getText().trim());
+                        income.setAmountReceivable(discount);
+                             
+                         }else
+                        {income.setDiscount(discount);
+                            if(discount >= amountReceived)
+                             {
+                                 error("Can not have a discount higher than the amount received ");
+                             }
+                        }
+                    if(incomeRadioBalance.isSelected())
+                        income.setParentIncomeId(parentIncomeId);
+                    }catch(Exception exc)
+                    {
+                        error("Enter");
+                        return;
+                    }
+               
+           }catch(Exception x){ x.printStackTrace();}
+            
+            if(new IncomeService().createIncome(income))
+            {
+                info("Income entered successfully");
+                incomeClient = null;
+                
+                refreshIncomeView(false);
+            }
+        }
+        
+        @FXML 
+        private void newIncomeClient(ActionEvent evt)
+>>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
         {
             info("Income entered successfully");
             incomeClient = null;
+<<<<<<< HEAD
             refreshIncomeView(false);
+=======
+             incomeTxtEmail.setText("");
+             incomeTxtPhone.setText("");
+             incomeTxtAdd.setText("");
+             incomeTxtUid.setText("");    
+             IncomeTxtLName.setText("");
+             incomeTxtFName.setText("");
+             incomeTxtDob.setValue(null);
+             
+            disableIncomeClientForm(false);
+             
+        }
+        
+        @FXML
+        private void newExpenditureClient(ActionEvent evt)
+        {
+                        newExpenditureClient();
+                       
+        }
+        private void newExpenditureClient(){
+                        disableExpForm(false);
+                        expTxtLastName.setText("");
+                        expFirstName.setText("");
+                        expTxtAddress.setText("");
+                        expTxtPhone.setText("");
+                        expTxtEmail.setText("");
+                        expenditureClient = null;
+        }
+        private void disableIncomeClientForm(boolean disable){
+             incomeTxtEmail.setDisable(disable);
+             incomeTxtPhone.setDisable(disable);
+             incomeTxtEmail.setDisable(disable);
+             incomeTxtUid.setDisable(disable);
+             IncomeTxtLName.setDisable(disable);
+             incomeTxtFName.setDisable(disable);
+             incomeTxtDob.setDisable(disable);
+             incomeTxtAdd.setDisable(disable);
+             incomeRadioNew.setDisable(disable);
+             existingClientRadio.setDisable(disable);
+             incomeRadioBusiness.setDisable(disable);
+             incomeRadioPerson.setDisable(disable);
+             
+        }
+        
+         @FXML 
+        private void searchIncome(KeyEvent evt){
+           Platform.runLater(() -> {
+               try
+                   {
+               String search = incomeTxtSearch.getText().toLowerCase().trim();
+                    incomesFiltered.setPredicate(
+                        p -> p.getClientName().toLowerCase().contains(search.trim()) ||
+                        p.getServiceName().toLowerCase().contains(search.trim()) ||
+                        p.getDisplayPaymentType().toLowerCase().contains(search.trim()) || 
+                        (p.getAmountReceived()+"").contains(search.trim()));
+                    incomeListTable.setItems(incomesFiltered); 
+                   }catch(Exception exc){
+                   exc.printStackTrace();}
+           });
+            
+        }
+        
+         @FXML 
+        private void searchExpenditure(KeyEvent evt){
+           Platform.runLater(() -> {
+               try
+                   {
+               String search = expenditureTxtSearch.getText().toLowerCase().trim();
+                    expenditureFiltered.setPredicate(
+                        p -> 
+                                //p.getDescription().toLowerCase().contains(search.trim()) ||
+                        p.getBusinessName().contains(search.trim()) ||
+                        p.getFirstName().toLowerCase().contains(search.trim()) || 
+                        p.getLastName().toLowerCase().contains(search.trim()) || 
+                        (p.getAmount()+"").contains(search.trim()));
+                    expenditureListTable.setItems(expenditureFiltered); 
+                   }catch(Exception exc){
+                   exc.printStackTrace();}
+           });
+            
+        }
+        
+        @FXML
+        private void validateDepartmentForm(KeyEvent evt)
+        {
+             TextField tf = ((TextField)evt.getSource());
+             dptSaveBtnDisableProp.set(tf.getText().trim().length() < 1);
+>>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
         }
     }
 
@@ -1156,6 +1514,7 @@ public class MaiinUI implements Initializable {
     private void showClientListExp(ActionEvent Evt){
         if(expRadioExisting.isSelected()){ 
             try{
+<<<<<<< HEAD
                 disableExpForm(true);
             Stage stage;
             Parent root;
@@ -1249,6 +1608,193 @@ public class MaiinUI implements Initializable {
 
                // String dob = localDobDate.toString();
 
+=======
+            boolean disable = srvTextName.getText().trim().length() < 1
+                    || srvTextDescription.getText().trim().length() < 1
+                    || Double.parseDouble(srvTextAmount.getText().trim()) < 1 
+                    || srvComboProject.getSelectionModel().isEmpty();
+            
+            srvSaveBtnDisableProp.set(disable);
+                    }catch(Exception ex){
+                        srvSaveBtnDisableProp.set(true);
+                        ex.printStackTrace();
+                    }
+        }
+        
+        private void disableIcomeForm(boolean disable){
+            incomeComboService.setDisable(disable);
+            incomeComboPType.setDisable(disable);
+            IncomeTxtDueDate.setDisable(disable);
+            incomeTxtUnit.setDisable(disable);
+            incomeTxtAmount.setDisable(disable);
+            incomeRadioFull.setDisable(disable);
+            incomeRadioPart.setDisable(disable);
+        }
+                
+        @FXML
+        private void filterIncomeTable(ActionEvent evt){
+            refreshIncomeView(true);
+        }
+         @FXML
+        private void filterExpenditureTable(ActionEvent evt){
+            refreshExpenditureView(true);
+        }
+        @FXML
+        private void showClientListPopup(ActionEvent Evt){
+            if(existingClientRadio.isSelected()){ 
+                try{
+                    disableIncomeClientForm(true);
+                Stage stage;
+                Parent root;
+                stage = new Stage();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ClientPopupList.fxml"));
+                ClientListPopup popupController = new ClientListPopup(clientList);
+                loader.setController(popupController);
+                root = loader.load();
+                
+                stage.setScene(new Scene(root));
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.initOwner(existingClientRadio.getScene().getWindow());
+                stage.setTitle("Select Client from the list");
+                    stage.showAndWait();
+                    if (popupController.isConfirmed()) {
+                        DisplayClient client =  popupController.getClient();
+                        incomeTxtEmail.setText(client.getEmail());
+                        incomeTxtPhone.setText(client.getPhone());
+                        incomeTxtAdd.setText(client.getAddress());
+                        incomeTxtUid.setText(client.getUId());    
+                        IncomeTxtLName.setText( client.getLastName());
+                        incomeTxtFName.setText((null == client.getFirstName() 
+                                || client.getFirstName().trim().length() < 1)
+                                    ?client.getBusinessName() : client.getFirstName() );
+                         Platform.runLater(() -> {
+                            incomeClient = new ClientService().getClientById(client.getId());
+                            if(null == incomeClient.getPersonId())
+                                 incomeRadioBusiness.setSelected(true);
+                         });
+                         validateIncomeForm();
+                    }
+                    else 
+                    {
+                        incomeRadioNew.setSelected(true);
+                        disableIncomeClientForm(false);
+                    }
+                    
+                    stage.close();
+                }catch(Exception exc){
+                incomeRadioNew.setSelected(true);
+                disableIncomeClientForm(false);
+                   }
+                validateIncomeForm();
+            }
+            
+            
+        }
+        
+        @FXML
+        private void newIncomeRecord(ActionEvent evt)
+        {
+            if(incomeRadioNewIncome.isSelected())
+            { 
+                incomeLabelAmountRecieved.setText("");
+                disableIncomeClientForm(false);
+                    disableIcomeForm(false);
+                    incomeComboService.getSelectionModel().select(null);
+                    incomeComboPType.getSelectionModel().select(null);
+                    incomeTxtAmount.setText("");
+                    incomeTxtUnit.setText("");
+                    incomeTxtDiscount.setText("");
+                    Date date = new Date();
+                       SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                        String strDate= formatter.format(date);
+                    incomeTxtDate.setValue(LOCAL_DATE(strDate));
+                    IncomeTxtDueDate.setValue(LOCAL_DATE(strDate));
+                    IncomeTxtLName.setText("");
+                    incomeTxtFName.setText("");
+                    incomeTxtPhone.setText("");
+                    incomeTxtEmail.setText("");
+                    incomeTxtUid.setText("");
+                    incomeTxtAdd.setText("");
+                    incomeTxtDob.setValue(null);
+                    incomeRadioFull.setSelected(true);
+                    incomeLabelAmountRecieved.setText("");
+                    
+                    
+            }
+        }
+        
+        @FXML 
+        private void showIncomeListPopup(ActionEvent evt){
+              if(incomeRadioBalance.isSelected()){ 
+                try{
+                    disableIncomeClientForm(true);
+                    disableIcomeForm(true);
+                Stage stage;
+                Parent root;
+                stage = new Stage();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/IncomeListForBalancePayment.fxml"));
+                IncomeBalanceList popupController = new IncomeBalanceList();
+                loader.setController(popupController);
+                root = loader.load();
+                
+                stage.setScene(new Scene(root));
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.initOwner(existingClientRadio.getScene().getWindow());
+                stage.setTitle("Select Income from the list");
+                    stage.showAndWait();
+                    if (popupController.isConfirmed()) {
+                        DisplayIncome popIncome =  popupController.getIncome();
+                        incomeComboService.getSelectionModel().select(incomeComboService.getConverter().fromString(popIncome.getServiceName()));
+                        incomeComboPType.getSelectionModel().select(popIncome.getDisplayPaymentType());
+                        incomeTxtAmount.setText(popIncome.getAmountReceivable()+"");
+                        incomeRadioPart.setSelected(true);
+                        Clients client = popIncome.getClient();
+                        incomeTxtAdd.setText(client.getAddress());
+                        incomeTxtUid.setText(client.getUId()); 
+                        parentIncomeId = popIncome.getId();
+                        if(null != client.getPersonId() ){
+                            IncomeTxtLName.setText( client.getPersonId().getLastName());
+                            incomeTxtFName.setText(client.getPersonId().getFirstName());
+                        }else 
+                        {
+                            incomeTxtFName.setText(client.getBusinessName());
+                        }
+                        incomeTxtDiscount.setPromptText("Remaining Balance");
+                        incomeTxtPhone.setText(client.getPhone());
+                        incomeTxtEmail.setText(client.getEmail());
+                         Platform.runLater(() -> {
+                            incomeClient = new ClientService().getClientById(client.getId());
+                            if(null == incomeClient.getPersonId())
+                                 incomeRadioBusiness.setSelected(true);
+                         });
+                         setIncomeAmount();
+                    }
+                    else 
+                    {
+                        incomeComboService.getSelectionModel().select(null);
+                        incomeComboPType.getSelectionModel().select(null);
+                        incomeRadioNew.setSelected(true);
+                        disableIncomeClientForm(false);
+                        disableIcomeForm(false);
+                        incomeRadioNewIncome.setSelected(true);
+                        incomeTxtDiscount.setPromptText("Discount");
+                        incomeLabelAmountRecieved.setText("");
+                    }
+                    
+                    stage.close();
+                }catch(Exception exc){
+                incomeRadioNew.setSelected(true);
+                exc.printStackTrace();
+                disableIncomeClientForm(false);
+                   }
+                validateIncomeForm();
+            }
+        }
+        
+         @FXML
+        private void showClientListExp(ActionEvent Evt){
+            if(expRadioExisting.isSelected()){ 
+>>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
                 try{
                 discount = discountString.length() > 1 ? Double.parseDouble(discountString): 0;
                 }catch(Exception exc){}
@@ -1274,6 +1820,7 @@ public class MaiinUI implements Initializable {
                     xc.printStackTrace();
                     incomeSaveBtnDisableProp.set(true);
                     }
+<<<<<<< HEAD
                 // });
 
     }
@@ -1291,6 +1838,95 @@ public class MaiinUI implements Initializable {
     {
         RadioButton src = (RadioButton)act.getSource();
         if(src == incomeRadioFull)
+=======
+                    
+                    stage.close();
+                }catch(Exception exc){
+                expRadioNew.setSelected(true);
+                disableExpForm(false);
+                   }
+                 validateExpenditureForm();
+            }
+            
+            
+        }
+        @FXML
+        private void validateCctgForm(KeyEvent evt)
+        {  
+            validateCctgForm();
+        }
+        
+        private void validateCctgForm()
+        {
+            boolean disable = cctgTextName.getText().trim().length() < 1
+                    || cctgTextDescription.getText().trim().length() < 1
+                    || cctgComboType.getSelectionModel().isEmpty();
+            cctgSaveBtnDisableProp.set(disable);
+        }
+        
+        @FXML
+        private void validateIncomeForm(KeyEvent evt)
+        {
+             Platform.runLater(() -> {
+                 
+                  setIncomeAmount();
+                   validateIncomeForm();
+             });
+           
+        }
+        
+        @FXML
+        private void validateExpenditureForm(KeyEvent evt)
+        {
+             Platform.runLater(() -> {
+                  validateExpenditureForm();
+             });
+           
+        }
+        private void validateIncomeForm(){
+            double discount =0;
+                  try{
+                     
+                    String discountString = incomeTxtDiscount.getText().trim();
+                    String lname = IncomeTxtLName.getText().trim();
+                    String fname = incomeTxtFName.getText().trim();
+                    String email = incomeTxtEmail.getText().trim();
+                    String phone = incomeTxtPhone.getText().trim();
+                    String uid = incomeTxtUid.getText().trim();
+                    
+                   // String dob = localDobDate.toString();
+
+                    try{
+                    discount = discountString.length() > 1 ? Double.parseDouble(discountString): 0;
+                    }catch(Exception exc){}
+                            boolean disable = incomeRadioPerson.isSelected() && (incomeComboService.getSelectionModel().isEmpty() ||
+                                            amountReceived < 10 || incomeComboPType.getSelectionModel().isEmpty()
+                                            || (incomeRadioFull.isSelected() && discount > amountReceived/2) || amountReceived < 1
+                                             || lname.length() < 1 || fname.length()<1 || (email.length() < 1 &&
+                                                phone.length() < 1)
+                                            || uid.length() < 1 );
+                            incomeSaveBtnDisableProp.set(disable);
+                            Clients incomeClient = new Clients();
+                            if(incomeRadioBusiness.isSelected())
+                                    {
+                                        boolean temp =  fname.length() < 1;
+                                        incomeSaveBtnDisableProp.set(disable || temp );
+                                        incomeClient.setBusinessName(fname);
+
+                                    }
+
+
+
+                    }catch(Exception xc){
+                        xc.printStackTrace();
+                        incomeSaveBtnDisableProp.set(true);
+                        }
+                    
+           
+        }
+        
+        private boolean symbolPresent(String text)
+>>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
         {
             incomeTxtAmount.setPromptText("Amount");
             incomeTxtAmount.setText("");
@@ -1299,11 +1935,33 @@ public class MaiinUI implements Initializable {
         }
         else if(src == incomeRadioPart)
         {
+<<<<<<< HEAD
             incomeTxtAmount.setPromptText("Amount Received");
             incomeTxtAmount.setText("");
             incomeTxtDiscount.setText("");
             incomeTxtDiscount.setPromptText("Balance To be paid");
             incomeLabelAmountRecieved.setText("");
+=======
+            RadioButton src = (RadioButton)act.getSource();
+            if(src == incomeRadioFull)
+            {
+//                incomeTxtAmount.setPromptText("Amount");
+//                incomeTxtAmount.setText("");
+                IncomeTxtDueDate.setDisable(true);
+                incomeTxtDiscount.setText("");
+                incomeTxtDiscount.setPromptText("Discount");
+            }
+            else if(src == incomeRadioPart)
+            {
+                IncomeTxtDueDate.setDisable(false);
+//                incomeTxtAmount.setPromptText("Amount Received");
+//                incomeTxtAmount.setText("");
+                incomeTxtDiscount.setText("");
+                incomeTxtDiscount.setPromptText("Balance To be paid");
+               // incomeLabelAmountRecieved.setText("");
+            }
+            validateIncomeForm();
+>>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
         }
         validateIncomeForm();
     }
@@ -1390,6 +2048,7 @@ public class MaiinUI implements Initializable {
                 break;
             default:;
         }
+<<<<<<< HEAD
         }catch(Exception ex){}
     }
     static double totalIncome, totalExpenditure;
@@ -1492,5 +2151,109 @@ public class MaiinUI implements Initializable {
      
     SimpleStringProperty connectionSp;
     SimpleObjectProperty connectionColorProperty;
+=======
+        static double totalIncome, totalExpenditure;
+        List<DisplayClient> clientList;
+        List<DisplayIncome> incomeList;
+        private Label infoLabel;
+        Popup popup = new Popup();
+        Region popupRegion = new Region();
+        Clients incomeClient, expenditureClient;
+        final AppModel model;
+         @FXML
+         TableView departmentListTable, projectListTable, serviceListTable, costCategoryListTable, 
+                 userListTable, clientListTable, incomeListTable, expenditureListTable;
+         @FXML
+         TabPane adminPane, settingsPane; 
+         @FXML
+         AnchorPane incomePane, expenditurePane;
+         @FXML
+         Label adminLabel, departmentCreateLabel, departmentEditLabel, departmentInfoLabel,projectCreateLabel, projectEditLabel, projectInfoLabel,
+                 serviceCreateLabel, serviceEditLabel, serviceInfoLabel,costCategoryCreateLabel, costCategoryEditLabel, costCategoryInfoLabel, 
+                 userCreateLabel, userEditLabel, userInfoLabel,businessCreateLabel, businessEditLabel, businessInfoLabel,
+                 incomeLabelAmountRecieved;
+         @FXML
+         Label incomeLabel, expenditureLabel, settingsLabel, totalLabel, totalLabel1;
+        
+         @FXML
+         Line departmentCreateLine, departmentEditLine, projectCreateLine, projectEditLine,serviceCreateLine, serviceEditLine, costCategoryCreateLine, 
+                 costCategoryEditLine,userCreateLine, userEditLine, businessCreateLine, businessEditLine;
+         @FXML
+         Circle departmentInfoBullet, projectInfoBullet, serviceInfoBullet, costCategoryInfoBullet, userInfoBullet, businessInfoBullet;
+         
+         @FXML
+         TextField dptTextName, prjTextName, srvTextName, srvTextAmount, cctgTextName, 
+                 incomeTxtAmount, incomeTxtDiscount, IncomeTxtLName, incomeTxtFName,
+                 incomeTxtPhone, incomeTxtEmail, incomeTxtUid, incomeTxtSearch, expenditureTxtSearch,
+                 expTxtAmount, expTxtLastName, expFirstName, expTxtEmail, expTxtPhone, incomeTxtUnit;
+         @FXML
+         TextArea prjTextDescription, srvTextDescription, cctgTextDescription, incomeTxtAdd, 
+                 expTxtDescription, expTxtAddress;
+          
+        private final BooleanProperty adminDisplayProp = new SimpleBooleanProperty();
+        private final BooleanProperty incomeDisplayProp = new SimpleBooleanProperty();
+        private final BooleanProperty expenditureDisplayProp = new SimpleBooleanProperty();
+        private final BooleanProperty settingsDisplayProp = new SimpleBooleanProperty();
+        private final BooleanProperty departmentCreateProp = new SimpleBooleanProperty();
+        private final BooleanProperty projectCreateProp = new SimpleBooleanProperty();
+        private final BooleanProperty serviceCreateProp = new SimpleBooleanProperty();
+        private final BooleanProperty costCategoryCreateProp = new SimpleBooleanProperty();
+        private final BooleanProperty userCreateProp = new SimpleBooleanProperty();
+        private final BooleanProperty businessCreateProp = new SimpleBooleanProperty();
+        private final BooleanProperty dptSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final BooleanProperty prjSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final BooleanProperty srvSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final BooleanProperty cctgSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final BooleanProperty incomeSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final BooleanProperty expenditureSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final StringProperty incomeTotalProp = new SimpleStringProperty();
+        private final StringProperty expendtureTotalProp = new SimpleStringProperty();
+        
+        
+        
+        
+        public static FilteredList departmentsFiltered, projectsFiltered, servicesFiltered, costCategoriesFiltered,
+                                               usersFiltered, clientsFiltered;
+        private static FilteredList<DisplayIncome> incomesFiltered;
+        private static FilteredList<DisplayExpenditure> expenditureFiltered;
+        @FXML
+        private TableColumn dptColSerial, dptColName, dptColId, prjColSerial, prjColName, prjColDepartment, prjColId,
+                            srvColSerial, srvColName, srvColProject, srvColAmount, srvColId, cctgColSerial, cctgColName,
+                            cctgColType, cctgColId, userColId, userColFirstName, userColLastName, userColEmail, userColPhone,
+                            userColRole, userColSerial, userColDepartment, clientColSerial, clientColName, clientColPhone, 
+                            clientColEmail, clientColAddress, clientColId, incomeColSerial, incomeColService, incomeColClient,
+                            incomeColAmount, incomeColDate, incomeColPaymentType, incomeColId, expColSerial,expColRecipient, 
+                            expColProject, expColCostCat, expColAmt, expColDate, expIdCol;
+        @FXML
+        private Button dptBtnSave, prjBtnSave,expBtnEnter, srvBtnSave, cctgBtnSave, incomeBtnSave, inocmePrintBtn;
+        
+        @FXML
+        private ComboBox<Departments> prjComboDepartment ;
+         @FXML
+        private ComboBox<DisplayProject> srvComboProject ;
+         @FXML
+        private ComboBox<DisplayService> incomeComboService;
+        @FXML
+        private ComboBox<CostCategories> expComboCost;
+        @FXML
+        private ComboBox<DisplayProject> expComboProject;
+        @FXML
+        private ComboBox<DisplayUser> expComboIssuer;
+         @FXML
+         private ComboBox<String> cctgComboType, incomeComboPType ;
+         @FXML 
+         private DatePicker incomeTxtDate, IncomeTxtDueDate, incomeTxtDob, incomeFromDate, 
+                 expTxtDate, incomeToDate, expFromDate, expToDate;
+         @FXML
+         private RadioButton incomeRadioNew, incomeRadioPerson, incomeRadioBusiness, 
+                 incomeRadioMale, incomeRadioFemale,  expRadioNew, expRadioBusiness , 
+                 incomeRadioNewIncome, existingClientRadio, expRadioPerson, 
+                 expRadioMale, expRadioFemale, expRadioExisting, incomeRadioFull, incomeRadioPart,
+                 incomeRadioBalance;
+         double amountReceived;
+         int parentIncomeId;
+         @FXML
+         private CheckBox adminServCheckFixed;
+>>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
         
 }

@@ -36,7 +36,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Services.findByName", query = "SELECT s FROM Services s WHERE s.name = :name"),
     @NamedQuery(name = "Services.findByDescription", query = "SELECT s FROM Services s WHERE s.description = :description"),
     @NamedQuery(name = "Services.findByAmount", query = "SELECT s FROM Services s WHERE s.amount = :amount"),
-    @NamedQuery(name = "Services.findByOnlineEntryId", query = "SELECT s FROM Services s WHERE s.onlineEntryId = :onlineEntryId")})
+    @NamedQuery(name = "Services.findByOnlineEntryId", query = "SELECT s FROM Services s WHERE s.onlineEntryId = :onlineEntryId"),
+    @NamedQuery(name = "Services.findByFixedAmount", query = "SELECT s FROM Services s WHERE s.fixedAmount = :fixedAmount")})
 public class Services implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,6 +55,9 @@ public class Services implements Serializable {
     private double amount;
     @Column(name = "OnlineEntryId")
     private Integer onlineEntryId;
+    @Basic(optional = false)
+    @Column(name = "FixedAmount")
+    private int fixedAmount;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "serviceId")
     private Collection<Incomes> incomesCollection;
     @JoinColumn(name = "ProjectId", referencedColumnName = "Id")
@@ -67,9 +71,10 @@ public class Services implements Serializable {
         this.id = id;
     }
 
-    public Services(Integer id, double amount) {
+    public Services(Integer id, double amount, int fixedAmount) {
         this.id = id;
         this.amount = amount;
+        this.fixedAmount = fixedAmount;
     }
 
     public Integer getId() {
@@ -110,6 +115,14 @@ public class Services implements Serializable {
 
     public void setOnlineEntryId(Integer onlineEntryId) {
         this.onlineEntryId = onlineEntryId;
+    }
+
+    public int getFixedAmount() {
+        return fixedAmount;
+    }
+
+    public void setFixedAmount(int fixedAmount) {
+        this.fixedAmount = fixedAmount;
     }
 
     @XmlTransient

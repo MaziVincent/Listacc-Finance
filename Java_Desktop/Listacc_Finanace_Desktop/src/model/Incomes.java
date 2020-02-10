@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Incomes.findById", query = "SELECT i FROM Incomes i WHERE i.id = :id"),
     @NamedQuery(name = "Incomes.findByType", query = "SELECT i FROM Incomes i WHERE i.type = :type"),
     @NamedQuery(name = "Incomes.findByDate", query = "SELECT i FROM Incomes i WHERE i.date = :date"),
+    @NamedQuery(name = "Incomes.findByUnit", query = "SELECT i FROM Incomes i WHERE i.unit = :unit"),
     @NamedQuery(name = "Incomes.findByAmountReceived", query = "SELECT i FROM Incomes i WHERE i.amountReceived = :amountReceived"),
     @NamedQuery(name = "Incomes.findByDiscount", query = "SELECT i FROM Incomes i WHERE i.discount = :discount"),
     @NamedQuery(name = "Incomes.findByPaymentType", query = "SELECT i FROM Incomes i WHERE i.paymentType = :paymentType"),
@@ -53,6 +54,9 @@ public class Incomes implements Serializable {
     @Basic(optional = false)
     @Column(name = "Date")
     private String date;
+    @Basic(optional = false)
+    @Column(name = "Unit")
+    private int unit;
     @Basic(optional = false)
     @Column(name = "AmountReceived")
     private double amountReceived;
@@ -77,9 +81,6 @@ public class Incomes implements Serializable {
     @JoinColumn(name = "IncomeId", referencedColumnName = "Id")
     @ManyToOne
     private Incomes incomeId;
-    @JoinColumn(name = "ProjectId", referencedColumnName = "Id")
-    @ManyToOne
-    private Projects projectId;
     @JoinColumn(name = "ServiceId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Services serviceId;
@@ -94,9 +95,10 @@ public class Incomes implements Serializable {
         this.id = id;
     }
 
-    public Incomes(Integer id, String date, double amountReceived, double discount, double amountReceivable, String dateDue) {
+    public Incomes(Integer id, String date, int unit, double amountReceived, double discount, double amountReceivable, String dateDue) {
         this.id = id;
         this.date = date;
+        this.unit = unit;
         this.amountReceived = amountReceived;
         this.discount = discount;
         this.amountReceivable = amountReceivable;
@@ -125,6 +127,14 @@ public class Incomes implements Serializable {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public int getUnit() {
+        return unit;
+    }
+
+    public void setUnit(int unit) {
+        this.unit = unit;
     }
 
     public double getAmountReceived() {
@@ -198,14 +208,6 @@ public class Incomes implements Serializable {
 
     public void setIncomeId(Incomes incomeId) {
         this.incomeId = incomeId;
-    }
-
-    public Projects getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Projects projectId) {
-        this.projectId = projectId;
     }
 
     public Services getServiceId() {

@@ -1,6 +1,6 @@
 using System;
 
-namespace ListaccFinance.Api
+namespace ListaccFinance.API
 {
     public class WeatherForecast
     {
