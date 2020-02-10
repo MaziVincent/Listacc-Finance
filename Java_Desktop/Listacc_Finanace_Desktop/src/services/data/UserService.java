@@ -6,7 +6,6 @@
 package services.data;
 
 import java.util.List;
-import model.Departments;
 import model.Users;
 import model.display.DisplayUser;
 

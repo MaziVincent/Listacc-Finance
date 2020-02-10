@@ -11,8 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityResult;
-import javax.persistence.FieldResult;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,11 +19,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import model.display.DisplayClient;
 
 /**
  *
@@ -43,8 +39,8 @@ import model.display.DisplayClient;
     @NamedQuery(name = "Clients.findByAddress", query = "SELECT c FROM Clients c WHERE c.address = :address"),
     @NamedQuery(name = "Clients.findByUId", query = "SELECT c FROM Clients c WHERE c.uId = :uId"),
     @NamedQuery(name = "Clients.findByUId2", query = "SELECT c FROM Clients c WHERE c.uId2 = :uId2"),
-    @NamedQuery(name = "Clients.findByAmountReceivable", query = "SELECT c FROM Clients c WHERE c.amountReceivable = :amountReceivable")})
-    
+    @NamedQuery(name = "Clients.findByAmountReceivable", query = "SELECT c FROM Clients c WHERE c.amountReceivable = :amountReceivable"),
+    @NamedQuery(name = "Clients.findByOnlineEntryId", query = "SELECT c FROM Clients c WHERE c.onlineEntryId = :onlineEntryId")})
 public class Clients implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -68,6 +64,8 @@ public class Clients implements Serializable {
     @Basic(optional = false)
     @Column(name = "AmountReceivable")
     private double amountReceivable;
+    @Column(name = "OnlineEntryId")
+    private Integer onlineEntryId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clientId")
     private Collection<Incomes> incomesCollection;
     @JoinColumn(name = "PersonId", referencedColumnName = "Id")
@@ -150,6 +148,14 @@ public class Clients implements Serializable {
 
     public void setAmountReceivable(double amountReceivable) {
         this.amountReceivable = amountReceivable;
+    }
+
+    public Integer getOnlineEntryId() {
+        return onlineEntryId;
+    }
+
+    public void setOnlineEntryId(Integer onlineEntryId) {
+        this.onlineEntryId = onlineEntryId;
     }
 
     @XmlTransient

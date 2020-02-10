@@ -33,7 +33,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "CostCategories.findById", query = "SELECT c FROM CostCategories c WHERE c.id = :id"),
     @NamedQuery(name = "CostCategories.findByName", query = "SELECT c FROM CostCategories c WHERE c.name = :name"),
     @NamedQuery(name = "CostCategories.findByType", query = "SELECT c FROM CostCategories c WHERE c.type = :type"),
-    @NamedQuery(name = "CostCategories.findByDescription", query = "SELECT c FROM CostCategories c WHERE c.description = :description")})
+    @NamedQuery(name = "CostCategories.findByDescription", query = "SELECT c FROM CostCategories c WHERE c.description = :description"),
+    @NamedQuery(name = "CostCategories.findByOnlineEntryId", query = "SELECT c FROM CostCategories c WHERE c.onlineEntryId = :onlineEntryId")})
 public class CostCategories implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,6 +49,8 @@ public class CostCategories implements Serializable {
     private String type;
     @Column(name = "Description")
     private String description;
+    @Column(name = "OnlineEntryId")
+    private Integer onlineEntryId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "costCategoryId")
     private Collection<Expenditures> expendituresCollection;
 
@@ -88,6 +91,14 @@ public class CostCategories implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getOnlineEntryId() {
+        return onlineEntryId;
+    }
+
+    public void setOnlineEntryId(Integer onlineEntryId) {
+        this.onlineEntryId = onlineEntryId;
     }
 
     @XmlTransient

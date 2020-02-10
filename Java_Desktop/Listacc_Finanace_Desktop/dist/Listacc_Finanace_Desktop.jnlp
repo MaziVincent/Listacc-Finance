@@ -8,10 +8,13 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Listacc_Finanace_Desktop.jar" size="6783432" download="eager" />
+    <jar href="Listacc_Finanace_Desktop.jar" size="7071097" download="eager" />
+    <jar href="lib\android-util-2.5.1.jar" size="48307" download="eager" />
     <jar href="lib\eclipselink-2.5.2.jar" size="8632395" download="eager" />
+    <jar href="lib\gson-2.8.5.jar" size="241622" download="eager" />
     <jar href="lib\javax.persistence-2.1.0.jar" size="162126" download="eager" />
     <jar href="lib\javax.persistence.jar" size="129793" download="eager" />
+    <jar href="lib\jfx-asynctask-1.0.1.jar" size="2884" download="eager" />
     <jar href="lib\sqlite-jdbc-3.30.1.jar" size="6096861" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Listacc_Finanace_Desktop" >

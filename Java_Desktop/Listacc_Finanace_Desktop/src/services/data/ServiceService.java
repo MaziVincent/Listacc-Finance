@@ -7,7 +7,6 @@ package services.data;
 
 import java.util.List;
 import javax.persistence.NoResultException;
-import model.Departments;
 import model.Projects;
 import model.Services;
 import model.display.DisplayService;
@@ -20,14 +19,14 @@ public class ServiceService extends DataService{
     
     public List<DisplayService> getAllServices()
     {
-         return em.createQuery("SELECT new model.display.DisplayService(a.id, a.name, a.description, a.amount, a.projectId.name, a.projectId.id)FROM Services a").getResultList();
+        return em.createQuery("SELECT new model.display.DisplayService(a.id, a.name, a.description, a.amount, a.projectId.name, a.projectId.id)FROM Services a").getResultList();
     }
     
-     public boolean serviceNameExists(String name)
+    public boolean serviceNameExists(String name)
     {
         
         List<Services> department = (List<Services>) em.createQuery("SELECT q FROM Services q  where upper(q.name)=:name")
-    .setParameter("name",name.toUpperCase()).getResultList();
+            .setParameter("name",name.toUpperCase()).getResultList();
         
         return department.size() > 0;
     }
@@ -38,26 +37,33 @@ public class ServiceService extends DataService{
             em.persist(service);
             em.getTransaction().commit();
             em.close();
+            
+            // insert chage
+            new ChangeService().insertCreateChange(service);
         
             return true;
         }catch(Exception exc){
             return false;
         }
     }
-     public boolean createService( String name, double amount,String description, int projectId ){
-         try{
-             Services service = new Services(0,amount);
-                service.setDescription(description);
-                service.setName(name);
+     
+    public boolean createService( String name, double amount,String description, int projectId ){
+        try{
+            Services service = new Services(0,amount);
+            service.setDescription(description);
+            service.setName(name);
+            
             Projects project = (Projects) em.createNamedQuery("Projects.findById")
             .setParameter("id", projectId).getSingleResult();
             service.setProjectId(project);
-           return createService(service);
+            
+            return createService(service);
         }catch(NoResultException ex){
             return false;
         }catch(Exception exc){
             exc.printStackTrace();
         }
-      return  false;   
+        
+        return  false;   
      }
 }

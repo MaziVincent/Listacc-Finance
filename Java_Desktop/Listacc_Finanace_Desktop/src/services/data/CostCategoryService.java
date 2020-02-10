@@ -16,16 +16,16 @@ import model.Projects;
  */
 public class CostCategoryService extends DataService {
     
-     public List<CostCategories> getAllCostCategories()
+    public List<CostCategories> getAllCostCategories()
     {
-         return em.createQuery("SELECT a FROM CostCategories a", CostCategories.class).getResultList();
+        return em.createQuery("SELECT a FROM CostCategories a", CostCategories.class).getResultList();
     }
      
     public boolean costCategoryNameExists(String name)
     {
         
         List<CostCategories> ccategory = (List<CostCategories>) em.createQuery("SELECT q FROM CostCategories q  where upper(q.name)=:name")
-    .setParameter("name",name.toUpperCase()).getResultList();
+            .setParameter("name",name.toUpperCase()).getResultList();
         
         return ccategory.size() > 0;
     }
@@ -37,18 +37,23 @@ public class CostCategoryService extends DataService {
             em.getTransaction().commit();
             em.close();
         
+            // insert chage
+            new ChangeService().insertCreateChange(costCategories);
+            
+            // return
             return true;
         }catch(Exception exc){
             return false;
         }
     }
-     public boolean createCategories( String name, String description, String type ){
-         try{
-             CostCategories costcat = new CostCategories();
-                costcat.setDescription(description);
-                costcat.setName(name);
-                costcat.setType(type);
-                return createCostCategory(costcat);
+    
+    public boolean createCategories( String name, String description, String type ){
+        try{
+            CostCategories costcat = new CostCategories();
+            costcat.setDescription(description);
+            costcat.setName(name);
+            costcat.setType(type);
+            return createCostCategory(costcat);
            
         }catch(NoResultException ex){
             return false;

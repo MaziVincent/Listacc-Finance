@@ -34,7 +34,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Persons.findByFirstName", query = "SELECT p FROM Persons p WHERE p.firstName = :firstName"),
     @NamedQuery(name = "Persons.findByLastName", query = "SELECT p FROM Persons p WHERE p.lastName = :lastName"),
     @NamedQuery(name = "Persons.findByGender", query = "SELECT p FROM Persons p WHERE p.gender = :gender"),
-    @NamedQuery(name = "Persons.findByDateOfBirth", query = "SELECT p FROM Persons p WHERE p.dateOfBirth = :dateOfBirth")})
+    @NamedQuery(name = "Persons.findByDateOfBirth", query = "SELECT p FROM Persons p WHERE p.dateOfBirth = :dateOfBirth"),
+    @NamedQuery(name = "Persons.findByOnlineEntryId", query = "SELECT p FROM Persons p WHERE p.onlineEntryId = :onlineEntryId")})
 public class Persons implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,6 +52,8 @@ public class Persons implements Serializable {
     private String gender;
     @Column(name = "DateOfBirth")
     private String dateOfBirth;
+    @Column(name = "OnlineEntryId")
+    private Integer onlineEntryId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personId")
     private Collection<Users> usersCollection;
     @OneToMany(mappedBy = "personId")
@@ -101,6 +104,14 @@ public class Persons implements Serializable {
 
     public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public Integer getOnlineEntryId() {
+        return onlineEntryId;
+    }
+
+    public void setOnlineEntryId(Integer onlineEntryId) {
+        this.onlineEntryId = onlineEntryId;
     }
 
     @XmlTransient

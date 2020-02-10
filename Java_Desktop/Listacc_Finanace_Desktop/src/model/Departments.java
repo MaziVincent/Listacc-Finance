@@ -31,7 +31,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Departments.findAll", query = "SELECT d FROM Departments d"),
     @NamedQuery(name = "Departments.findById", query = "SELECT d FROM Departments d WHERE d.id = :id"),
-    @NamedQuery(name = "Departments.findByName", query = "SELECT d FROM Departments d WHERE d.name = :name")})
+    @NamedQuery(name = "Departments.findByName", query = "SELECT d FROM Departments d WHERE d.name = :name"),
+    @NamedQuery(name = "Departments.findByOnlineEntryId", query = "SELECT d FROM Departments d WHERE d.onlineEntryId = :onlineEntryId")})
 public class Departments implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -43,6 +44,8 @@ public class Departments implements Serializable {
     @Basic(optional = false)
     @Column(name = "Name")
     private String name;
+    @Column(name = "OnlineEntryId")
+    private Integer onlineEntryId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "departmentId")
     private Collection<Projects> projectsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "departmentId")
@@ -59,6 +62,12 @@ public class Departments implements Serializable {
         this.id = id;
         this.name = name;
     }
+    
+    public Departments(Integer id, String name, Integer onlineEntryId) {
+        this.id = id;
+        this.name = name;
+        this.onlineEntryId = onlineEntryId;
+    }
 
     public Integer getId() {
         return id;
@@ -74,6 +83,14 @@ public class Departments implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getOnlineEntryId() {
+        return onlineEntryId;
+    }
+
+    public void setOnlineEntryId(Integer onlineEntryId) {
+        this.onlineEntryId = onlineEntryId;
     }
 
     @XmlTransient
