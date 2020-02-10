@@ -62,6 +62,11 @@ public class Changes implements Serializable {
     @JoinColumn(name = "UserId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Users userId;
+    /*@JoinColumn(name = "UserId", referencedColumnName = "Id", insertable = false, updatable = false)
+    @ManyToOne
+    private Users user;
+    @Column(name = "UserId")
+    private Integer userId;*/
 
     public Changes() {
     }
@@ -76,6 +81,18 @@ public class Changes implements Serializable {
         this.timeStamp = timeStamp;
         this.pushed = pushed;
         this.onlineEntryId = onlineEntryId;
+    }
+    
+    public Changes(String table, int entryId) {
+        this.table = table;
+        this.entryId = entryId;
+        this.pushed = 0;
+    }
+    
+    public Changes(String table, int entryId, String change) {
+        this.table = table;
+        this.entryId = entryId;
+        this.changes = change;
     }
 
     public Integer getId() {
@@ -141,6 +158,22 @@ public class Changes implements Serializable {
     public void setUserId(Users userId) {
         this.userId = userId;
     }
+    
+    /*public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }*/
 
     @Override
     public int hashCode() {

@@ -48,9 +48,11 @@ public class IncomeBalanceList implements Initializable{
      private void searchIncome(KeyEvent evt){
             String search = incomeTxtSearch.getText().toLowerCase().trim();
             incomesFiltered.setPredicate(p -> 
-                    (p.getAmountReceived()+"").toLowerCase().contains(search.trim()) ||
-        p.getClientName().toLowerCase().contains(search.trim()) ||
-        (p.getAmountReceivable()+"").contains(search.trim()) );
+        (p.getAmountReceived()+"").toLowerCase().contains(search.trim()) ||
+         p.getClientName().toLowerCase().contains(search.trim()) ||
+            (p.getAmountReceivable()+"").contains(search.trim()) ||
+             p.getServiceName().contains(search.trim())
+                             );
         incomeTablePop.setItems(incomesFiltered); 
         }
     public IncomeBalanceList() {

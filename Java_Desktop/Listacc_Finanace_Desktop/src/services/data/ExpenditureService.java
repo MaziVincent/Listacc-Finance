@@ -37,37 +37,46 @@ public class ExpenditureService extends DataService {
                 Persons person = ds.getPerson();
                 if(null != person)  
                 {
-                 em.getTransaction().begin();
+                    em.getTransaction().begin();
                     em.persist(person);
                     em.getTransaction().commit();
+                    
+                    // insert chage
+                    new ChangeService().insertCreateChange(person);
                 }
                 client = ds.getClient();
                 client.setPersonId(person);
                 em.getTransaction().begin();
-                    em.persist(client);
-                    em.getTransaction().commit();
+                em.persist(client);
+                em.getTransaction().commit();
+                
+                // insert chage
+                new ChangeService().insertCreateChange(client);
             }else
             {
-               client = (Clients) em.createNamedQuery("Clients.findById")
-                        .setParameter("id", ds.getClientId()).getSingleResult();
+                client = (Clients) em.createNamedQuery("Clients.findById")
+                    .setParameter("id", ds.getClientId()).getSingleResult();
             }
             exp.setClientId(client);
             exp.setIssuerId(user);
             exp.setCostCategoryId(ccat);
             exp.setProjectId(projectId);
             em.getTransaction().begin();
-                    em.persist(exp);
-                    em.getTransaction().commit();
+            em.persist(exp);
+            em.getTransaction().commit();
+            
+            // insert chage
+            new ChangeService().insertCreateChange(exp);
+            
+            // return
             return true;
         }catch(Exception ex){ex.printStackTrace();}
         return false;
     }
-    
-    
-        
-        public List<DisplayExpenditure> getAllExpenditures()
-        {
-             return em.createQuery("SELECT new model.display.DisplayExpenditure(a.costCategoryId.id,a.projectId.id,a.issuerId.id,a.clientId.businessName, a.projectId.name, a.costCategoryId.name, a.clientId.id,a.amount, a.date)FROM Expenditures a ORDER BY a.id desc").getResultList();
-        }
+       
+    public List<DisplayExpenditure> getAllExpenditures()
+    {
+        return em.createQuery("SELECT new model.display.DisplayExpenditure(a.costCategoryId.id,a.projectId.id,a.issuerId.id,a.clientId.businessName, a.projectId.name, a.costCategoryId.name, a.clientId.id,a.amount, a.date)FROM Expenditures a ORDER BY a.id desc").getResultList();
     }
+}
     

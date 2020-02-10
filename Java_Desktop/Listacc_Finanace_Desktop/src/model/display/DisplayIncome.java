@@ -158,11 +158,12 @@ public class DisplayIncome extends Incomes{
     public DisplayIncome(String serviceName, String clientName, Integer clientId,   Integer id, String date,Integer unit, Double amountReceived, Double discount, String paymentType, Double amountReceivable, String dateDue, Integer count) {
         super(id, date,unit, amountReceived, discount, amountReceivable, dateDue);
         this.serviceName = serviceName;
-        this.paymentCounts = count;
+        this.paymentCounts = count + 1;
+        
         
         this.displayPaymentType = paymentType;
         if (null == clientName || clientName.isEmpty())
-        {
+        { 
             Clients clien = new ClientService().getClientById(clientId);
             this.setClientId(clien);
             if(null != clien.getPersonId())
