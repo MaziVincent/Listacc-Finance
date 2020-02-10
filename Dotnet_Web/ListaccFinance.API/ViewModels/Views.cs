@@ -14,6 +14,21 @@ namespace ListaccFinance.API.ViewModels
         public string ClientMacAddress { get; set; }
         [Required]
         public string ClientType { get; set; }
+
+        [Required]
+        public string Password {get; set;}
+
+        [Required]
+        public string UserName {get; set;}
+    }
+
+    public class UserLogin 
+    {
+        [Required]
+        public string Password { get; set; }
+
+        [Required]
+        public string UserName { get; set; }
     }
 
     public class RegisterModel
@@ -26,6 +41,8 @@ namespace ListaccFinance.API.ViewModels
 
         public string Phone { get; set; }
         public string Address { get; set; }
+
+        public string UserName {get; set;}
         public string Password { get; set; }
 
         public string Department {get; set;}
@@ -43,4 +60,6 @@ namespace ListaccFinance.API.ViewModels
         [Required]
         public string ClientType { get; set; }
     }
+
+
 }

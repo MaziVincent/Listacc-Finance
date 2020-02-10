@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ListaccFinance.API.Interfaces;
 using ListaccFinance.API.ViewModels;
+using ListaccFinance.API.Data.Model;
 
 namespace ListaccFinance.API.Controllers
 {
@@ -35,26 +36,55 @@ namespace ListaccFinance.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var i = await _context.DesktopClients.Where(x => mod.ClientName.CompareTo(x.ClientName) == 0 
-                                                        && mod.ClientMacAddress.CompareTo(x.ClientMacAddress) == 0 
-                                                        && mod.ClientType.CompareTo(x.ClientType) == 0).FirstOrDefaultAsync();
+ 
+            
+            var u = await _context.Users.Where
+                                        (x=> x.UserName.ToUpper().CompareTo(mod.UserName.ToUpper()) == 0 && 
+                                        x.Password.CompareTo(mod.Password) == 0).FirstOrDefaultAsync();
 
-            if (i == null)
+
+            var d = await _context.DesktopClients.Where(x => mod.ClientName.ToUpper().CompareTo(x.ClientName.ToUpper()) == 0
+                                             && mod.ClientMacAddress.ToUpper().CompareTo(x.ClientMacAddress.ToUpper()) == 0
+                                             && mod.ClientType.ToUpper().CompareTo(x.ClientType.ToUpper()) == 0).FirstOrDefaultAsync();
+
+
+            if (u == null)
             {
                 //Redirect("api/controller/register");
-                return BadRequest(new {message = "Your username and password is incorrect"});
-                
+                return Unauthorized(new { message = "Your login imput is incorrect" });
+
             }
 
-             var token =  await _tokGen.GenerateToken(i);
+
+            if (d == null)
+            {
+                var dc = new DesktopCreateModel()
+                {
+                    ClientMacAddress = mod.ClientMacAddress,
+                    ClientName = mod.ClientName,
+                    ClientType = mod.ClientType,
+                };
+                await _dService.CreateDesktopClientAsync(dc);
+            }
+
+
+
+             var token =  await _tokGen.GenerateToken(d);
 
              return Ok(token);
 
         }
 
+
         [HttpPost("CreateDesktopClient")]
         public async Task<IActionResult> CreateDesktop(DesktopCreateModel m)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
             var response = await _dService.CreateDesktopClientAsync(m);
             return Ok(response);
         }
