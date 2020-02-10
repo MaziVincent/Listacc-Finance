@@ -7,5 +7,7 @@ namespace ListaccFinance.API.Interfaces
     public interface IUserService
     {
         Task<string> CreateUserAsync(RegisterModel reg);
+        Task<string> CreateUserAsync(RegisterModel reg, int userId);
+        bool IsUserExist(UserLogin u);
     }
 }

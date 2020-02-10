@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Interfaces;
+using ListaccFinance.API.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -26,7 +27,7 @@ namespace ListaccFinance.API.Services
 
 
             var tokenClaims = new List<Claim>{};
-            tokenClaims.Add(new Claim("id", i.Id.ToString()));
+            tokenClaims.Add(new Claim("Desktopid", i.Id.ToString()));
             tokenClaims.Add(new Claim("name", i.ClientName));
             tokenClaims.Add(new Claim("type", i.ClientType));
             tokenClaims.Add(new Claim("macAddr", i.ClientMacAddress));
@@ -40,7 +41,7 @@ namespace ListaccFinance.API.Services
             {
                 Subject = new ClaimsIdentity(tokenClaims),
                 SigningCredentials = credentials,
-                Expires = DateTime.Now.AddMonths(3),
+                Expires = DateTime.Now.AddMonths(1),
             };
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -48,6 +49,33 @@ namespace ListaccFinance.API.Services
             var tokenString = tokenHandler.WriteToken(token);
 
             
+            return tokenString;
+        }
+
+        public async Task<string> GenerateToken(UserLogin u, int ID)
+        {
+            var tokenClaims = new List<Claim> { };
+            tokenClaims.Add(new Claim("UserID", ID.ToString()));
+            tokenClaims.Add(new Claim(ClaimTypes.NameIdentifier, u.UserName));
+            tokenClaims.Add(new Claim("password", u.Password));
+
+            var keyByte = Encoding.UTF8.GetBytes(_config.GetSection("LoginSettings:Key").Value);
+
+            var key = new SymmetricSecurityKey(keyByte);
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(tokenClaims),
+                SigningCredentials = credentials,
+                Expires = DateTime.Now.AddDays(3),
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+
             return tokenString;
         }
     }    
