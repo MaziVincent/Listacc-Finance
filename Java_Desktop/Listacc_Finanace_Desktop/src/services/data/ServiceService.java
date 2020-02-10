@@ -20,7 +20,7 @@ public class ServiceService extends DataService{
     
     public List<DisplayService> getAllServices()
     {
-         return em.createQuery("SELECT new model.display.DisplayService(a.id, a.name, a.description, a.amount, a.projectId.name, a.projectId.id)FROM Services a").getResultList();
+         return em.createQuery("SELECT new model.display.DisplayService(a.id, a.name, a.description, a.amount, a.projectId.name, a.projectId.id, a.fixedAmount)FROM Services a").getResultList();
     }
     
      public boolean serviceNameExists(String name)
@@ -44,9 +44,9 @@ public class ServiceService extends DataService{
             return false;
         }
     }
-     public boolean createService( String name, double amount,String description, int projectId ){
+     public boolean createService( String name, double amount,String description, int projectId, boolean fixedAmount ){
          try{
-             Services service = new Services(0,amount);
+             Services service = new Services(0,amount, fixedAmount?1:0);
                 service.setDescription(description);
                 service.setName(name);
             Projects project = (Projects) em.createNamedQuery("Projects.findById")

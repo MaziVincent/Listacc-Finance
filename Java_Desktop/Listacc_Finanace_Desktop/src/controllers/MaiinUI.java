@@ -9,9 +9,12 @@ package controllers;
 import com.sun.deploy.util.SessionState.Client;
 import helpers.CostCatStringConverter;
 import helpers.DeptStringConverter;
+import helpers.DoubleValuChangeListener;
+import helpers.FocusChangeListener;
 import helpers.NumberChangeListener;
 import helpers.PrjStringConverter;
 import helpers.SrvStringConverter;
+import helpers.UnitNumberChangeListener;
 import helpers.UserStringConverter;
 import javafx.event.ActionEvent;
 import java.net.URL;
@@ -44,6 +47,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -77,6 +81,7 @@ import model.Departments;
 import model.Incomes;
 import model.Persons;
 import model.Projects;
+import model.Services;
 import model.Users;
 import model.display.DisplayClient;
 import model.display.DisplayExpenditure;
@@ -255,12 +260,14 @@ public class MaiinUI implements Initializable {
         }
         
         private void initializeNumberFields(){
-            incomeTxtAmount.textProperty().addListener(new NumberChangeListener(incomeTxtAmount));
-            incomeTxtDiscount.textProperty().addListener(new NumberChangeListener(incomeTxtDiscount));
+            incomeTxtAmount.textProperty().addListener(new DoubleValuChangeListener(incomeTxtAmount));
+            incomeTxtDiscount.textProperty().addListener(new DoubleValuChangeListener(incomeTxtDiscount));
             srvTextAmount.textProperty().addListener(new NumberChangeListener(srvTextAmount));
             incomeTxtPhone.textProperty().addListener(new NumberChangeListener(incomeTxtPhone));
             expTxtPhone.textProperty().addListener(new NumberChangeListener(expTxtPhone));
             expTxtAmount.textProperty().addListener(new NumberChangeListener(expTxtAmount));
+            incomeTxtUnit.textProperty().addListener(new UnitNumberChangeListener(incomeTxtUnit));
+            incomeTxtUnit.focusedProperty().addListener(new FocusChangeListener(incomeTxtUnit));
         }
         private void refreshExpenditureView(boolean filter){
             Platform.runLater(() -> {
@@ -299,7 +306,7 @@ public class MaiinUI implements Initializable {
                         }
             
        
-            List<DisplayIncome> incomeList = new IncomeService().getAllIncomes();
+            incomeList = new IncomeService().getAllIncomes();
             ObservableList<DisplayIncome> serviceData
             = FXCollections.observableArrayList(incomeList);
                        incomesFiltered =  filterDateforIncomeView(serviceData);
@@ -319,6 +326,7 @@ public class MaiinUI implements Initializable {
                         incomeTxtDob.setValue(null);
                         incomeTxtAdd.setText("");
                         incomeTxtUid.setText("");
+                        amountReceived =0;
                         try{
                 incomeListTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
                 if (newSelection != null ) {
@@ -609,14 +617,15 @@ public class MaiinUI implements Initializable {
                 if(srvService.createService(servName,
                         amount,
                         srvTextDescription.getText().trim(),
-                        srvComboProject.getSelectionModel().getSelectedItem().getId()))
+                        srvComboProject.getSelectionModel().getSelectedItem().getId()
+                        ,adminServCheckFixed.isSelected() ))
                     {
                     info("Service created successfully ");
                     refreshServiceView();
                     srvTextName.setText("");
                     srvTextAmount.setText("");
                     srvTextDescription.setText("");
-
+                    adminServCheckFixed.setSelected(false);
                 }
            }catch(Exception exc)
            {
@@ -691,23 +700,42 @@ public class MaiinUI implements Initializable {
         @FXML 
         private void setIncomeAmount(ActionEvent event){
             try{
-             double amount  = incomeComboService.getSelectionModel().getSelectedItem().getAmount();
-             incomeTxtAmount.setText( amount+"" );
-             
+            incomeTxtUnit.setText("1");
+            try{
+                Services service = incomeComboService.getSelectionModel().getSelectedItem();
+                if(null != service)
+                {
+                    //if(incomeRadioNewIncome.isSelected())
+                    incomeTxtAmount.setText(service.getAmount()+"");
+                    if(incomeRadioNewIncome.isSelected())
+                    incomeTxtAmount.setDisable((service.getFixedAmount() == 1));
+                    
+                }
+            }catch(Exception e){}
             setIncomeAmount();
             }catch(Exception exc){}
         }
         
         private void setIncomeAmount(){
             
+           
             double discount = 0;
-            try{ 
-                discount = Double.parseDouble(incomeTxtDiscount.getText().trim());
-            }catch(Exception exc){}
-            NumberFormat formatter = new DecimalFormat("#,###.00"); 
-            double amount = Double.parseDouble(incomeTxtAmount.getText()); 
-            amountReceived = amount - discount;
-            if(!incomeRadioPart.isSelected())
+            double amount  = 0;
+            int unit = 1;
+             NumberFormat formatter = new DecimalFormat("#,###.00"); 
+            try{
+                amount  = Double.parseDouble(incomeTxtAmount.getText().trim());
+                
+            }catch(Exception e){}
+            try{
+                 unit = Integer.parseInt(incomeTxtUnit.getText().trim());
+            }catch(Exception e){}
+            try{
+                 discount = Double.parseDouble(incomeTxtDiscount.getText().trim());
+                 
+            }catch(Exception e){}            
+            amountReceived = amount*unit - discount;
+           // if(!incomeRadioPart.isSelected())
             incomeLabelAmountRecieved.setText("NGN "+ formatter.format(amountReceived));
         }
         @FXML
@@ -716,7 +744,7 @@ public class MaiinUI implements Initializable {
                   try{
                       
             LocalDate localDate = incomeTxtDate.getValue();
-                Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
+                
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.DATE, localDate.getDayOfMonth());
                 calendar.set(Calendar.MONTH, localDate.getMonthValue()-1);
@@ -729,9 +757,6 @@ public class MaiinUI implements Initializable {
              LocalDate localDueDate = IncomeTxtDueDate.getValue();
             String dueDate = localDueDate.toString();
                       Persons incomePerson = new Persons();
-                     
-                      
-                        double amount = Double.parseDouble(incomeTxtAmount.getText());
                       
                          String fname = incomeTxtFName.getText().trim(); 
                         
@@ -746,21 +771,20 @@ public class MaiinUI implements Initializable {
                         String phone = incomeTxtPhone.getText().trim();
                         String uid = incomeTxtUid.getText().trim();
                         //incomeClient.setPersonId(incomePerson);
-                        String add = incomeTxtAdd.getText().trim();
+                        String add = incomeTxtAdd.getText();
                          if(null == incomeClient)
                          {
                             incomeClient = new Clients();
                             incomeClient.setUId(uid);
-                            incomeClient.setAddress(add.trim().length() >= 1 ? add : null );
+                            incomeClient.setAddress(null == add?null:add.trim() );
                             incomeClient.setPhone(phone);
                             incomeClient.setEmail(email);
+                            incomeClient.setId(0);
                             incomeClient.setBusinessName(incomeRadioBusiness.isSelected() ? fname : null);
                          }
                         income.setPerson(incomeRadioPerson.isSelected()? incomePerson : null);
                        income.setClient(incomeClient);
-                       income.setAmountReceived(amount);
-                     
-                       
+                       income.setAmountReceived(amountReceived);                   
                        income.setDate(""+calendar.getTimeInMillis());
                        income.setDateDue(dueDate);
                        income.setType(incomeRadioNewIncome.isSelected() ?"New" :"Balance");
@@ -784,14 +808,15 @@ public class MaiinUI implements Initializable {
                         discount =  Double.parseDouble(incomeTxtDiscount.getText().trim());
                         income.setAmountReceivable(discount);
                              
-                }else
+                         }else
                         {income.setDiscount(discount);
-                            if(discount >= amount)
+                            if(discount >= amountReceived)
                              {
                                  error("Can not have a discount higher than the amount received ");
                              }
                         }
-                        
+                    if(incomeRadioBalance.isSelected())
+                        income.setParentIncomeId(parentIncomeId);
                     }catch(Exception exc)
                     {
                         error("Enter");
@@ -804,6 +829,7 @@ public class MaiinUI implements Initializable {
             {
                 info("Income entered successfully");
                 incomeClient = null;
+                
                 refreshIncomeView(false);
             }
         }
@@ -819,6 +845,7 @@ public class MaiinUI implements Initializable {
              IncomeTxtLName.setText("");
              incomeTxtFName.setText("");
              incomeTxtDob.setValue(null);
+             
             disableIncomeClientForm(false);
              
         }
@@ -847,8 +874,11 @@ public class MaiinUI implements Initializable {
              incomeTxtFName.setDisable(disable);
              incomeTxtDob.setDisable(disable);
              incomeTxtAdd.setDisable(disable);
+             incomeRadioNew.setDisable(disable);
+             existingClientRadio.setDisable(disable);
              incomeRadioBusiness.setDisable(disable);
              incomeRadioPerson.setDisable(disable);
+             
         }
         
          @FXML 
@@ -1045,6 +1075,17 @@ public class MaiinUI implements Initializable {
                         ex.printStackTrace();
                     }
         }
+        
+        private void disableIcomeForm(boolean disable){
+            incomeComboService.setDisable(disable);
+            incomeComboPType.setDisable(disable);
+            IncomeTxtDueDate.setDisable(disable);
+            incomeTxtUnit.setDisable(disable);
+            incomeTxtAmount.setDisable(disable);
+            incomeRadioFull.setDisable(disable);
+            incomeRadioPart.setDisable(disable);
+        }
+                
         @FXML
         private void filterIncomeTable(ActionEvent evt){
             refreshIncomeView(true);
@@ -1086,7 +1127,7 @@ public class MaiinUI implements Initializable {
                             if(null == incomeClient.getPersonId())
                                  incomeRadioBusiness.setSelected(true);
                          });
-                         
+                         validateIncomeForm();
                     }
                     else 
                     {
@@ -1103,6 +1144,106 @@ public class MaiinUI implements Initializable {
             }
             
             
+        }
+        
+        @FXML
+        private void newIncomeRecord(ActionEvent evt)
+        {
+            if(incomeRadioNewIncome.isSelected())
+            { 
+                incomeLabelAmountRecieved.setText("");
+                disableIncomeClientForm(false);
+                    disableIcomeForm(false);
+                    incomeComboService.getSelectionModel().select(null);
+                    incomeComboPType.getSelectionModel().select(null);
+                    incomeTxtAmount.setText("");
+                    incomeTxtUnit.setText("");
+                    incomeTxtDiscount.setText("");
+                    Date date = new Date();
+                       SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                        String strDate= formatter.format(date);
+                    incomeTxtDate.setValue(LOCAL_DATE(strDate));
+                    IncomeTxtDueDate.setValue(LOCAL_DATE(strDate));
+                    IncomeTxtLName.setText("");
+                    incomeTxtFName.setText("");
+                    incomeTxtPhone.setText("");
+                    incomeTxtEmail.setText("");
+                    incomeTxtUid.setText("");
+                    incomeTxtAdd.setText("");
+                    incomeTxtDob.setValue(null);
+                    incomeRadioFull.setSelected(true);
+                    incomeLabelAmountRecieved.setText("");
+                    
+                    
+            }
+        }
+        
+        @FXML 
+        private void showIncomeListPopup(ActionEvent evt){
+              if(incomeRadioBalance.isSelected()){ 
+                try{
+                    disableIncomeClientForm(true);
+                    disableIcomeForm(true);
+                Stage stage;
+                Parent root;
+                stage = new Stage();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/IncomeListForBalancePayment.fxml"));
+                IncomeBalanceList popupController = new IncomeBalanceList();
+                loader.setController(popupController);
+                root = loader.load();
+                
+                stage.setScene(new Scene(root));
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.initOwner(existingClientRadio.getScene().getWindow());
+                stage.setTitle("Select Income from the list");
+                    stage.showAndWait();
+                    if (popupController.isConfirmed()) {
+                        DisplayIncome popIncome =  popupController.getIncome();
+                        incomeComboService.getSelectionModel().select(incomeComboService.getConverter().fromString(popIncome.getServiceName()));
+                        incomeComboPType.getSelectionModel().select(popIncome.getDisplayPaymentType());
+                        incomeTxtAmount.setText(popIncome.getAmountReceivable()+"");
+                        incomeRadioPart.setSelected(true);
+                        Clients client = popIncome.getClient();
+                        incomeTxtAdd.setText(client.getAddress());
+                        incomeTxtUid.setText(client.getUId()); 
+                        parentIncomeId = popIncome.getId();
+                        if(null != client.getPersonId() ){
+                            IncomeTxtLName.setText( client.getPersonId().getLastName());
+                            incomeTxtFName.setText(client.getPersonId().getFirstName());
+                        }else 
+                        {
+                            incomeTxtFName.setText(client.getBusinessName());
+                        }
+                        incomeTxtDiscount.setPromptText("Remaining Balance");
+                        incomeTxtPhone.setText(client.getPhone());
+                        incomeTxtEmail.setText(client.getEmail());
+                         Platform.runLater(() -> {
+                            incomeClient = new ClientService().getClientById(client.getId());
+                            if(null == incomeClient.getPersonId())
+                                 incomeRadioBusiness.setSelected(true);
+                         });
+                         setIncomeAmount();
+                    }
+                    else 
+                    {
+                        incomeComboService.getSelectionModel().select(null);
+                        incomeComboPType.getSelectionModel().select(null);
+                        incomeRadioNew.setSelected(true);
+                        disableIncomeClientForm(false);
+                        disableIcomeForm(false);
+                        incomeRadioNewIncome.setSelected(true);
+                        incomeTxtDiscount.setPromptText("Discount");
+                        incomeLabelAmountRecieved.setText("");
+                    }
+                    
+                    stage.close();
+                }catch(Exception exc){
+                incomeRadioNew.setSelected(true);
+                exc.printStackTrace();
+                disableIncomeClientForm(false);
+                   }
+                validateIncomeForm();
+            }
         }
         
          @FXML
@@ -1173,8 +1314,9 @@ public class MaiinUI implements Initializable {
         private void validateIncomeForm(KeyEvent evt)
         {
              Platform.runLater(() -> {
-                  validateIncomeForm();
+                 
                   setIncomeAmount();
+                   validateIncomeForm();
              });
            
         }
@@ -1188,11 +1330,9 @@ public class MaiinUI implements Initializable {
            
         }
         private void validateIncomeForm(){
-            
-            
+            double discount =0;
                   try{
-                    double amount = Double.parseDouble(incomeTxtAmount.getText().trim());
-                    double discount = 0;
+                     
                     String discountString = incomeTxtDiscount.getText().trim();
                     String lname = IncomeTxtLName.getText().trim();
                     String fname = incomeTxtFName.getText().trim();
@@ -1206,8 +1346,8 @@ public class MaiinUI implements Initializable {
                     discount = discountString.length() > 1 ? Double.parseDouble(discountString): 0;
                     }catch(Exception exc){}
                             boolean disable = incomeRadioPerson.isSelected() && (incomeComboService.getSelectionModel().isEmpty() ||
-                                            amount < 10 || incomeComboPType.getSelectionModel().isEmpty()
-                                            || discount > amount/2
+                                            amountReceived < 10 || incomeComboPType.getSelectionModel().isEmpty()
+                                            || (incomeRadioFull.isSelected() && discount > amountReceived/2) || amountReceived < 1
                                              || lname.length() < 1 || fname.length()<1 || (email.length() < 1 &&
                                                 phone.length() < 1)
                                             || uid.length() < 1 );
@@ -1227,7 +1367,7 @@ public class MaiinUI implements Initializable {
                         xc.printStackTrace();
                         incomeSaveBtnDisableProp.set(true);
                         }
-                    // });
+                    
            
         }
         
@@ -1245,18 +1385,20 @@ public class MaiinUI implements Initializable {
             RadioButton src = (RadioButton)act.getSource();
             if(src == incomeRadioFull)
             {
-                incomeTxtAmount.setPromptText("Amount");
-                incomeTxtAmount.setText("");
+//                incomeTxtAmount.setPromptText("Amount");
+//                incomeTxtAmount.setText("");
+                IncomeTxtDueDate.setDisable(true);
                 incomeTxtDiscount.setText("");
                 incomeTxtDiscount.setPromptText("Discount");
             }
             else if(src == incomeRadioPart)
             {
-                incomeTxtAmount.setPromptText("Amount Received");
-                incomeTxtAmount.setText("");
+                IncomeTxtDueDate.setDisable(false);
+//                incomeTxtAmount.setPromptText("Amount Received");
+//                incomeTxtAmount.setText("");
                 incomeTxtDiscount.setText("");
                 incomeTxtDiscount.setPromptText("Balance To be paid");
-                incomeLabelAmountRecieved.setText("");
+               // incomeLabelAmountRecieved.setText("");
             }
             validateIncomeForm();
         }
@@ -1347,6 +1489,7 @@ public class MaiinUI implements Initializable {
         }
         static double totalIncome, totalExpenditure;
         List<DisplayClient> clientList;
+        List<DisplayIncome> incomeList;
         private Label infoLabel;
         Popup popup = new Popup();
         Region popupRegion = new Region();
@@ -1377,7 +1520,7 @@ public class MaiinUI implements Initializable {
          TextField dptTextName, prjTextName, srvTextName, srvTextAmount, cctgTextName, 
                  incomeTxtAmount, incomeTxtDiscount, IncomeTxtLName, incomeTxtFName,
                  incomeTxtPhone, incomeTxtEmail, incomeTxtUid, incomeTxtSearch, expenditureTxtSearch,
-                 expTxtAmount, expTxtLastName, expFirstName, expTxtEmail, expTxtPhone;
+                 expTxtAmount, expTxtLastName, expFirstName, expTxtEmail, expTxtPhone, incomeTxtUnit;
          @FXML
          TextArea prjTextDescription, srvTextDescription, cctgTextDescription, incomeTxtAdd, 
                  expTxtDescription, expTxtAddress;
@@ -1440,8 +1583,11 @@ public class MaiinUI implements Initializable {
          private RadioButton incomeRadioNew, incomeRadioPerson, incomeRadioBusiness, 
                  incomeRadioMale, incomeRadioFemale,  expRadioNew, expRadioBusiness , 
                  incomeRadioNewIncome, existingClientRadio, expRadioPerson, 
-                 expRadioMale, expRadioFemale, expRadioExisting, incomeRadioFull, incomeRadioPart;
+                 expRadioMale, expRadioFemale, expRadioExisting, incomeRadioFull, incomeRadioPart,
+                 incomeRadioBalance;
          double amountReceived;
-        
+         int parentIncomeId;
+         @FXML
+         private CheckBox adminServCheckFixed;
         
 }

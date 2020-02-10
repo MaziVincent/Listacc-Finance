@@ -32,12 +32,14 @@ public class DisplayService extends Services {
         super(id);
     }
 
-    public DisplayService(Integer id, String name, String description, double amount, String projectName, int projectId ) {
-        super(id, amount);
-        setDescription(description);
-        setName(name);
-        setProjectsId(projectId);
-        setProjectName(projectName);
+    public DisplayService(Integer id, String name, String description, double amount, String projectName, int projectId, int fixedAmount ) {
+        super(id, amount, fixedAmount);
+        this.setDescription(description);
+        this.setName(name);
+        this.setProjectsId(projectId);
+        this.setProjectName(projectName);
+        
+        
     }
 
     public String getProjectName() {

@@ -26,7 +26,24 @@ public class DisplayIncome extends Incomes{
     Clients  client;
     String displayPaymentType;
     String dateString;
+    int paymentCounts;
+    int parentIncomeId;
 
+    public int getParentIncomeId() {
+        return parentIncomeId;
+    }
+
+    public void setParentIncomeId(int parentIncomeId) {
+        this.parentIncomeId = parentIncomeId;
+    }
+
+    public int getPaymentCounts() {
+        return paymentCounts;
+    }
+
+    public void setPaymentCounts(int paymentCounts) {
+        this.paymentCounts = paymentCounts;
+    }
     public String getDateString() {
         String date =   getDate();
         long dateLong = Long.parseLong(date);
@@ -50,7 +67,7 @@ public class DisplayIncome extends Incomes{
     }
 
     public Clients getClient() {
-        return client;
+        return  client == null? super.getClientId(): client;
     }
 
     public void setClient(Clients client) {
@@ -58,7 +75,7 @@ public class DisplayIncome extends Incomes{
     }
 
     public Persons getPerson() {
-        return person;
+        return this.person;
     }
 
     public void setPerson(Persons person) {
@@ -119,14 +136,35 @@ public class DisplayIncome extends Incomes{
     public void setClientNumId(int clientNumId) {
         this.clientNumId = clientNumId;
     }
-    public DisplayIncome(String serviceName, String clientName, int clientId,   Integer id, String date, double amountReceived, double discount, String paymentType, double amountReceivable, String dateDue) {
-        super(id, date, amountReceived, discount, amountReceivable, dateDue);
+    public DisplayIncome(String serviceName, String clientName, int clientId,   Integer id, String date,int unit, double amountReceived, double discount, String paymentType, double amountReceivable, String dateDue) {
+        super(id, date,unit, amountReceived, discount, amountReceivable, dateDue);
         this.serviceName = serviceName;
         this.displayPaymentType = paymentType;
         if (null == clientName || clientName.isEmpty())
         {
             Clients clien = new ClientService().getClientById(clientId);
-            setClientId(clien);
+                this.client = clien;
+            if(null != clien.getPersonId())
+             this.clientName = clien.getPersonId().getLastName() + " " + clien.getPersonId().getFirstName();
+            else 
+                this.clientName = clien.getBusinessName();
+           this.clientNumId = clien.getId();
+        }
+        else 
+            this.clientName = clientName;
+            
+    }
+    
+    public DisplayIncome(String serviceName, String clientName, Integer clientId,   Integer id, String date,Integer unit, Double amountReceived, Double discount, String paymentType, Double amountReceivable, String dateDue, Integer count) {
+        super(id, date,unit, amountReceived, discount, amountReceivable, dateDue);
+        this.serviceName = serviceName;
+        this.paymentCounts = count;
+        
+        this.displayPaymentType = paymentType;
+        if (null == clientName || clientName.isEmpty())
+        {
+            Clients clien = new ClientService().getClientById(clientId);
+            this.setClientId(clien);
             if(null != clien.getPersonId())
              this.clientName = clien.getPersonId().getLastName() + " " + clien.getPersonId().getFirstName();
             else 

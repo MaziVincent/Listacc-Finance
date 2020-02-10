@@ -51,8 +51,6 @@ public class Projects implements Serializable {
     private String description;
     @Column(name = "OnlineEntryId")
     private Integer onlineEntryId;
-    @OneToMany(mappedBy = "projectId")
-    private Collection<Incomes> incomesCollection;
     @JoinColumn(name = "DepartmentId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Departments departmentId;
@@ -103,15 +101,6 @@ public class Projects implements Serializable {
 
     public void setOnlineEntryId(Integer onlineEntryId) {
         this.onlineEntryId = onlineEntryId;
-    }
-
-    @XmlTransient
-    public Collection<Incomes> getIncomesCollection() {
-        return incomesCollection;
-    }
-
-    public void setIncomesCollection(Collection<Incomes> incomesCollection) {
-        this.incomesCollection = incomesCollection;
     }
 
     public Departments getDepartmentId() {
