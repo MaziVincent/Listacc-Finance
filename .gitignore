@@ -3,6 +3,10 @@ bin
 obj
 build/
 **/build
+ build/
+ dist/
+ nbproject/
+  build-impl.xml
 dist
 .DS_Store
 # See http://help.github.com/ignore-files/ for more about ignoring files.

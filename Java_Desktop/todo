@@ -1,0 +1,34 @@
+1. add all changes to the changes table (NOT TESTED)
+	- get currently logged in user (PENDING)
+	
+2. check for when connection is up or down (NOT TESTED)
+	
+3. go through changes table and extract unpushed data (NOT TESTED)
+	- send extracted data to web app (NOT TESTED)
+		- show that sync operation is in progress (PENDING)
+		
+4. mark change as pushed (NOT TESTED)
+
+5. set online entry id for newly created entries (NOT TESTED)
+
+set time of last synchronization (when it began, not when it finished)
+login (email, password, pc info - mac address, name)
+ - mac address -> NetworkInterface.getHardwareAddress, 
+ - pc name -> InetAddress.getLocalHost().getHostName()
+
+
+----- DATA HIERARCHY ------
+Departments (Id, Name, OnlineEntryId)
+Persons
+
+Users
+Clients
+Projects
+
+Cost Categories
+Expenditures
+Services
+
+Incomes (depends Income)
+
+Changes (Id, Table, EntryId, Changes, TimeStamp, Pushed, OnlineEntryId, UserId)
