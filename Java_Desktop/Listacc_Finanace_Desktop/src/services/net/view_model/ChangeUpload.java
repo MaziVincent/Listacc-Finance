@@ -6,7 +6,6 @@
 package services.net.view_model;
 
 import java.util.List;
-import model.Departments;
 
 /**
  *

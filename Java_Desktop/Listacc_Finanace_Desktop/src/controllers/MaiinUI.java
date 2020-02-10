@@ -83,12 +83,9 @@ import model.Clients;
 import model.CostCategories;
 import model.Departments;
 import model.Persons;
-<<<<<<< HEAD
-=======
 import model.Projects;
 import model.Services;
 import model.Users;
->>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
 import model.display.DisplayClient;
 import model.display.DisplayExpenditure;
 import model.display.DisplayIncome;
@@ -156,23 +153,9 @@ public class MaiinUI implements Initializable {
             });
         }, 0, 10, TimeUnit.SECONDS);
         
-<<<<<<< HEAD
         // run synchronization download operation
         /*ScheduledExecutorService synDownExec = Executors.newSingleThreadScheduledExecutor();
         synDownExec.scheduleAtFixedRate(() -> {
-=======
-        private void initializeNumberFields(){
-            incomeTxtAmount.textProperty().addListener(new DoubleValuChangeListener(incomeTxtAmount));
-            incomeTxtDiscount.textProperty().addListener(new DoubleValuChangeListener(incomeTxtDiscount));
-            srvTextAmount.textProperty().addListener(new NumberChangeListener(srvTextAmount));
-            incomeTxtPhone.textProperty().addListener(new NumberChangeListener(incomeTxtPhone));
-            expTxtPhone.textProperty().addListener(new NumberChangeListener(expTxtPhone));
-            expTxtAmount.textProperty().addListener(new NumberChangeListener(expTxtAmount));
-            incomeTxtUnit.textProperty().addListener(new UnitNumberChangeListener(incomeTxtUnit));
-            incomeTxtUnit.focusedProperty().addListener(new FocusChangeListener(incomeTxtUnit));
-        }
-        private void refreshExpenditureView(boolean filter){
->>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
             Platform.runLater(() -> {
                 SynchronizationDownloadService conn = new SynchronizationDownloadService(activitySp);
                 conn.execute();
@@ -333,20 +316,20 @@ public class MaiinUI implements Initializable {
         expTxtPhone.textProperty().addListener(new NumberChangeListener(expTxtPhone));
         expTxtAmount.textProperty().addListener(new NumberChangeListener(expTxtAmount));
     }
+    
     private void refreshExpenditureView(boolean filter){
         Platform.runLater(() -> {
                 Date date = new Date();
                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
                     String strDate= formatter.format(date);
                     expTxtDate.setValue(LOCAL_DATE(strDate));
-                   expTxtAmount.setText("");
+                    expTxtAmount.setText("");
                     expTxtDescription.setText("");
                     expRadioNew.setSelected(true);
                     expRadioPerson.setSelected(true);
                     newExpenditureClient();
                     expenditureSaveBtnDisableProp.set(true);
-            if(!filter)
-<<<<<<< HEAD
+                    if(!filter)
                     {
                         expFromDate.setValue(LOCAL_DATE(strDate));
                         expToDate.setValue(LOCAL_DATE(strDate));
@@ -358,6 +341,7 @@ public class MaiinUI implements Initializable {
                    expenditureListTable.setItems(expenditureFiltered);
         });
     }
+    
     private void refreshIncomeView(boolean filter)
     {
         Platform.runLater(() -> {
@@ -749,12 +733,11 @@ public class MaiinUI implements Initializable {
        {
            error("Name should be created without any symbol");
            return;
-<<<<<<< HEAD
        }
        if(prjService.projectNameExists(prjName))
        {
-       error("Project name already exists");
-       return;
+            error("Project name already exists");
+            return;
        }
        if(prjService.createProject(prjName, prjTextDescription.getText().trim(),
 
@@ -776,7 +759,30 @@ public class MaiinUI implements Initializable {
        if(deptName.length() < 2)
        {
            error("Name should be at least 2 characters");
-=======
+           return;
+       }
+       if(symbolPresent(deptName) )
+       {
+           error("Name should be created without any symbol");
+           return;
+       }
+       if(ccService.costCategoryNameExists(deptName))
+       {
+       error("Cost Category name already exists");
+       return;
+       }
+       if(ccService.createCategories(deptName, cctgTextDescription.getText().trim(),
+               cctgComboType.getSelectionModel().getSelectedItem()))
+       {
+           info("Cost Category created successfully ");
+           refreshCostCategoryView();
+           cctgTextName.setText("");
+           cctgTextDescription.setText("");     
+       }
+       else{
+           error("Could not create Department");
+       }
+/*=======
            }
            try{
                
@@ -804,53 +810,9 @@ public class MaiinUI implements Initializable {
            }catch(Exception exc)
            {
                exc.printStackTrace();
-           }
-        }
-        
-        @FXML
-        private void saveProject(ActionEvent event)
-        {
-            ProjectService prjService = new ProjectService();
-           String prjName = prjTextName.getText().trim();
-           if(prjName.length() < 2)
-           {
-               error("Name should be at least 2 characters");
-               return;
-           }
-           if(symbolPresent(prjName) )
-           {
-               error("Name should be created without any symbol");
-               return;
-           }
-           if(prjService.projectNameExists(prjName))
-           {
-           error("Project name already exists");
->>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
-           return;
-       }
-       if(symbolPresent(deptName) )
-       {
-           error("Name should be created without any symbol");
-           return;
-<<<<<<< HEAD
-       }
-       if(ccService.costCategoryNameExists(deptName))
-       {
-       error("Cost Category name already exists");
-       return;
-       }
-       if(ccService.createCategories(deptName, cctgTextDescription.getText().trim(),
-               cctgComboType.getSelectionModel().getSelectedItem()))
-       {
-           info("Cost Category created successfully ");
-           refreshCostCategoryView();
-           cctgTextName.setText("");
-           cctgTextDescription.setText("");     
-       }
-       else{
-           error("Could not create Department");
-       }
+           }*/
     }
+
     @FXML 
     private void setIncomeAmount(ActionEvent event){
         try{
@@ -873,6 +835,7 @@ public class MaiinUI implements Initializable {
         if(!incomeRadioPart.isSelected())
         incomeLabelAmountRecieved.setText("NGN "+ formatter.format(amountReceived));
     }
+    
     @FXML
     private void saveIncome(ActionEvent event){
         DisplayIncome income = new DisplayIncome();

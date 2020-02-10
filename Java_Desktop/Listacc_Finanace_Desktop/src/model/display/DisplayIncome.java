@@ -8,7 +8,6 @@ package model.display;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 import model.Clients;
 import model.Incomes;
 import model.Persons;

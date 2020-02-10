@@ -19,11 +19,7 @@ public class ServiceService extends DataService{
     
     public List<DisplayService> getAllServices()
     {
-<<<<<<< HEAD
-        return em.createQuery("SELECT new model.display.DisplayService(a.id, a.name, a.description, a.amount, a.projectId.name, a.projectId.id)FROM Services a").getResultList();
-=======
-         return em.createQuery("SELECT new model.display.DisplayService(a.id, a.name, a.description, a.amount, a.projectId.name, a.projectId.id, a.fixedAmount)FROM Services a").getResultList();
->>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
+        return em.createQuery("SELECT new model.display.DisplayService(a.id, a.name, a.description, a.amount, a.projectId.name, a.projectId.id, a.fixedAmount)FROM Services a").getResultList();
     }
     
     public boolean serviceNameExists(String name)
@@ -50,21 +46,13 @@ public class ServiceService extends DataService{
             return false;
         }
     }
-<<<<<<< HEAD
-     
-    public boolean createService( String name, double amount,String description, int projectId ){
+
+    public boolean createService( String name, double amount,String description, int projectId, boolean fixedAmount ){
         try{
-            Services service = new Services(0,amount);
+            Services service = new Services(0,amount, fixedAmount?1:0);
             service.setDescription(description);
             service.setName(name);
             
-=======
-     public boolean createService( String name, double amount,String description, int projectId, boolean fixedAmount ){
-         try{
-             Services service = new Services(0,amount, fixedAmount?1:0);
-                service.setDescription(description);
-                service.setName(name);
->>>>>>> 23a1292ba37f3f716adde80a08c8e5ed6b57e078
             Projects project = (Projects) em.createNamedQuery("Projects.findById")
             .setParameter("id", projectId).getSingleResult();
             service.setProjectId(project);
