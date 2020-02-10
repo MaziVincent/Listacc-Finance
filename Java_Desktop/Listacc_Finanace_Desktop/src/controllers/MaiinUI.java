@@ -29,6 +29,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
@@ -36,6 +39,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -97,6 +101,8 @@ import services.data.IncomeService;
 import services.data.ProjectService;
 import services.data.ServiceService;
 import services.data.UserService;
+import services.net.ConnectionService;
+import services.net.SynchronizationUploadService;
 
 /**
  *
@@ -106,6 +112,8 @@ public class MaiinUI implements Initializable {
     
       
         public MaiinUI(AppModel model){
+            this.connectionSp =  new SimpleStringProperty();
+            this.connectionColorProperty = new SimpleObjectProperty<>();
             this.model = model;
         }
         
@@ -118,12 +126,49 @@ public class MaiinUI implements Initializable {
             settingsPane.visibleProperty().bind(settingsDisplayProp);
             totalLabel.textProperty().bind(incomeTotalProp);
             totalLabel1.textProperty().bind(expendtureTotalProp);
+            connectionStatus.textProperty().bind(connectionSp);
+            connectionStatus.textFillProperty().bind(connectionColorProperty);
             initializeAdminComponents();
             initializeButtonEnableProp();
             populateTables();
             InitializePopup();
             initializeNumberFields();
+            initializeNetworkActivities();  
         }
+    
+	private void initializeNetworkActivities(){
+            // set initial connection values
+            //connectionColorProperty.set(Color.TOMATO);
+            //connectionSp.set("Not Connected");
+
+            //check connection status
+            ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+            exec.scheduleAtFixedRate(() -> {
+                Platform.runLater(() -> {
+                    ConnectionService conn = new ConnectionService(connectionColorProperty);
+                    conn.execute(connectionSp);
+                });
+            }, 0, 10, TimeUnit.SECONDS);
+
+            // run synchronization download operation
+            /*ScheduledExecutorService synDownExec = Executors.newSingleThreadScheduledExecutor();
+            synDownExec.scheduleAtFixedRate(() -> {
+                Platform.runLater(() -> {
+                    SynchronizationDownloadService conn = new SynchronizationDownloadService(activitySp);
+                    conn.execute();
+                });
+            }, 0, 5, TimeUnit.MINUTES);*/
+        
+            // run synchronization upload operation
+            ScheduledExecutorService synUpExec = Executors.newSingleThreadScheduledExecutor();
+            synUpExec.scheduleAtFixedRate(() -> {
+                Platform.runLater(() -> {
+                    SynchronizationUploadService conn = new SynchronizationUploadService(null); //activitySp
+                    conn.execute();
+                });
+            }, 0, 60, TimeUnit.SECONDS);
+        }
+        
         private void initializeButtonEnableProp()
         {
             dptBtnSave.disableProperty().bind(dptSaveBtnDisableProp);
@@ -147,6 +192,7 @@ public class MaiinUI implements Initializable {
             expComboCost.valueProperty().addListener((obs, oldval, newval) -> {validateExpenditureForm();});
             
         }
+        
         private void populateTables()
         {
              Platform.runLater(() -> {refreshDepartmentTable();});
@@ -1508,7 +1554,7 @@ public class MaiinUI implements Initializable {
                  userCreateLabel, userEditLabel, userInfoLabel,businessCreateLabel, businessEditLabel, businessInfoLabel,
                  incomeLabelAmountRecieved;
          @FXML
-         Label incomeLabel, expenditureLabel, settingsLabel, totalLabel, totalLabel1;
+         Label incomeLabel, expenditureLabel, settingsLabel, totalLabel, totalLabel1, connectionStatus;
         
          @FXML
          Line departmentCreateLine, departmentEditLine, projectCreateLine, projectEditLine,serviceCreateLine, serviceEditLine, costCategoryCreateLine, 
@@ -1525,6 +1571,8 @@ public class MaiinUI implements Initializable {
          TextArea prjTextDescription, srvTextDescription, cctgTextDescription, incomeTxtAdd, 
                  expTxtDescription, expTxtAddress;
           
+        SimpleStringProperty connectionSp;
+        SimpleObjectProperty connectionColorProperty;
         private final BooleanProperty adminDisplayProp = new SimpleBooleanProperty();
         private final BooleanProperty incomeDisplayProp = new SimpleBooleanProperty();
         private final BooleanProperty expenditureDisplayProp = new SimpleBooleanProperty();
