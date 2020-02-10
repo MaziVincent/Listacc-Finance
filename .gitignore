@@ -1,6 +1,7 @@
 .vscode
 bin
 obj
+build/
 **/build
 dist
 .DS_Store
