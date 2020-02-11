@@ -5,6 +5,7 @@
  */
 package listacc_finanace_desktop;
 
+import controllers.Login;
 import controllers.MaiinUI;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -36,12 +37,11 @@ public class Listacc_Finanace_Desktop extends Application {
             }
         });
         try{
-        FXMLLoader firstLoader = new FXMLLoader(getClass().getResource("/fxml/MainUI.fxml"));
-                                 Users user = new UserService().getUserById(1);
-                                final AppModel model = new AppModel(primaryStage, user) ;
-                               firstLoader.setController(new MaiinUI(model));
+        FXMLLoader firstLoader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
+                               final AppModel model = new AppModel(primaryStage) ;
+                               firstLoader.setController(new Login(model));
                                Parent root = firstLoader.load();
-                               Scene scene = new Scene(root, 1366, 768);
+                               Scene scene = new Scene(root, 612, 396);
                                primaryStage.setTitle("Listacc");
                                primaryStage.setScene(scene);
                                primaryStage.show();

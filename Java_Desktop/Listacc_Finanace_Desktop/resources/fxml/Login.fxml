@@ -7,14 +7,15 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="396.0" prefWidth="612.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TextField layoutX="191.0" layoutY="96.0" prefHeight="39.0" prefWidth="284.0" promptText="Email / Username " />
-      <PasswordField layoutX="191.0" layoutY="180.0" prefHeight="48.0" prefWidth="284.0" promptText="Password" />
-      <Button layoutX="381.0" layoutY="270.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="97.0" text="Sign In" />
-      <Label layoutX="501.0" layoutY="6.0" text="Connection Status" />
+      <TextField fx:id="txtUsername" layoutX="191.0" layoutY="96.0" prefHeight="39.0" prefWidth="284.0" promptText="Email / Username " />
+      <PasswordField fx:id="txtPassword" layoutX="191.0" layoutY="180.0" prefHeight="39.0" prefWidth="284.0" promptText="Password" />
+      <Button fx:id="btnSignin" layoutX="381.0" layoutY="270.0" mnemonicParsing="false" onAction="#signIn" prefHeight="31.0" prefWidth="97.0" text="Sign In" />
+      <Label fx:id="lblConnectionStatus" layoutX="501.0" layoutY="6.0" text="Connection Status" />
       <Label layoutX="208.0" layoutY="39.0" prefHeight="31.0" prefWidth="250.0" text="Listacc Finance Login" textFill="#7dabc3">
          <font>
             <Font name="Book Antiqua" size="24.0" />
          </font>
       </Label>
+      <Label fx:id="lblLoginStatus" layoutX="191.0" layoutY="227.0" prefHeight="25.0" prefWidth="284.0" />
    </children>
 </AnchorPane>
