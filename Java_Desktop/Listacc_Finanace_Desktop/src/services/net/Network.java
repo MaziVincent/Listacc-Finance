@@ -35,9 +35,9 @@ import services.net.view_model.Login;
  */
 public class Network {
     
-    public final static String hostUrl = "http://localhost:49659/"; // 192.168.43.135:49659
+    public final static String hostUrl = "http://localhost:5000/"; // 192.168.43.135:49659
     public static String authUrl = hostUrl + "api/accountwebapi";
-    public static String baseUrl = hostUrl + "api/desktopappwebapi";
+    public static String baseUrl = hostUrl + "api/sync";
     public static String token = "";
     public static Login login ;
     public static boolean isConnected = false;
