@@ -38,6 +38,7 @@ namespace ListaccFinance.API
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDesktopService, DesktopService>();
+            //services.AddScoped(typeof(ISyncService<>),typeof(SyncService<>));
             //DBContext
             services.AddDbContext<DataContext>(con => con.UseSqlite(
                 Configuration.GetConnectionString("DefaultConnection")));

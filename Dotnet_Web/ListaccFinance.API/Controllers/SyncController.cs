@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using ListaccFinance.API.Interfaces;
 using ListaccFinance.API.ViewModels;
 using ListaccFinance.API.Data.Model;
+using System;
+using ListaccFinance.API.Services;
 
 namespace ListaccFinance.API.Controllers
 {
@@ -20,6 +22,7 @@ namespace ListaccFinance.API.Controllers
         private readonly ITokenGenerator _tokGen;
 
         private readonly IDesktopService _dService;
+        //private readonly ISyncService<> _sservice;
 
         public SyncController(DataContext context, ITokenGenerator tokGen, IDesktopService dService) 
         {
@@ -36,11 +39,16 @@ namespace ListaccFinance.API.Controllers
                 return BadRequest(ModelState);
             }
 
- 
-            
-            var u = await _context.Users.Where
-                                        (x=> x.UserName.ToUpper().CompareTo(mod.UserName.ToUpper()) == 0 && 
-                                        x.Password.CompareTo(mod.Password) == 0).FirstOrDefaultAsync();
+
+            // Password Hash
+            var pmessage = mod.Password;
+            var currentUser = _context.Users.Where(x => x.Email.ToUpper().CompareTo(mod.EmailAddress.ToUpper()) == 0).FirstOrDefault();
+            var PasswordHash = Hash.Create(pmessage, currentUser.salt);
+
+
+            /*var u = await _context.Users.Where
+                                        (x=> x.Email.ToUpper().CompareTo(mod.EmailAddress.ToUpper()) == 0 &&
+                                       x.PasswordHash.CompareTo(PasswordHash) == 0).FirstOrDefaultAsync();*/
 
 
             var d = await _context.DesktopClients.Where(x => mod.ClientName.ToUpper().CompareTo(x.ClientName.ToUpper()) == 0
@@ -48,7 +56,7 @@ namespace ListaccFinance.API.Controllers
                                              && mod.ClientType.ToUpper().CompareTo(x.ClientType.ToUpper()) == 0).FirstOrDefaultAsync();
 
 
-            if (u == null)
+            if (currentUser == null || PasswordHash.CompareTo(currentUser.PasswordHash) != 0)
             {
                 //Redirect("api/controller/register");
                 return Unauthorized(new { message = "Your login imput is incorrect" });
@@ -70,6 +78,7 @@ namespace ListaccFinance.API.Controllers
 
 
              var token =  await _tokGen.GenerateToken(d);
+
 
              return Ok(token);
 
@@ -102,8 +111,11 @@ namespace ListaccFinance.API.Controllers
             return Ok();
         }
 
-        public async Task<IActionResult> DownloadData()
+
+        [HttpPost("Upload")]
+        public async Task<IActionResult> DownloadData(DataDownload data)
         {
+            string MacAddress = this.User.Claims.First(i => i.Type == "macAddr").Value;
             return Ok();
         }
 

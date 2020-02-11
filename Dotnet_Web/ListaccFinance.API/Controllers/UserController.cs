@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Interfaces;
+using ListaccFinance.API.Services;
 using ListaccFinance.API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,22 +37,36 @@ namespace ListaccFinance.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Password Hash Comparison
+            var pmessage = u.Password;
+            var currentUser = _context.Users.Where(x => x.Email.ToUpper().CompareTo(u.EmailAddress.ToUpper()) == 0).FirstOrDefault();
 
-            var thisUser = _context.Users.
-                Where(x => x.UserName.CompareTo(u.UserName) == 0 &&
-                 x.Password.CompareTo(u.Password) == 0).FirstOrDefault();
-
-            int myID = thisUser.Id;
-
-            if (thisUser is null)
+            if (currentUser is null)
             {
-                return Unauthorized(new {message = "Not authorized"});
+                return Unauthorized(new { message = "Not authorized" });
+            }
+
+            else
+            {
+                var PasswordHash = Hash.Create(pmessage, currentUser.salt);
+                //var isCorrect = Hash.Validate(pmessage, salt, PasswordHash);
+
+                if (currentUser.PasswordHash.CompareTo(PasswordHash) == 0)
+                {
+                    int myID = currentUser.Id;
+
+                    var message = await _generator.GenerateToken(u, myID);
+                    return Ok(message);
+                }
+                return BadRequest("Wrong password");
             }
 
 
+            /*var thisUser = _context.Users.
+                Where(x => x.Email.CompareTo(u.EmailAddress) == 0 &&
+                 x.PasswordHash.CompareTo(PasswordHash) == 0).FirstOrDefault();*/
 
-            var message = await _generator.GenerateToken(u, myID);
-            return Ok(message);
+
         }
 
 
@@ -67,9 +82,9 @@ namespace ListaccFinance.API.Controllers
             var aUser = new UserLogin
             {
                 Password = me.Password,
-                UserName = me.UserName,
+                EmailAddress = me.Emailaddress,
             };
-            if (!_uService.IsUserExist(aUser))
+            if (!_uService.IsUserExist())
             {
 
                 var resp = await _uService.CreateUserAsync(me);
@@ -93,12 +108,18 @@ namespace ListaccFinance.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            if (_uService.IsUserExist())
+            {
+                string userIdString = this.User.Claims.First(i => i.Type == "UserID").Value;
+                int userId = int.Parse(userIdString);
+                var u = new User();
+                var resp = await _uService.CreateUserAsync(me, userId);
+                return Ok("successful");
+            }
             
-            string userIdString = this.User.Claims.First(i => i.Type == "UserID").Value;
-            int userId = int.Parse(userIdString);
-            var u = new User();
-            var resp = await _uService.CreateUserAsync(me, userId);
-            return Ok("successful");
+            return Redirect("http://localhost:5000/api/user/firstcreateuser");
+
         }
 
         

@@ -56,7 +56,7 @@ namespace ListaccFinance.API.Services
         {
             var tokenClaims = new List<Claim> { };
             tokenClaims.Add(new Claim("UserID", ID.ToString()));
-            tokenClaims.Add(new Claim(ClaimTypes.NameIdentifier, u.UserName));
+            tokenClaims.Add(new Claim("email", u.EmailAddress));
             tokenClaims.Add(new Claim("password", u.Password));
 
             var keyByte = Encoding.UTF8.GetBytes(_config.GetSection("LoginSettings:Key").Value);
