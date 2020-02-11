@@ -14,7 +14,7 @@ import javafx.stage.Stage;
  */
 public class AppModel {
     final Stage stage;
-    final Users user;
+    Users user;
 
     public Users getUser() {
         return user;
@@ -27,5 +27,10 @@ public class AppModel {
     public Stage getStage(){
         return stage;
     }
+
+    public AppModel(Stage stage) {
+        this.stage = stage;
+    }
+    
     
 }
