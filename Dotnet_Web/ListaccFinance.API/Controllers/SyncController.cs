@@ -91,7 +91,8 @@ namespace ListaccFinance.API.Controllers
 
 
         // This method pings the server at intervals
-        public async Task<IActionResult> PingServer()
+        [HttpGet("PingServer")]
+        public IActionResult PingServer()
         {
             return Ok();
         }
