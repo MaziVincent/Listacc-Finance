@@ -79,14 +79,8 @@ namespace ListaccFinance.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var aUser = new UserLogin
-            {
-                Password = me.Password,
-                EmailAddress = me.Emailaddress,
-            };
             if (!_uService.IsUserExist())
             {
-
                 var resp = await _uService.CreateUserAsync(me);
                 return Ok("successful");
             }
@@ -109,7 +103,7 @@ namespace ListaccFinance.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (_uService.IsUserExist())
+            if (!_uService.IsThisUserExist(me.Emailaddress))
             {
                 string userIdString = this.User.Claims.First(i => i.Type == "UserID").Value;
                 int userId = int.Parse(userIdString);
@@ -117,8 +111,10 @@ namespace ListaccFinance.API.Controllers
                 var resp = await _uService.CreateUserAsync(me, userId);
                 return Ok("successful");
             }
-            
-            return Redirect("http://localhost:5000/api/user/firstcreateuser");
+
+            return BadRequest(new {message = " User already exists"});
+
+            //return RedirectToAction(string actionName, string controllerName, object routeValues);
 
         }
 

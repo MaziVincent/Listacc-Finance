@@ -156,6 +156,18 @@ namespace ListaccFinance.API.Services
 
             return true; */
         }
+    
+        public bool IsThisUserExist(string UserEmail)
+        {
+            var thisU = _context.Users.Where(x => x.Email.CompareTo(UserEmail) == 0).FirstOrDefault();
+
+            if (thisU is null)
+            {
+                return false;
+            }
+            
+            return true;
+        }
     }
 
 }

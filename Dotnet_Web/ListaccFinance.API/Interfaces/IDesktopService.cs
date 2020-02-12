@@ -1,10 +1,11 @@
 using System.Threading.Tasks;
+using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.ViewModels;
 
 namespace ListaccFinance.API.Interfaces
 {
     public interface IDesktopService
     {
-        Task<string> CreateDesktopClientAsync(DesktopCreateModel d);
+        Task<DesktopClient> CreateDesktopClientAsync(DesktopCreateModel d);
     }
 }

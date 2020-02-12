@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +7,9 @@ using ListaccFinance.API.Interfaces;
 
 namespace ListaccFinance.API.Services
 {
-    public class SyncService
+
+    public class SyncService : ISyncService
+    //<T>: ISyncService<T> where T : class
     {
         
         private readonly DataContext _context;
@@ -18,17 +19,120 @@ namespace ListaccFinance.API.Services
             _context = context;
         }
 
-        /*public async Task<List<T>> DownloadData(string MacAddress, DateTime lastUpdate)
+        /*public async Task<List<T>> Download<T>(List<Change> ch) where T :  class
         {
-            var did =_context.DesktopClients.Where((x) => x.ClientMacAddress.CompareTo(MacAddress) == 0).FirstOrDefault().Id;
+            var toDownload = _context.Set<T>().
+        } */
 
+        public async Task<List<Department>> DownloadDept(List<Change> ch)
+        {
+            var toDownload = new List<Department>{};
+            foreach (var item in ch)
+            {
+                var td = _context.Departments.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                toDownload.Add(td);
+            }
+
+            return toDownload;
+        }
+
+        public async Task<List<Person>> DownloadPerson (List<Change> ch)
+        {
+            var toDownload = new List<Person> { };
+            foreach (var item in ch)
+            {
+                var td = _context.Persons.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                toDownload.Add(td);
+            }
+
+            return toDownload;
             
-            List<Change> ch = _context.Changes
-                                .Where(i => i.OnlineTimeStamp.CompareTo(lastUpdate) <= 0)
-                                .Except(_context.Changes.Where(((x) => x.DesktopClientId != did)))
-                                .ToList();
-                                
+        }
 
-        }*/
+        public async Task<List<User>> DownloadUser(List<Change> ch)
+        {
+            var toDownload = new List<User> { };
+            foreach (var item in ch)
+            {
+                var td = _context.Users.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                toDownload.Add(td);
+            }
+
+            return toDownload;
+        }
+
+        public async Task<List<Client>> DownloadClient (List<Change> ch)
+        {
+            var toDownload = new List<Client> { };
+            foreach (var item in ch)
+            {
+                var td = _context.Clients.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                toDownload.Add(td);
+            }
+
+            return toDownload;
+        }
+
+        public async Task<List<Project>> DownloadProject (List<Change> ch)
+        {
+            var toDownload = new List<Project> { };
+            foreach (var item in ch)
+            {
+                var td = _context.Projects.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                toDownload.Add(td);
+            }
+
+            return toDownload;
+        }
+
+        public async Task<List<CostCategory>> DownloadCost(List<Change> ch)
+        {
+            var toDownload = new List<CostCategory> { };
+            foreach (var item in ch)
+            {
+                var td = _context.CostCategories.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                toDownload.Add(td);
+            }
+
+            return toDownload;
+        }
+
+        public async Task<List<Expenditure>> DownloadExpenditure (List<Change> ch)
+        {
+            var toDownload = new List<Expenditure> { };
+            foreach (var item in ch)
+            {
+                var td = _context.Expenditures.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                toDownload.Add(td);
+            }
+
+            return toDownload;
+        }
+
+        public async Task<List<Service>> DownloadServices (List<Change> ch)
+        {
+            var toDownload = new List<Service> { };
+            foreach (var item in ch)
+            {
+                var td = _context.Services.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                toDownload.Add(td);
+            }
+
+            return toDownload;
+        }
+
+        public async Task<List<Income>> DownloadIncomes(List<Change> ch)
+        {
+            var toDownload = new List<Income> { };
+            foreach (var item in ch)
+            {
+                var td = _context.Incomes.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                toDownload.Add(td);
+            }
+
+            return toDownload;
+        }
+
+
     } 
 }
