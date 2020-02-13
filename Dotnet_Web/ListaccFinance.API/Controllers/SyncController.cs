@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 
 namespace ListaccFinance.API.Controllers
 {
-    [Authorize]
+  
     [ApiController]
     [Route("api/[controller]")]
     public class SyncController : ControllerBase 
@@ -42,6 +42,7 @@ namespace ListaccFinance.API.Controllers
             _sservice = sservice;
         }
 
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Login(SyncLoginModel mod)
         {
@@ -59,9 +60,9 @@ namespace ListaccFinance.API.Controllers
             var check = Hash.Validate(pmessage,currentUser.salt, currentUser.PasswordHash) ;
 
 
-            if (currentUser == null || check)
+            if (check)//&& currentUser == null
             {
-                return Unauthorized(new { message = "Your login imput is incorrect" });
+                return Unauthorized(new { message = "Your login input is incorrect" });
 
             }
             
@@ -90,7 +91,7 @@ namespace ListaccFinance.API.Controllers
 
         }
 
-
+        [Authorize]
         [HttpPost("CreateDesktopClient")]
         public async Task<IActionResult> CreateDesktop(DesktopCreateModel m)
         {
@@ -105,6 +106,8 @@ namespace ListaccFinance.API.Controllers
         }
 
 
+
+        [AllowAnonymous]
         // This method pings the server at intervals
         [HttpGet("PingServer")]
         public IActionResult PingServer()
@@ -112,12 +115,15 @@ namespace ListaccFinance.API.Controllers
             return Ok();
         }
 
+        [Authorize]
         public async Task<IActionResult> UploadData()
         {
             return Ok();
         }
 
 
+
+        [Authorize]
         [HttpPost("Download")]
         public async Task<HttpResponseMessage> DownloadData(int lastSyncID)
         {
