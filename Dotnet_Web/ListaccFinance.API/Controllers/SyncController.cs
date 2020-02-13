@@ -54,12 +54,8 @@ namespace ListaccFinance.API.Controllers
             // Password Hash
             var pmessage = mod.Password;
             var currentUser = _context.Users.Where(x => x.Email.ToUpper().CompareTo(mod.EmailAddress.ToUpper()) == 0).FirstOrDefault();
-            //var PasswordHash = Hash.Create(pmessage, currentUser.salt);
-
-            var check = Hash.Validate(pmessage,currentUser.salt, currentUser.PasswordHash) ;
-
-
-            if (currentUser == null || check)
+            
+            if (currentUser == null || Hash.Validate(pmessage, currentUser.salt, currentUser.PasswordHash))
             {
                 return Unauthorized(new { message = "Your login imput is incorrect" });
 
@@ -80,8 +76,6 @@ namespace ListaccFinance.API.Controllers
                 };
                 d = await _dService.CreateDesktopClientAsync(dc);
             }
-
-
 
              var token =  await _tokGen.GenerateToken(d);
 
@@ -213,5 +207,5 @@ namespace ListaccFinance.API.Controllers
             return Response;
 
     }
-}
+    }
 }

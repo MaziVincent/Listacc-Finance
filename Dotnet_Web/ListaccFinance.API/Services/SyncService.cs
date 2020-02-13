@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ListaccFinance.API.Services
 {
@@ -29,19 +30,19 @@ namespace ListaccFinance.API.Services
             var toDownload = new List<Department>{};
             foreach (var item in ch)
             {
-                var td = _context.Departments.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                var td = await _context.Departments.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
                 toDownload.Add(td);
             }
 
             return toDownload;
         }
 
-        public async Task<List<Person>> DownloadPerson (List<Change> ch)
+        public async Task<List<Person>> DownloadPerson(List<Change> ch)
         {
             var toDownload = new List<Person> { };
             foreach (var item in ch)
             {
-                var td = _context.Persons.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                var td = await _context.Persons.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
                 toDownload.Add(td);
             }
 
@@ -54,19 +55,19 @@ namespace ListaccFinance.API.Services
             var toDownload = new List<User> { };
             foreach (var item in ch)
             {
-                var td = _context.Users.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                var td = await _context.Users.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
                 toDownload.Add(td);
             }
 
             return toDownload;
         }
 
-        public async Task<List<Client>> DownloadClient (List<Change> ch)
+        public async Task<List<Client>> DownloadClient(List<Change> ch)
         {
             var toDownload = new List<Client> { };
             foreach (var item in ch)
             {
-                var td = _context.Clients.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                var td = await _context.Clients.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
                 toDownload.Add(td);
             }
 
@@ -78,7 +79,7 @@ namespace ListaccFinance.API.Services
             var toDownload = new List<Project> { };
             foreach (var item in ch)
             {
-                var td = _context.Projects.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                var td = await _context.Projects.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
                 toDownload.Add(td);
             }
 
@@ -90,31 +91,31 @@ namespace ListaccFinance.API.Services
             var toDownload = new List<CostCategory> { };
             foreach (var item in ch)
             {
-                var td = _context.CostCategories.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                var td = await _context.CostCategories.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
                 toDownload.Add(td);
             }
 
             return toDownload;
         }
 
-        public async Task<List<Expenditure>> DownloadExpenditure (List<Change> ch)
+        public async Task<List<Expenditure>> DownloadExpenditure(List<Change> ch)
         {
             var toDownload = new List<Expenditure> { };
             foreach (var item in ch)
             {
-                var td = _context.Expenditures.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                var td = await _context.Expenditures.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
                 toDownload.Add(td);
             }
 
             return toDownload;
         }
 
-        public async Task<List<Service>> DownloadServices (List<Change> ch)
+        public async Task<List<Service>> DownloadServices(List<Change> ch)
         {
             var toDownload = new List<Service> { };
             foreach (var item in ch)
             {
-                var td = _context.Services.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                var td = await _context.Services.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
                 toDownload.Add(td);
             }
 
@@ -126,13 +127,12 @@ namespace ListaccFinance.API.Services
             var toDownload = new List<Income> { };
             foreach (var item in ch)
             {
-                var td = _context.Incomes.Where(x => x.Id == item.EntryId).FirstOrDefault();
+                var td = await _context.Incomes.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
                 toDownload.Add(td);
             }
 
             return toDownload;
         }
-
 
     } 
 }
