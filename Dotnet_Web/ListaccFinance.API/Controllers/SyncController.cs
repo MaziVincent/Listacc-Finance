@@ -53,17 +53,10 @@ namespace ListaccFinance.API.Controllers
 
 
             // Password Hash
-            var pmessage = mod.Password;
             var currentUser = _context.Users.Where(x => x.Email.ToUpper().CompareTo(mod.EmailAddress.ToUpper()) == 0).FirstOrDefault();
-            //var PasswordHash = Hash.Create(pmessage, currentUser.salt);
-
-            var check = Hash.Validate(pmessage,currentUser.salt, currentUser.PasswordHash) ;
-
-
-            if (check)//&& currentUser == null
+            if (currentUser == null || Hash.Validate(mod.Password, currentUser.salt, currentUser.PasswordHash))
             {
                 return Unauthorized(new { message = "Your login input is incorrect" });
-
             }
             
             var d = await _context.DesktopClients.Where(x => mod.ClientName.ToUpper().CompareTo(x.ClientName.ToUpper()) == 0
@@ -81,8 +74,6 @@ namespace ListaccFinance.API.Controllers
                 };
                 d = await _dService.CreateDesktopClientAsync(dc);
             }
-
-
 
              var token =  await _tokGen.GenerateToken(d);
 
@@ -129,14 +120,11 @@ namespace ListaccFinance.API.Controllers
         {
             string MacAddress = this.User.Claims.First(i => i.Type == "macAddr").Value;
 
-            var dc = _context.DesktopClients.Where((x) => x.ClientMacAddress.CompareTo(MacAddress) == 0).FirstOrDefault();
+            var dc = await _context.DesktopClients.Where((x) => x.ClientMacAddress.CompareTo(MacAddress) == 0).FirstOrDefaultAsync();
 
-            var lastChanges = _context.Changes
+            var lastChanges = await _context.Changes
                                 .Where(i => i.Id > lastSyncID)
-                                .Except(_context.Changes.Where(((x) => x.DesktopClientId == dc.Id)));
-
-            List<Change> ch = lastChanges.ToList();
-            var myLastChange = await lastChanges.LastAsync();
+                                .Except(_context.Changes.Where(((x) => x.DesktopClientId == dc.Id))).ToListAsync();
 
             var dChange = new List<Change> {};
             var pChange = new List<Change> {};
@@ -148,7 +136,7 @@ namespace ListaccFinance.API.Controllers
             var sChange = new List<Change> { };
             var iChange = new List<Change> { };
 
-            foreach (var change in ch)
+            foreach (var change in lastChanges)
             {
                 switch (change.Table)
                 {
@@ -212,12 +200,12 @@ namespace ListaccFinance.API.Controllers
                 expList = expDown,
                 serList = serDown,
                 incList = incDown,
-                lastId = myLastChange.Id,
+                lastId = lastChanges.Count > 0 ? lastChanges.Last().Id : 0,
             };
             Response.Content = respList;
 
             return Response;
 
     }
-}
+    }
 }
