@@ -5,6 +5,7 @@ using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Interfaces;
 using ListaccFinance.API.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace ListaccFinance.API.Services
 
@@ -157,9 +158,9 @@ namespace ListaccFinance.API.Services
             return true; */
         }
     
-        public bool IsThisUserExist(string UserEmail)
+        public async Task<bool> IsThisUserExist(string UserEmail)
         {
-            var thisU = _context.Users.Where(x => x.Email.CompareTo(UserEmail) == 0).FirstOrDefault();
+            var thisU = await _context.Users.Where(x => x.Email.CompareTo(UserEmail) == 0).FirstOrDefaultAsync();
 
             if (thisU is null)
             {

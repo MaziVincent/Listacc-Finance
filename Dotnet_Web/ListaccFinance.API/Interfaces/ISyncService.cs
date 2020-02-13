@@ -10,15 +10,15 @@ namespace ListaccFinance.API.Interfaces
         //<T> where T : class
 
         {
-                Task<List<Department>> DownloadDept(List<Change> ch);
-                Task<List<Person>> DownloadPerson(List<Change> ch);
-                Task<List<User>> DownloadUser(List<Change> ch);
-                Task<List<Client>> DownloadClient(List<Change> ch);
-                Task<List<Project>> DownloadProject(List<Change> ch);
-                Task<List<CostCategory>> DownloadCost(List<Change> ch);
-                Task<List<Expenditure>> DownloadExpenditure(List<Change> ch);
-                Task<List<Service>> DownloadServices(List<Change> ch);
-                Task<List<Income>> DownloadIncomes(List<Change> ch);
+                Task<List<Department>> DownloadDeptAsync(List<Change> ch);
+                Task<List<Person>> DownloadPersonAsync(List<Change> ch);
+                Task<List<User>> DownloadUserAsync(List<Change> ch);
+                Task<List<Client>> DownloadClientAsync(List<Change> ch);
+                Task<List<Project>> DownloadProjectAsync(List<Change> ch);
+                Task<List<CostCategory>> DownloadCostAsync(List<Change> ch);
+                Task<List<Expenditure>> DownloadExpenditureAsync(List<Change> ch);
+                Task<List<Service>> DownloadServicesAsync(List<Change> ch);
+                Task<List<Income>> DownloadIncomesAsync(List<Change> ch);
         }
 
 }

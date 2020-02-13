@@ -54,7 +54,7 @@ namespace ListaccFinance.API.Controllers
 
             // Password Hash
             var currentUser = _context.Users.Where(x => x.Email.ToUpper().CompareTo(mod.EmailAddress.ToUpper()) == 0).FirstOrDefault();
-            if (currentUser == null || Hash.Validate(mod.Password, currentUser.salt, currentUser.PasswordHash))
+            if (currentUser == null || !Hash.Validate(mod.Password, currentUser.salt, currentUser.PasswordHash))
             {
                 return Unauthorized(new { message = "Your login input is incorrect" });
             }
@@ -177,15 +177,15 @@ namespace ListaccFinance.API.Controllers
                 }
             }
 
-            var deptDown = await  _sservice.DownloadDept(dChange);
-            var perDown = await _sservice.DownloadPerson(pChange);
-            var usDown = await  _sservice.DownloadUser(uChange);
-            var cliDown = await  _sservice.DownloadClient(cChange);
-            var proDown = await _sservice.DownloadProject(prChange);
-            var cocDown = await _sservice.DownloadCost(ccChange);
-            var expDown = await  _sservice.DownloadExpenditure(eChange);
-            var serDown = await  _sservice.DownloadServices(sChange);
-            var incDown = await _sservice.DownloadIncomes(iChange);
+            var deptDown = await  _sservice.DownloadDeptAsync(dChange);
+            var perDown = await _sservice.DownloadPersonAsync(pChange);
+            var usDown = await  _sservice.DownloadUserAsync(uChange);
+            var cliDown = await  _sservice.DownloadClientAsync(cChange);
+            var proDown = await _sservice.DownloadProjectAsync(prChange);
+            var cocDown = await _sservice.DownloadCostAsync(ccChange);
+            var expDown = await  _sservice.DownloadExpenditureAsync(eChange);
+            var serDown = await  _sservice.DownloadServicesAsync(sChange);
+            var incDown = await _sservice.DownloadIncomesAsync(iChange);
 
 
             var Response = new HttpResponseMessage(HttpStatusCode.OK);

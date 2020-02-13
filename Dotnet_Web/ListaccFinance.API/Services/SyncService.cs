@@ -25,111 +25,111 @@ namespace ListaccFinance.API.Services
             var toDownload = _context.Set<T>().
         } */
 
-        public async Task<List<Department>> DownloadDept(List<Change> ch)
+        public async Task<List<Department>> DownloadDeptAsync(List<Change> ch)
         {
-            var toDownload = new List<Department>{};
-            foreach (var item in ch)
+            var IDs = new List<int>();
+            foreach (var i in ch)
             {
-                var td = await _context.Departments.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
-                toDownload.Add(td);
+                IDs.Add(i.EntryId.Value);
             }
-
+                var toDownload = await _context.Departments.Where(x =>IDs.Contains(x.Id)).ToListAsync();
+            
             return toDownload;
         }
 
-        public async Task<List<Person>> DownloadPerson(List<Change> ch)
+        public async Task<List<Person>> DownloadPersonAsync(List<Change> ch)
         {
-            var toDownload = new List<Person> { };
-            foreach (var item in ch)
+            var IDs = new List<int>();
+            foreach (var i in ch)
             {
-                var td = await _context.Persons.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
-                toDownload.Add(td);
+                IDs.Add(i.EntryId.Value);
             }
+            var toDownload = await _context.Persons.Where(x => IDs.Contains(x.Id)).ToListAsync();
 
             return toDownload;
             
         }
 
-        public async Task<List<User>> DownloadUser(List<Change> ch)
+        public async Task<List<User>> DownloadUserAsync(List<Change> ch)
         {
-            var toDownload = new List<User> { };
-            foreach (var item in ch)
+            var IDs = new List<int>();
+            foreach (var i in ch)
             {
-                var td = await _context.Users.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
-                toDownload.Add(td);
+                IDs.Add(i.EntryId.Value);
             }
+            var toDownload = await _context.Users.Where(x => IDs.Contains(x.Id)).ToListAsync();
 
             return toDownload;
         }
 
-        public async Task<List<Client>> DownloadClient(List<Change> ch)
+        public async Task<List<Client>> DownloadClientAsync(List<Change> ch)
         {
-            var toDownload = new List<Client> { };
-            foreach (var item in ch)
+            var IDs = new List<int>();
+            foreach (var i in ch)
             {
-                var td = await _context.Clients.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
-                toDownload.Add(td);
+                IDs.Add(i.EntryId.Value);
             }
+            var toDownload = await _context.Clients.Where(x => IDs.Contains(x.Id)).ToListAsync();
 
             return toDownload;
         }
 
-        public async Task<List<Project>> DownloadProject (List<Change> ch)
+        public async Task<List<Project>> DownloadProjectAsync (List<Change> ch)
         {
-            var toDownload = new List<Project> { };
-            foreach (var item in ch)
+            var IDs = new List<int>();
+            foreach (var i in ch)
             {
-                var td = await _context.Projects.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
-                toDownload.Add(td);
+                IDs.Add(i.EntryId.Value);
             }
+            var toDownload = await _context.Projects.Where(x => IDs.Contains(x.Id)).ToListAsync();
 
             return toDownload;
         }
 
-        public async Task<List<CostCategory>> DownloadCost(List<Change> ch)
+        public async Task<List<CostCategory>> DownloadCostAsync(List<Change> ch)
         {
-            var toDownload = new List<CostCategory> { };
-            foreach (var item in ch)
+            var IDs = new List<int>();
+            foreach (var i in ch)
             {
-                var td = await _context.CostCategories.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
-                toDownload.Add(td);
+                IDs.Add(i.EntryId.Value);
             }
+            var toDownload = await _context.CostCategories.Where(x => IDs.Contains(x.Id)).ToListAsync();
 
             return toDownload;
         }
 
-        public async Task<List<Expenditure>> DownloadExpenditure(List<Change> ch)
+        public async Task<List<Expenditure>> DownloadExpenditureAsync(List<Change> ch)
         {
-            var toDownload = new List<Expenditure> { };
-            foreach (var item in ch)
+            var IDs = new List<int>();
+            foreach (var i in ch)
             {
-                var td = await _context.Expenditures.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
-                toDownload.Add(td);
+                IDs.Add(i.EntryId.Value);
             }
+            var toDownload = await _context.Expenditures.Where(x => IDs.Contains(x.Id)).ToListAsync();
 
             return toDownload;
         }
 
-        public async Task<List<Service>> DownloadServices(List<Change> ch)
+        public async Task<List<Service>> DownloadServicesAsync(List<Change> ch)
         {
-            var toDownload = new List<Service> { };
-            foreach (var item in ch)
+            var IDs = new List<int>();
+            foreach (var i in ch)
             {
-                var td = await _context.Services.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
-                toDownload.Add(td);
+                IDs.Add(i.EntryId.Value);
             }
+            var toDownload = await _context.Services.Where(x => IDs.Contains(x.Id)).ToListAsync();
 
             return toDownload;
         }
 
-        public async Task<List<Income>> DownloadIncomes(List<Change> ch)
+        public async Task<List<Income>> DownloadIncomesAsync(List<Change> ch)
         {
-            var toDownload = new List<Income> { };
-            foreach (var item in ch)
+            var IDs = new List<int>();
+            foreach (var i in ch)
             {
-                var td = await _context.Incomes.Where(x => x.Id == item.EntryId).FirstOrDefaultAsync();
-                toDownload.Add(td);
+                IDs.Add(i.EntryId.Value);
             }
+            var toDownload = await _context.Incomes.Where(x => IDs.Contains(x.Id)).ToListAsync();
 
             return toDownload;
         }

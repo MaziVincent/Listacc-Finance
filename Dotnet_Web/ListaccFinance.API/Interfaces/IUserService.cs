@@ -9,6 +9,6 @@ namespace ListaccFinance.API.Interfaces
         Task<string> CreateUserAsync(RegisterModel reg);
         Task<string> CreateUserAsync(RegisterModel reg, int userId);
         bool IsUserExist();
-        bool IsThisUserExist(string UserEmail);
+        Task<bool> IsThisUserExist(string UserEmail);
     }
 }
