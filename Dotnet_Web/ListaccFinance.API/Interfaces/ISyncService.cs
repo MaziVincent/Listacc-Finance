@@ -3,22 +3,23 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ListaccFinance.API.Data.Model;
+using ListaccFinance.API.Data.ViewModel;
 
 namespace ListaccFinance.API.Interfaces
 {
-        public interface ISyncService
-        //<T> where T : class
+    public interface ISyncService
+    //<T> where T : class
 
-        {
-                Task<List<Department>> DownloadDeptAsync(List<Change> ch);
-                Task<List<Person>> DownloadPersonAsync(List<Change> ch);
-                Task<List<User>> DownloadUserAsync(List<Change> ch);
-                Task<List<Client>> DownloadClientAsync(List<Change> ch);
-                Task<List<Project>> DownloadProjectAsync(List<Change> ch);
-                Task<List<CostCategory>> DownloadCostAsync(List<Change> ch);
-                Task<List<Expenditure>> DownloadExpenditureAsync(List<Change> ch);
-                Task<List<Service>> DownloadServicesAsync(List<Change> ch);
-                Task<List<Income>> DownloadIncomesAsync(List<Change> ch);
-        }
+    {
+        Task<DepartMentViewModel> DownloadDeptAsync(Change ch);
+        Task<PersonViewModel> DownloadPersonAsync(Change ch);
+        Task<UserViewModel> DownloadUserAsync(Change ch);
+        Task<ClientViewModel> DownloadClientAsync(Change ch);
+        Task<ProjectViewModel> DownloadProjectAsync(Change ch);
+        Task<CostCategoryViewModel> DownloadCostAsync(Change ch);
+        //Task<ExpenditureViewModel> DownloadExpenditureAsync(Change ch);
+        Task<ServiceViewModel> DownloadServicesAsync(Change ch);
+        //Task<IncomeViewModel> DownloadIncomesAsync(Change ch);
+    }
 
 }

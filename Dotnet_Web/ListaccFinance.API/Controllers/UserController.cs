@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Interfaces;
+using ListaccFinance.API.SendModel;
 using ListaccFinance.API.Services;
-using ListaccFinance.API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

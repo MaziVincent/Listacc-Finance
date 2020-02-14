@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using ListaccFinance.API.Data.Model;
 
-namespace ListaccFinance.API.ViewModels
+namespace ListaccFinance.API.SendModel
 
 {
     public class SyncLoginModel

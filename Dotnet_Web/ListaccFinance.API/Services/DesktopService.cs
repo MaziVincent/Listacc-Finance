@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Interfaces;
-using ListaccFinance.API.ViewModels;
+using ListaccFinance.API.SendModel;
 
 namespace ListaccFinance.API.Services
 

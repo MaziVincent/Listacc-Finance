@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Interfaces;
-using ListaccFinance.API.ViewModels;
+using ListaccFinance.API.SendModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 

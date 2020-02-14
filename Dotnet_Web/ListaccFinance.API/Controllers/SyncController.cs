@@ -5,18 +5,18 @@ using ListaccFinance.Api.Data;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ListaccFinance.API.Interfaces;
-using ListaccFinance.API.ViewModels;
 using ListaccFinance.API.Data.Model;
 using System;
 using ListaccFinance.API.Services;
 using System.Net;
 using System.Net.Http;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using ListaccFinance.API.SendModel;
+using ListaccFinance.API.Data.ViewModel;
 
 namespace ListaccFinance.API.Controllers
 {
-  
+
     [ApiController]
     [Route("api/[controller]")]
     public class SyncController : ControllerBase 
@@ -32,7 +32,7 @@ namespace ListaccFinance.API.Controllers
 
         public SyncController(  DataContext context, 
                                 ITokenGenerator tokGen, 
-                                IDesktopService dService, 
+                                IDesktopService dService,
                                 ISyncService sservice
                              ) 
         {
@@ -107,8 +107,10 @@ namespace ListaccFinance.API.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> UploadData()
+        [HttpPost]
+        public IActionResult UploadData()
         {
+
             return Ok();
         }
 
@@ -116,96 +118,54 @@ namespace ListaccFinance.API.Controllers
 
         [Authorize]
         [HttpPost("Download")]
-        public async Task<HttpResponseMessage> DownloadData(int lastSyncID)
+        public async Task<IActionResult> DownloadData(int lastSyncID)
         {
+            const int numnerOfItems = 10;
             string MacAddress = this.User.Claims.First(i => i.Type == "macAddr").Value;
 
             var dc = await _context.DesktopClients.Where((x) => x.ClientMacAddress.CompareTo(MacAddress) == 0).FirstOrDefaultAsync();
 
             var lastChanges = await _context.Changes
                                 .Where(i => i.Id > lastSyncID)
-                                .Except(_context.Changes.Where(((x) => x.DesktopClientId == dc.Id))).ToListAsync();
+                                .Except(_context.Changes.Where(((x) => x.DesktopClientId == dc.Id)))
+                                .OrderBy(x =>x.Id).Take(numnerOfItems).ToListAsync();
 
-            var dChange = new List<Change> {};
-            var pChange = new List<Change> {};
-            var uChange = new List<Change> {};
-            var cChange = new List<Change> {};
-            var prChange = new List<Change> {};
-            var ccChange = new List<Change> {};
-            var eChange = new List<Change> {};
-            var sChange = new List<Change> { };
-            var iChange = new List<Change> { };
+            List<SyncViewModel> syncValues = new List<SyncViewModel>();
 
-            foreach (var change in lastChanges)
+            foreach (var ch in lastChanges)
             {
-                switch (change.Table)
+                SyncViewModel obj = new SyncViewModel();
+                switch (ch.Table)
                 {
                     case "Departments":
-                        dChange.Add(change);
+                        obj.dept = await _sservice.DownloadDeptAsync(ch);
                         break;
+                    
                     case "Persons":
-                        pChange.Add(change);
+                        obj.person = await _sservice.DownloadPersonAsync(ch);
                         break;
+
                     case "Users":
-                        uChange.Add(change);
+                        obj.user = await _sservice.DownloadUserAsync(ch);
                         break;
                     case "Clients":
-                        cChange.Add(change);
+                        obj.client = await _sservice.DownloadClientAsync(ch);
                         break;
-
                     case "Projects":
-                        prChange.Add(change);
+                        obj.project = await _sservice.DownloadProjectAsync(ch);
                         break;
-
-                    case "Cost Categories":
-                        ccChange.Add(change);
+                    case "CostCategories":
+                        obj.costCategory = await _sservice.DownloadCostAsync(ch);
                         break;
-
-                    case "Expenditures":
-                        eChange.Add(change);
-                        break;
-
                     case "Services":
-                        sChange.Add(change);
+                        obj.service = await _sservice.DownloadServicesAsync(ch);
                         break;
-                    case "Incomes":
-                        iChange.Add(change);
-                        break;
-
-
-                    //default: 
                 }
+                obj.Table = ch.Table;
+                syncValues.Add(obj);
             }
 
-            var deptDown = await  _sservice.DownloadDeptAsync(dChange);
-            var perDown = await _sservice.DownloadPersonAsync(pChange);
-            var usDown = await  _sservice.DownloadUserAsync(uChange);
-            var cliDown = await  _sservice.DownloadClientAsync(cChange);
-            var proDown = await _sservice.DownloadProjectAsync(prChange);
-            var cocDown = await _sservice.DownloadCostAsync(ccChange);
-            var expDown = await  _sservice.DownloadExpenditureAsync(eChange);
-            var serDown = await  _sservice.DownloadServicesAsync(sChange);
-            var incDown = await _sservice.DownloadIncomesAsync(iChange);
-
-
-            var Response = new HttpResponseMessage(HttpStatusCode.OK);
-            var respList = new DownloadContent()
-            {
-                deptList = deptDown,
-                pertList = perDown,
-                userList = usDown,
-                cList = cliDown,
-                proList = proDown,
-                costList = cocDown,
-                expList = expDown,
-                serList = serDown,
-                incList = incDown,
-                lastId = lastChanges.Count > 0 ? lastChanges.Last().Id : 0,
-            };
-            Response.Content = respList;
-
-            return Response;
-
+            return Ok(syncValues);
     }
     }
 }

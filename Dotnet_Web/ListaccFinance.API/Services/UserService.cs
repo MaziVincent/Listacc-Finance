@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Interfaces;
-using ListaccFinance.API.ViewModels;
+using ListaccFinance.API.SendModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace ListaccFinance.API.Services
@@ -57,10 +57,17 @@ namespace ListaccFinance.API.Services
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
 
+            var thisUser = _context.Users.
+                Where(x => x.Email.CompareTo(reg.Emailaddress) == 0 &&
+                 x.PasswordHash.CompareTo(hash) == 0).FirstOrDefault();
+
+            int thisUserID = thisUser.Id;
+
             var change = new Change()
             {
                 Table = "Users",
                 ChangeType = "Create",
+                EntryId = thisUserID,
                 OnlineTimeStamp = DateTime.Now,
                 OfflineTimeStamp = DateTime.Now,
             };

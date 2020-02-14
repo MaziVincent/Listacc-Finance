@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
-using ListaccFinance.API.Data.Model;
-using ListaccFinance.API.ViewModels;
+using ListaccFinance.API.SendModel;
 
 namespace ListaccFinance.API.Interfaces
 {
