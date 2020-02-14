@@ -142,6 +142,49 @@ namespace ListaccFinance.API.Services
         }
 
 
+
+        //Create User for uploads
+        public async Task<string> CreateUserUploadAsync(RegisterModel reg)
+        {
+            var newUser = new User();
+
+            var dept = new Department()
+            {
+                Name = reg.Department
+            };
+
+            var per = new Person()
+            {
+                firstName = reg.firstName,
+                LastName = reg.LastName,
+                Gender = reg.Gender,
+                DateOfBirth = reg.DateOfBirth,
+            };
+
+            newUser.Email = reg.Emailaddress;
+            newUser.Address = reg.Address;
+            newUser.Phone = reg.Phone;
+
+
+            // Password Hash
+            var message = reg.Password;
+            var salt = Salt.Create();
+            var hash = Hash.Create(message, salt);
+            newUser.PasswordHash = hash;
+            newUser.salt = salt;
+
+
+            newUser.Person = per;
+            newUser.Department = dept;
+
+            await _context.Users.AddAsync(newUser);
+            await _context.SaveChangesAsync();
+
+            return "done";
+
+
+        }
+
         public bool IsUserExist ()
         {
             var nr = _context.Users.Count();

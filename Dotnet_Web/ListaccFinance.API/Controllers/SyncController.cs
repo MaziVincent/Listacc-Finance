@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Collections.Generic;
 using ListaccFinance.API.SendModel;
 using ListaccFinance.API.Data.ViewModel;
+using AutoMapper;
 
 namespace ListaccFinance.API.Controllers
 {
@@ -29,17 +30,21 @@ namespace ListaccFinance.API.Controllers
         //private readonly ISyncService<> _sservice;
 
         private readonly ISyncService _sservice;
+        private readonly IMapper _mapper;
 
         public SyncController(  DataContext context, 
                                 ITokenGenerator tokGen, 
                                 IDesktopService dService,
-                                ISyncService sservice
+                                ISyncService sservice,
+                                IMapper mapper
                              ) 
         {
             _context = context;
             _tokGen = tokGen;
             _dService = dService;
             _sservice = sservice;
+            _mapper = mapper;
+  
         }
 
         [AllowAnonymous]
@@ -107,18 +112,65 @@ namespace ListaccFinance.API.Controllers
         }
 
         [Authorize]
-        [HttpPost]
-        public IActionResult UploadData()
+        [HttpPost("Upload")]
+        public async Task<IActionResult> UploadData(List<SyncViewModel> lsync)
         {
+            try
+            {
+                foreach (SyncViewModel sync in lsync)
+                {
+                    switch (sync.Table)
+                    {
+                        case "Departments":
+                            var dChange = _mapper.Map<Department>(sync.dept);
+                            await _sservice.UploadDeptAsync(dChange);
+                            break;
 
-            return Ok();
+                        case "Persons":
+                            var pChange = _mapper.Map<Person>(sync.person);
+                            await _sservice.UploadPersonAsync(pChange);
+                            break;
+
+                        case "Users":
+                            var uChange = _mapper.Map<RegisterModel>(sync.user);
+                            await _sservice.UploadUserAsync(uChange);
+                            break;
+
+                        case "Clients":
+                            var cChange = _mapper.Map<Client>(sync.client);
+                            await _sservice.UploadClientAsync(cChange);
+                            break;
+
+                        case "Projects":
+                            var prChange = _mapper.Map<Project>(sync.project);
+                            await _sservice.UploadProjectAsync(prChange);
+                            break;
+
+                        case "CostCategories":
+                            var ccChange = _mapper.Map<CostCategory>(sync.costCategory);
+                            await _sservice.UploadCostAsync(ccChange);
+                            break;
+                        case "Services":
+                            var sChange = _mapper.Map<Service>(sync.service);
+                            await _sservice.UploadServiceAsync(sChange);
+                            break;
+                    }
+                }
+                return Ok();
+            }
+            catch (System.Exception e)
+            {
+                
+                throw e;
+            }
+
         }
 
 
 
         [Authorize]
-        [HttpPost("Download")]
-        public async Task<IActionResult> DownloadData(int lastSyncID)
+        [HttpPost("Download/{lastSyncID}")]
+        public async Task<IActionResult> DownloadData([FromRoute]int lastSyncID)
         {
             const int numnerOfItems = 10;
             string MacAddress = this.User.Claims.First(i => i.Type == "macAddr").Value;
