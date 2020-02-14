@@ -6,6 +6,7 @@ using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Data.ViewModel;
 using ListaccFinance.API.Interfaces;
+using ListaccFinance.API.SendModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace ListaccFinance.API.Services
@@ -17,34 +18,132 @@ namespace ListaccFinance.API.Services
         private readonly DataContext _context;
         private readonly IMapper _mapper;
 
-        public SyncService (DataContext context, IMapper mapper)
+        private readonly IUserService _uService;
+
+        public SyncService (DataContext context, IMapper mapper, IUserService uService)
         {
             _context = context;
             _mapper = mapper;
+            _uService = uService;
         }
 
 
-        // Upload is ageneric method. It handles the upload of data
-        /*public async Task<string> Upload<T> (List<T> changes) where T : class
+       /* public async Task<string> UploadAsync<T> (T syncV, Department d) where T : class
         {
-            _context.Set<T>().AddRange(changes);
+
+            var props = syncV.GetType().GetProperties();
+
+            foreach (var prop in props)
+            {
+                switch (prop.GetType().ToString())
+                {
+                    case "Department":
+                        await AddAsync<Department>(d);
+                        break;
+                }
+            }
+            
+            return "successful";
         }*/
+
+        public async Task UploadDeptAsync(Department d) 
+        {
+            try
+            {
+                await _context.Departments.AddAsync(d);
+            }
+            catch (System.Exception e)
+            {
+                
+                throw e;
+            }
+
+        }
+        public async Task UploadPersonAsync(Person p)
+        {
+            try
+            {
+                await _context.Persons.AddAsync(p);
+            }
+            catch (System.Exception e)
+            {
+
+                throw e;
+            }
+        }
+            public async Task UploadUserAsync(RegisterModel u)
+            {
+                try
+                {
+                    await _uService.CreateUserUploadAsync(u);
+                }
+                catch (System.Exception e)
+                {
+
+                    throw e;
+                }
+            }
+
+        public async Task UploadClientAsync(Client c)
+        {
+            try
+            {
+                await _context.Clients.AddAsync(c);
+            }
+            catch (System.Exception e)
+            {
+
+                throw e;
+            }
+        }
+
+        public async Task UploadProjectAsync(Project p)
+        {
+            try
+            {
+                await _context.Projects.AddAsync(p);
+            }
+            catch (System.Exception e)
+            {
+
+                throw e;
+            }
+        }
+
+        public async Task UploadCostAsync(CostCategory c)
+        {
+            try
+            {
+                await _context.CostCategories.AddAsync(c);
+            }
+            catch (System.Exception e)
+            {
+
+                throw e;
+            }
+        }
+        public async Task UploadServiceAsync(Service s)
+        {
+            try
+            {
+                await _context.Services.AddAsync(s);
+            }
+            catch (System.Exception e)
+            {
+
+                throw e;
+            }
+        }
+
+
 
 
 
         public async Task<DepartMentViewModel> DownloadDeptAsync(Change ch)
         {
             var deptCh = await _context.Departments.Where(x => x.Id == ch.EntryId).FirstOrDefaultAsync();
-            
-            var dept = new DepartMentViewModel()
-            {
-                Id = deptCh.Id,
-                Name = deptCh.Name,
-                ChangeId = ch.Id,
-
-            };
-            /*var dept = _mapper.Map<DepartMentViewModel>(deptCh);
-            dept.ChangeId = ch.Id;*/
+            var dept = _mapper.Map<DepartMentViewModel>(deptCh);
+            dept.ChangeId = ch.Id;
             return dept;
         }
 
@@ -58,7 +157,7 @@ namespace ListaccFinance.API.Services
 
         public async Task<UserViewModel> DownloadUserAsync(Change ch)
         {
-            var userCh = await _context.Users.Where(x => x.Id == ch.EntryId).FirstOrDefaultAsync();
+            var userCh = await _context.Users.Where(x => x.Id == ch.EntryId).Include(x => x.Person).FirstOrDefaultAsync();
             var user = _mapper.Map<UserViewModel>(userCh);
             user.ChangeId = ch.Id;
             return user;
@@ -104,6 +203,8 @@ namespace ListaccFinance.API.Services
             service.ChangeId = ch.Id;
             return service;
         }
+
+
 
         /*public async Task<IncomeViewModel> DownloadIncomesAsync(Change ch)
         {
