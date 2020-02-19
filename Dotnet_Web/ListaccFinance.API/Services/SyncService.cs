@@ -71,18 +71,18 @@ namespace ListaccFinance.API.Services
                 throw e;
             }
         }
-            public async Task UploadUserAsync(RegisterModel u)
+        public async Task UploadUserAsync(RegisterModel u)
+        {
+            try
             {
-                try
-                {
-                    await _uService.CreateUserUploadAsync(u);
-                }
-                catch (System.Exception e)
-                {
-
-                    throw e;
-                }
+                await _uService.CreateUserUploadAsync(u);
             }
+            catch (System.Exception e)
+            {
+
+                throw e;
+            }
+        }
 
         public async Task UploadClientAsync(Client c)
         {
@@ -136,6 +136,12 @@ namespace ListaccFinance.API.Services
         }
 
 
+        // see if there's more work to do on this later
+        public async Task UploadChanges(Change ch)
+        {
+            await _context.Changes.AddAsync(ch);
+            return;
+        }
 
 
 
