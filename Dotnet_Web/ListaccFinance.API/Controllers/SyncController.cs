@@ -177,8 +177,7 @@ namespace ListaccFinance.API.Controllers
                 return Ok();
             }
             catch (System.Exception e)
-            {
-                
+            {      
                 throw e;
             }
 
@@ -187,7 +186,7 @@ namespace ListaccFinance.API.Controllers
 
 
         [Authorize]
-        [HttpPost("Download/{lastSyncID}")]
+        [HttpGet("Download/{lastSyncID}")]
         public async Task<IActionResult> DownloadData([FromRoute]int lastSyncID)
         {
             const int numnerOfItems = 10;

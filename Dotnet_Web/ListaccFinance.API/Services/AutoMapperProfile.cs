@@ -21,13 +21,14 @@ public class AutoMapperProfile : Profile
 
         //Reverse Mapping for uploads
         CreateMap<DepartMentViewModel, Department>();
+        CreateMap<UserViewModel, RegisterModel>();
         CreateMap<PersonViewModel, Person>();
         CreateMap<CostCategoryViewModel, CostCategory>();
         CreateMap<ProjectViewModel, Project>();
         CreateMap<ClientViewModel, Client>();
         CreateMap<ServiceViewModel, Service>();
 
-        // I removed this automapper for User Upload because mappint it won't just work.  
+        // I removed this automapper for User Upload because mapping it won't just work.  
         //CreateMap<UserViewModel, RegisterModel>();
 
     }

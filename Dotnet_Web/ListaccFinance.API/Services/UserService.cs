@@ -149,7 +149,6 @@ namespace ListaccFinance.API.Services
             var newUser = new User();
 
 
-
             var per = new Person()
             {
                 firstName = reg.firstName,
