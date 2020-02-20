@@ -2,13 +2,16 @@ using AutoMapper;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Data.ViewModel;
 using ListaccFinance.API.SendModel;
+using Microsoft.AspNetCore.Identity;
 
 public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {
         CreateMap<Department, DepartMentViewModel>();
-        CreateMap<User, UserViewModel>();
+        CreateMap<IdentityUser<int>, IdentityU>();
+
+        CreateMap<User, UserViewModel>().IncludeBase<IdentityUser<int>, IdentityU>();
         CreateMap<Person, PersonViewModel>();
         CreateMap<CostCategory, CostCategoryViewModel>();
         CreateMap<Project, ProjectViewModel>();
@@ -23,6 +26,9 @@ public class AutoMapperProfile : Profile
         CreateMap<ProjectViewModel, Project>();
         CreateMap<ClientViewModel, Client>();
         CreateMap<ServiceViewModel, Service>();
+
+        // I removed this automapper for User Upload because mapping it won't just work.  
+        //CreateMap<UserViewModel, RegisterModel>();
 
     }
 }

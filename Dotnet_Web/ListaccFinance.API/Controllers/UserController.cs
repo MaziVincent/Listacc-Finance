@@ -103,7 +103,7 @@ namespace ListaccFinance.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (!await _uService.IsThisUserExist(me.Emailaddress))
+            if (!await _uService.IsThisUserExist(me.EmailAddress))
             {
                 string userIdString = this.User.Claims.First(i => i.Type == "UserID").Value;
                 int userId = int.Parse(userIdString);

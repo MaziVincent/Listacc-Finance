@@ -132,8 +132,22 @@ namespace ListaccFinance.API.Controllers
                             break;
 
                         case "Users":
-                            var uChange = _mapper.Map<RegisterModel>(sync.user);
-                            await _sservice.UploadUserAsync(uChange);
+                            //var uChange = _mapper.Map<RegisterModel>(sync.user);
+                            var regUser = new RegisterModel{
+                                firstName = sync.user.person.firstName,
+                                LastName = sync.user.person.LastName,
+                                Gender = sync.user.person.Gender,
+                                DateOfBirth = sync.user.person.DateOfBirth,
+                                Phone = sync.user.Phone, 
+                                Address = sync.user.Address,
+                                EmailAddress = sync.user.Email,
+                                Password = sync.user.Password,
+                                DepartmentId = sync.user.DepartmentId,
+                                
+                            };
+
+                            
+                            await _sservice.UploadUserAsync(regUser);
                             break;
 
                         case "Clients":
@@ -159,8 +173,7 @@ namespace ListaccFinance.API.Controllers
                 return Ok();
             }
             catch (System.Exception e)
-            {
-                
+            {      
                 throw e;
             }
 
@@ -169,7 +182,7 @@ namespace ListaccFinance.API.Controllers
 
 
         [Authorize]
-        [HttpPost("Download/{lastSyncID}")]
+        [HttpGet("Download/{lastSyncID}")]
         public async Task<IActionResult> DownloadData([FromRoute]int lastSyncID)
         {
             const int numnerOfItems = 10;

@@ -1,4 +1,6 @@
 
+using ListaccFinance.API.Data.Model;
+
 namespace ListaccFinance.API.Data.ViewModel
 {
     public class SyncViewModel
@@ -37,19 +39,27 @@ namespace ListaccFinance.API.Data.ViewModel
         public int ChangeId { get; set; }
     }
     
-    public class UserViewModel 
+    public class UserViewModel : IdentityU
     {
         public UserViewModel ()
         {}
+        public int Id {get; set;}
         public string Phone { get; set; }
         public string Address { get; set; }
         public string Password { get; set; }
         public int DepartmentId { get; set; }
+        public Person person {get; set;}
         public int PersonId { get; set; }
         public string salt { get; set; }
 
         public int OnlineEntryId { get; set; }
         public int ChangeId { get; set; }
+       // public string Email {get; set;}
+    }
+
+    public class IdentityU {
+        public string Email {get; set;}
+        public string PasswordHash{get; set;}
     }
 
     public class ClientViewModel

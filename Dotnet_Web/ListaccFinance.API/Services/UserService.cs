@@ -38,7 +38,7 @@ namespace ListaccFinance.API.Services
                 DateOfBirth = reg.DateOfBirth,
             };
 
-            newUser.Email = reg.Emailaddress;
+            newUser.Email = reg.EmailAddress;
             newUser.Address = reg.Address;
             newUser.Phone = reg.Phone;
 
@@ -58,7 +58,7 @@ namespace ListaccFinance.API.Services
             await _context.SaveChangesAsync();
 
             var thisUser = _context.Users.
-                Where(x => x.Email.CompareTo(reg.Emailaddress) == 0 &&
+                Where(x => x.Email.CompareTo(reg.EmailAddress) == 0 &&
                  x.PasswordHash.CompareTo(hash) == 0).FirstOrDefault();
 
             int thisUserID = thisUser.Id;
@@ -98,7 +98,7 @@ namespace ListaccFinance.API.Services
                 DateOfBirth = reg.DateOfBirth,
             };
 
-            newUser.Email = reg.Emailaddress;
+            newUser.Email = reg.EmailAddress;
             newUser.Address = reg.Address;
             newUser.Phone = reg.Phone;
 
@@ -118,7 +118,7 @@ namespace ListaccFinance.API.Services
             await _context.SaveChangesAsync();
 
             var thisUser = _context.Users.
-                            Where(x => x.Email.CompareTo(reg.Emailaddress) == 0 &&
+                            Where(x => x.Email.CompareTo(reg.EmailAddress) == 0 &&
                              x.PasswordHash.CompareTo(hash) == 0).FirstOrDefault();
 
             int thisUserID = thisUser.Id;
@@ -148,10 +148,6 @@ namespace ListaccFinance.API.Services
         {
             var newUser = new User();
 
-            var dept = new Department()
-            {
-                Name = reg.Department
-            };
 
             var per = new Person()
             {
@@ -161,10 +157,10 @@ namespace ListaccFinance.API.Services
                 DateOfBirth = reg.DateOfBirth,
             };
 
-            newUser.Email = reg.Emailaddress;
+            newUser.Email = reg.EmailAddress;
             newUser.Address = reg.Address;
             newUser.Phone = reg.Phone;
-
+            newUser.DepartmentId = reg.DepartmentId.Value;
 
             // Password Hash
             var message = reg.Password;
@@ -175,7 +171,6 @@ namespace ListaccFinance.API.Services
 
 
             newUser.Person = per;
-            newUser.Department = dept;
 
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
