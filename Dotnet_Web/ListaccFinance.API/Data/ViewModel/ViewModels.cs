@@ -12,6 +12,7 @@ namespace ListaccFinance.API.Data.ViewModel
         public ProjectViewModel project {get; set;}//= new ProjectViewModel();
         public CostCategoryViewModel costCategory{get; set;}// = new CostCategoryViewModel();
         public ServiceViewModel service{get; set;}// = new ServiceViewModel();
+        public Change change {get; set;}
         public string Table {get; set;} 
     }
 
@@ -72,6 +73,7 @@ namespace ListaccFinance.API.Data.ViewModel
         public string UId { get; set; }
         public string UId2 { get; set; }
         public double AmountReceivable { get; set; }
+        public Person Person {get; set;}
         public int? PersonId { get; set; }
 
         public int OnlineEntryId { get; set; }

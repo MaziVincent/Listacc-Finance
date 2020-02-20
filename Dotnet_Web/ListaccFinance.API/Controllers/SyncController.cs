@@ -168,6 +168,10 @@ namespace ListaccFinance.API.Controllers
                             var sChange = _mapper.Map<Service>(sync.service);
                             await _sservice.UploadServiceAsync(sChange);
                             break;
+
+                        case "Change" :
+                            await _context.Changes.AddAsync(sync.change);
+                            break;
                     }
                 }
                 return Ok();
