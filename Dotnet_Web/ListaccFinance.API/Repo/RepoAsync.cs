@@ -3,7 +3,7 @@ using ListaccFinance.Api.Data;
 
 namespace ListaccFinance.Api.Repo
 {
-    public class RepoAsync<T> where T : class
+    public class RepoAsync<T> : IRepoAsync<T>  where T : class 
     {
         private readonly DataContext _context;
 
