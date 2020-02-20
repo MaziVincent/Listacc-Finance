@@ -33,6 +33,7 @@ namespace ListaccFinance.API.Interfaces
         Task UploadProjectAsync(Project p);
         Task UploadCostAsync(CostCategory c);
         Task UploadServiceAsync(Service s);
+        Task UploadChanges(Change ch);
     }
 
 }
