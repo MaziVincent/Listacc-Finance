@@ -8,6 +8,7 @@ public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {
+        // Mapping for downloads
         CreateMap<Department, DepartMentViewModel>();
         CreateMap<IdentityUser<int>, IdentityU>();
 
@@ -18,7 +19,7 @@ public class AutoMapperProfile : Profile
         CreateMap<Client, ClientViewModel>();
         CreateMap<Service, ServiceViewModel>();
 
-        //Reverse Mapping
+        //Reverse Mapping for uploads
         CreateMap<DepartMentViewModel, Department>();
         CreateMap<PersonViewModel, Person>();
         CreateMap<CostCategoryViewModel, CostCategory>();
