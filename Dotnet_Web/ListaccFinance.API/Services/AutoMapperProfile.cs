@@ -19,6 +19,7 @@ public class AutoMapperProfile : Profile
         CreateMap<Client, ClientViewModel>();
         CreateMap<Service, ServiceViewModel>();
 
+
         //Reverse Mapping for uploads
         CreateMap<DepartMentViewModel, Department>();
         CreateMap<UserViewModel, RegisterModel>();

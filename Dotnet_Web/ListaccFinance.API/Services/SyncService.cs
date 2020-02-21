@@ -172,7 +172,7 @@ namespace ListaccFinance.API.Services
 
         public async Task<ClientViewModel> DownloadClientAsync(Change ch)
         {
-            var clientCh = await _context.Clients.Where(x => x.Id == ch.EntryId).FirstOrDefaultAsync();
+            var clientCh = await _context.Clients.Where(x => x.Id == ch.EntryId).Include(x => x.Person).FirstOrDefaultAsync();//
             var client = _mapper.Map<ClientViewModel>(clientCh);
             client.ChangeId = ch.Id;
             return client;
