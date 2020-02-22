@@ -32,8 +32,10 @@ namespace ListaccFinance.API.Interfaces
         Task UploadClientAsync(Client c);
         Task UploadProjectAsync(Project p);
         Task UploadCostAsync(CostCategory c);
+        Task UploadExpenditureAsync(Expenditure e);
         Task UploadServiceAsync(Service s);
-        Task UploadChanges(Change ch);
+        Task UploadIncomeAsync(Income i);
+        Task UploadChangesAsync(Change ch);
     }
 
 }

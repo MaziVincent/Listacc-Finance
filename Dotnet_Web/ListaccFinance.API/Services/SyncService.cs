@@ -122,6 +122,19 @@ namespace ListaccFinance.API.Services
                 throw e;
             }
         }
+        
+        public async Task UploadExpenditureAsync(Expenditure e)
+        {
+            try
+            {
+                await _context.Expenditures.AddAsync(e);
+            }
+            catch (System.Exception exc)
+            {
+
+                throw exc;
+            }
+        }
         public async Task UploadServiceAsync(Service s)
         {
             try
@@ -135,9 +148,22 @@ namespace ListaccFinance.API.Services
             }
         }
 
+        public async Task UploadIncomeAsync(Income i)
+        {
+            try
+            {
+                await _context.Incomes.AddAsync(i);
+            }
+            catch (System.Exception e)
+            {
+
+                throw e;
+            }
+        }
+
 
         // see if there's more work to do on this later
-        public async Task UploadChanges(Change ch)
+        public async Task UploadChangesAsync(Change ch)
         {
             await _context.Changes.AddAsync(ch);
             return;

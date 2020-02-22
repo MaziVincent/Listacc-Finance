@@ -27,7 +27,9 @@ public class AutoMapperProfile : Profile
         CreateMap<CostCategoryViewModel, CostCategory>();
         CreateMap<ProjectViewModel, Project>();
         CreateMap<ClientViewModel, Client>();
+        CreateMap<ExpenditureViewModel, Expenditure>();
         CreateMap<ServiceViewModel, Service>();
+        CreateMap<IncomeViewModel, Income>();
 
         // I removed this automapper for User Upload because mapping it won't just work.  
         //CreateMap<UserViewModel, RegisterModel>();

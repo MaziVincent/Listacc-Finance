@@ -164,12 +164,20 @@ namespace ListaccFinance.API.Controllers
                             var ccChange = _mapper.Map<CostCategory>(sync.costCategory);
                             await _sservice.UploadCostAsync(ccChange);
                             break;
+                        case "Expenditures":
+                            var eChange = _mapper.Map<Expenditure>(sync.expenditure);
+                            await  _sservice.UploadExpenditureAsync(eChange);
+                            break;
                         case "Services":
                             var sChange = _mapper.Map<Service>(sync.service);
                             await _sservice.UploadServiceAsync(sChange);
                             break;
+                        case "Incomes":
+                            var iChange = _mapper.Map<Income>(sync.income);
+                            await _sservice.UploadIncomeAsync(iChange);
+                            break;
 
-                        case "Change" :
+                        case "Changes" :
                             await _context.Changes.AddAsync(sync.change);
                             break;
                     }
