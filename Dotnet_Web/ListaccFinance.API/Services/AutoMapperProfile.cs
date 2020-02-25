@@ -43,9 +43,7 @@ public class AutoMapperProfile : Profile
                                               .ForMember(dest => dest.UserId, opt => opt.MapFrom(x => x.UserOnlineEntryId))
                                               .ForMember(dest => dest.Id, opt => opt.Ignore());
 
-
-        // I removed this automapper for User Upload because mapping it won't just work.  
-        //CreateMap<UserViewModel, RegisterModel>();
+    // Mapper for creating admin and 
 
     }
 }

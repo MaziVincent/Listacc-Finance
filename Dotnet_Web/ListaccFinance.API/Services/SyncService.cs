@@ -54,12 +54,11 @@ namespace ListaccFinance.API.Services
                     await _context.Departments.AddAsync(d);
                     
                     await _context.SaveChangesAsync();
-                    int Id = _context.Departments.Where(x => x.Name == d.Name && x.Projects == d.Projects).FirstOrDefault().Id;
                     var newSaved = new SavedList
                     {
                         Id = OffId,
                         Table = "Departments",
-                        OnlineEntryId = Id
+                        OnlineEntryId = d.Id
                     };
                     return newSaved;
                 }

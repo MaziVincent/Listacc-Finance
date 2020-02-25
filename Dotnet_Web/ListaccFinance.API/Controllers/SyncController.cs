@@ -19,6 +19,7 @@ namespace ListaccFinance.API.Controllers
 {
 
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class SyncController : ControllerBase
     {
@@ -49,45 +50,6 @@ namespace ListaccFinance.API.Controllers
 
         private int deptId;
 
-        [AllowAnonymous]
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(SyncLoginModel mod)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-
-            // Password Hash
-            var currentUser = _context.Users.Where(x => x.Email.ToUpper().CompareTo(mod.EmailAddress.ToUpper()) == 0).FirstOrDefault();
-            if (currentUser == null || !Hash.Validate(mod.Password, currentUser.salt, currentUser.PasswordHash))
-            {
-                return Unauthorized(new { message = "Your login input is incorrect" });
-            }
-
-            var d = await _context.DesktopClients.Where(x => mod.ClientName.ToUpper().CompareTo(x.ClientName.ToUpper()) == 0
-                                             && mod.ClientMacAddress.ToUpper().CompareTo(x.ClientMacAddress.ToUpper()) == 0
-                                             && mod.ClientType.ToUpper().CompareTo(x.ClientType.ToUpper()) == 0).FirstOrDefaultAsync();
-
-
-            if (d == null)
-            {
-                var dc = new DesktopCreateModel()
-                {
-                    ClientMacAddress = mod.ClientMacAddress,
-                    ClientName = mod.ClientName,
-                    ClientType = mod.ClientType,
-                };
-                d = await _dService.CreateDesktopClientAsync(dc);
-            }
-
-            var token = await _tokGen.GenerateToken(d, currentUser.Id);
-
-
-            return Ok(token);
-
-        }
 
         [Authorize]
         [HttpPost("CreateDesktopClient")]
@@ -105,13 +67,7 @@ namespace ListaccFinance.API.Controllers
 
 
 
-        [AllowAnonymous]
-        // This method pings the server at intervals
-        [HttpGet("PingServer")]
-        public IActionResult PingServer()
-        {
-            return Ok();
-        }
+
 
         public async Task SaveChangesAsync(DateTime ChangeTimestamp, string Change, string Table, int EntryId)
         {

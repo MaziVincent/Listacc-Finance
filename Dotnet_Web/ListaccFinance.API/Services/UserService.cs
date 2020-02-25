@@ -214,6 +214,14 @@ namespace ListaccFinance.API.Services
             
             return true;
         }
+
+        public async Task CreateAdmin(RegisterModel reg)
+        {
+            await this.CreateUserAsync(reg);
+            var ad = new Admin{
+            };
+            
+        }
     }
 
 }

@@ -28,51 +28,7 @@ namespace ListaccFinance.API.Controllers
         }
 
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login (UserLogin u)
-        {
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            // Password Hash Comparison
-            var pmessage = u.Password;
-            var currentUser = _context.Users.Where(x => x.Email.ToUpper().CompareTo(u.EmailAddress.ToUpper()) == 0).FirstOrDefault();
-
-            if (currentUser is null)
-            {
-                return Unauthorized(new { message = "Not authorized" });
-            }
-
-            else
-            {
-                var PasswordHash = Hash.Create(pmessage, currentUser.salt);
-                //var isCorrect = Hash.Validate(pmessage, salt, PasswordHash);
-
-                if (currentUser.PasswordHash.CompareTo(PasswordHash) == 0)
-                {
-                    int myID = currentUser.Id;
-
-                    var tokenString = await _generator.GenerateToken(u, myID);
-                    currentUser.PasswordHash = null;
-                    var token = new{
-                                    tokenString = tokenString,
-                                    currentUser = currentUser
-                    };
-                    return Ok(token);
-                }
-                return BadRequest("Wrong password");
-            }
-
-
-            /*var thisUser = _context.Users.
-                Where(x => x.Email.CompareTo(u.EmailAddress) == 0 &&
-                 x.PasswordHash.CompareTo(PasswordHash) == 0).FirstOrDefault();*/
-
-
-        }
+        
 
 
 
