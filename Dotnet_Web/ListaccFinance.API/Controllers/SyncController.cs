@@ -20,7 +20,7 @@ namespace ListaccFinance.API.Controllers
 
     [ApiController]
     [Route("api/[controller]")]
-    public class SyncController : ControllerBase 
+    public class SyncController : ControllerBase
     {
         private readonly DataContext _context;
 
@@ -32,20 +32,22 @@ namespace ListaccFinance.API.Controllers
         private readonly ISyncService _sservice;
         private readonly IMapper _mapper;
 
-        public SyncController(  DataContext context, 
-                                ITokenGenerator tokGen, 
+        public SyncController(DataContext context,
+                                ITokenGenerator tokGen,
                                 IDesktopService dService,
                                 ISyncService sservice,
                                 IMapper mapper
-                             ) 
+                             )
         {
             _context = context;
             _tokGen = tokGen;
             _dService = dService;
             _sservice = sservice;
             _mapper = mapper;
-  
+
         }
+
+        private int deptId;
 
         [AllowAnonymous]
         [HttpPost("Login")]
@@ -63,7 +65,7 @@ namespace ListaccFinance.API.Controllers
             {
                 return Unauthorized(new { message = "Your login input is incorrect" });
             }
-            
+
             var d = await _context.DesktopClients.Where(x => mod.ClientName.ToUpper().CompareTo(x.ClientName.ToUpper()) == 0
                                              && mod.ClientMacAddress.ToUpper().CompareTo(x.ClientMacAddress.ToUpper()) == 0
                                              && mod.ClientType.ToUpper().CompareTo(x.ClientType.ToUpper()) == 0).FirstOrDefaultAsync();
@@ -80,10 +82,10 @@ namespace ListaccFinance.API.Controllers
                 d = await _dService.CreateDesktopClientAsync(dc);
             }
 
-             var token =  await _tokGen.GenerateToken(d);
+            var token = await _tokGen.GenerateToken(d, currentUser.Id);
 
 
-             return Ok(token);
+            return Ok(token);
 
         }
 
@@ -111,81 +113,270 @@ namespace ListaccFinance.API.Controllers
             return Ok();
         }
 
+        public async Task SaveChangesAsync(DateTime ChangeTimestamp, string Change, string Table, int EntryId)
+        {
+            int DesktopClientId = int.Parse(this.User.Claims.First(x => x.Type == "Desktopid").Value);
+            int UserId = int.Parse(this.User.Claims.First(x => x.Type == "userId").Value);
+            DateTime OnlineTimeStamp = DateTime.Now;
+            var newChange = new Change
+            {
+                DesktopClientId = DesktopClientId,
+                UserId = UserId,
+                OnlineTimeStamp = OnlineTimeStamp,
+                OfflineTimeStamp = ChangeTimestamp,
+                ChangeType = Change,
+                Table = Table,
+                EntryId = EntryId
+            };
+            await _context.Changes.AddAsync(newChange);
+            await _context.SaveChangesAsync();
+
+        }
+
+        List<SavedList> mapList = new List<SavedList>();
+        SavedList save;
         [Authorize]
         [HttpPost("Upload")]
-        public async Task<IActionResult> UploadData(List<SyncViewModel> lsync)
+        public async Task<IActionResult> UploadData(List<UploadSyncViewModel> lsync)
         {
+
             try
             {
-                foreach (SyncViewModel sync in lsync)
+
+                foreach (UploadSyncViewModel sync in lsync)
                 {
                     switch (sync.Table)
                     {
+
                         case "Departments":
                             var dChange = _mapper.Map<Department>(sync.dept);
-                            await _sservice.UploadDeptAsync(dChange);
+                            int dId = sync.dept.Id;
+
+                            save = sync.dept.OnlineEntryId is null ? await _sservice.UploadDeptAsync(dChange, dId) : await _sservice.UploadOldDeptAsync(dChange, sync.dept.OnlineEntryId.Value);
+                            if (save != null) mapList.Add(save);
+                            await SaveChangesAsync(sync.dept.ChangeTimeStamp, sync.dept.Change, sync.Table, dId);
                             break;
+
 
                         case "Persons":
                             var pChange = _mapper.Map<Person>(sync.person);
-                            await _sservice.UploadPersonAsync(pChange);
+                            int pId = sync.person.Id;
+                            save = sync.person.OnlineEntryId is null ? await _sservice.UploadPersonAsync(pChange, pId) : await _sservice.UploadOldPersonAsync(pChange, sync.person.OnlineEntryId.Value);
+                            if (save != null) mapList.Add(save);
+                            await SaveChangesAsync(sync.person.ChangeTimeStamp, sync.person.Change, sync.Table, pId);
                             break;
 
                         case "Users":
-                            //var uChange = _mapper.Map<RegisterModel>(sync.user);
-                            var regUser = new RegisterModel{
+
+                            if (sync.user.DepartmentOnlineEntryId is null)
+                            {
+                                foreach (var mapped in mapList)
+                                {
+                                    if (mapped.Id == sync.user.DepartmentId && mapped.Table == "Departments")
+                                    {
+                                        deptId = mapped.OnlineEntryId;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                deptId = sync.user.DepartmentId;
+                            }
+                            var regUser = new RegisterModel
+                            {
                                 firstName = sync.user.person.firstName,
                                 LastName = sync.user.person.LastName,
                                 Gender = sync.user.person.Gender,
                                 DateOfBirth = sync.user.person.DateOfBirth,
-                                Phone = sync.user.Phone, 
+                                Phone = sync.user.Phone,
                                 Address = sync.user.Address,
                                 EmailAddress = sync.user.Email,
                                 Password = sync.user.Password,
-                                DepartmentId = sync.user.DepartmentId,
-                                
+                                DepartmentId = deptId
                             };
-
-                            
-                            await _sservice.UploadUserAsync(regUser);
+                            int uId = sync.user.Id;
+                            await _sservice.UploadUserAsync(regUser, sync.user.Id);
+                            await SaveChangesAsync(sync.user.ChangeTimeStamp, sync.user.Change, sync.Table, uId);
                             break;
+
 
                         case "Clients":
                             var cChange = _mapper.Map<Client>(sync.client);
-                            await _sservice.UploadClientAsync(cChange);
+                            int cId = sync.client.Id;
+                            if (sync.client.PersonOnlineEntryId is null)
+                            {
+                                foreach (var mapped in mapList)
+                                {
+                                    if (mapped.Id == sync.client.PersonId && mapped.Table.CompareTo("Clients") == 0)
+                                    {
+                                        cChange.PersonId = mapped.OnlineEntryId;
+                                    }
+                                }
+                            }
+                            save = sync.client.OnlineEntryId is null ? await _sservice.UploadClientAsync(cChange, cId) : await _sservice.UploadOldClientAsync(cChange, sync.client.OnlineEntryId.Value);
+                            if (save != null) mapList.Add(save);
+                            await SaveChangesAsync(sync.client.ChangeTimeStamp, sync.client.Change, sync.Table, cId);
                             break;
+
 
                         case "Projects":
                             var prChange = _mapper.Map<Project>(sync.project);
-                            await _sservice.UploadProjectAsync(prChange);
+                            int prId = sync.project.Id;
+                            if (sync.project.DepartmentOnlineEntryId is null)
+                            {
+                                foreach (var mapped in mapList)
+                                {
+                                    if (mapped.Id == sync.project.DepartmentId && mapped.Table == "Departments")
+                                    {
+                                        prChange.DepartmentId = mapped.OnlineEntryId;
+                                    }
+                                }
+                            }
+
+                            save = sync.project.OnlineEntryId is null ? await _sservice.UploadProjectAsync(prChange, prId) : await _sservice.UploadOldProjectAsync(prChange, sync.project.OnlineEntryId.Value);
+                            if (save != null) mapList.Add(save);
+                            await SaveChangesAsync(sync.project.ChangeTimeStamp, sync.project.Change, sync.Table, prId);
                             break;
 
                         case "CostCategories":
                             var ccChange = _mapper.Map<CostCategory>(sync.costCategory);
-                            await _sservice.UploadCostAsync(ccChange);
-                            break;
-                        case "Expenditures":
-                            var eChange = _mapper.Map<Expenditure>(sync.expenditure);
-                            await  _sservice.UploadExpenditureAsync(eChange);
-                            break;
-                        case "Services":
-                            var sChange = _mapper.Map<Service>(sync.service);
-                            await _sservice.UploadServiceAsync(sChange);
-                            break;
-                        case "Incomes":
-                            var iChange = _mapper.Map<Income>(sync.income);
-                            await _sservice.UploadIncomeAsync(iChange);
+                            int ccId = sync.costCategory.Id;
+                            save = sync.costCategory.OnlineEntryId is null ? await _sservice.UploadCostAsync(ccChange, ccId) : await _sservice.UploadOldCostAsync(ccChange, sync.costCategory.OnlineEntryId.Value);
+                            if (save != null) mapList.Add(save);
+                            await SaveChangesAsync(sync.costCategory.ChangeTimeStamp, sync.costCategory.Change, sync.Table, ccId);
                             break;
 
-                        case "Changes" :
-                            await _context.Changes.AddAsync(sync.change);
+                        case "Expenditures":
+                            var eChange = _mapper.Map<Expenditure>(sync.expenditure);
+                            int eId = sync.expenditure.Id;
+                            if (sync.expenditure.ClientOnlineEntryId is null)
+                            {
+                                foreach (var mapped in mapList)
+                                {
+                                    if (mapped.Id == sync.expenditure.ClientId && mapped.Table.CompareTo("Clients") == 0)
+                                    {
+                                        eChange.ClientId = mapped.OnlineEntryId;
+                                    }
+                                }
+                            }
+                            if (sync.expenditure.CostCategoryOnlineEntryId is null)
+                            {
+                                foreach (var mapped in mapList)
+                                {
+                                    if (mapped.Id == sync.expenditure.CostCategoryId && mapped.Table.CompareTo("CostCategories") == 0)
+                                    {
+                                        eChange.CostCategoryId = mapped.OnlineEntryId;
+                                    }
+                                }
+                            }
+                            if (sync.expenditure.ProjectOnlineEntryId is null)
+                            {
+                                foreach (var mapped in mapList)
+                                {
+                                    if (mapped.Id == sync.expenditure.ProjectId && mapped.Table.CompareTo("Projects") == 0)
+                                    {
+                                        eChange.ProjectId = mapped.OnlineEntryId;
+                                    }
+                                }
+                            }
+                            if (sync.expenditure.IssuerOnlineEntryId is null)
+                            {
+                                foreach (var mapped in mapList)
+                                {
+                                    if (mapped.Id == sync.expenditure.IssuerId && mapped.Table.CompareTo("Users") == 0)
+                                    {
+                                        eChange.IssuerId = mapped.OnlineEntryId;
+                                    }
+                                }
+                            }
+                            save = sync.expenditure.OnlineEntryId is null ? await _sservice.UploadExpenditureAsync(eChange, eId) : await _sservice.UploadOldExpenditureAsync(eChange, sync.expenditure.OnlineEntryId.Value);
+                            if (save != null) mapList.Add(save);
+                            await SaveChangesAsync(sync.expenditure.ChangeTimeStamp, sync.expenditure.Change, sync.Table, eId);
                             break;
+
+
+                        case "Services":
+                            var sChange = _mapper.Map<Service>(sync.service);
+                            int sId = sync.service.Id;
+                            if (sync.service.ProjectOnlineEntryId is null)
+                            {
+                                foreach (var mapped in mapList)
+                                {
+                                    if (mapped.Id == sync.service.ProjectId && mapped.Table.CompareTo("Projects") == 0)
+                                    {
+                                        sChange.ProjectId = mapped.OnlineEntryId;
+                                    }
+                                }
+                            }
+                            save = sync.service.OnlineEntryId is null ? await _sservice.UploadServiceAsync(sChange, sId) : await _sservice.UploadOldServiceAsync(sChange, sync.service.OnlineEntryId.Value);
+                            if (save != null) mapList.Add(save);
+                            await SaveChangesAsync(sync.service.ChangeTimeStamp, sync.service.Change, sync.Table, sId);
+                            break;
+
+                        case "Incomes":
+                            var iChange = _mapper.Map<Income>(sync.income);
+                            if (sync.income.ClientOnlineEntryId == null)
+                            {
+                                foreach (var saved in mapList)
+                                {
+                                    if (saved.Id == sync.income.ServiceId && saved.Table.CompareTo("Clients") == 0)
+                                    {
+                                        iChange.ClientId = saved.OnlineEntryId;
+                                    }
+
+                                }
+                            }
+                            if (sync.income.ServiceOnlineEntryId == null)
+                            {
+                                foreach (var saved in mapList)
+                                {
+                                    if (saved.Id == sync.income.ServiceId && saved.Table.CompareTo("Services") == 0)
+                                    {
+                                        iChange.ServiceId = saved.OnlineEntryId;
+                                    }
+                                }
+                            }
+
+                            if (sync.income.IncomeOnlineEntryId == null)
+                            {
+                                foreach (var saved in mapList)
+                                {
+                                    if (saved.Id == sync.income.IncomeId && saved.Table.CompareTo("Incomes") == 0)
+                                    {
+                                        iChange.IncomeId = saved.OnlineEntryId;
+                                    }
+                                }
+                            }
+
+                            if (sync.income.UserOnlineEntryId == null)
+                            {
+                                foreach (var saved in mapList)
+                                {
+                                    if (saved.Id == sync.income.UserId && saved.Table.CompareTo("Users") == 0)
+                                    {
+                                        iChange.UserId = saved.OnlineEntryId;
+                                    }
+                                }
+                            }
+
+
+                            int iId = sync.income.Id;
+                            save = sync.income.OnlineEntryId is null ? await _sservice.UploadIncomeAsync(iChange, iId) : await _sservice.UploadOldIncomeAsync(iChange, sync.income.OnlineEntryId.Value);
+                            if (save != null) mapList.Add(save);
+                            await SaveChangesAsync(sync.income.ChangeTimeStamp, sync.income.Change, sync.Table, iId);
+                            break;
+
+                            /*case "Changes" :
+                                int DesktopClientId = int.Parse(this.User.Claims.First(x =>x.Type == "Desktopid").Value);
+
+                                await _context.Changes.AddAsync(sync.change);
+                                break;*/
                     }
                 }
                 return Ok();
             }
             catch (System.Exception e)
-            {      
+            {
                 throw e;
             }
 
@@ -205,7 +396,7 @@ namespace ListaccFinance.API.Controllers
             var lastChanges = await _context.Changes
                                 .Where(i => i.Id > lastSyncID)
                                 .Except(_context.Changes.Where(((x) => x.DesktopClientId == dc.Id)))
-                                .OrderBy(x =>x.Id).Take(numnerOfItems).ToListAsync();
+                                .OrderBy(x => x.Id).Take(numnerOfItems).ToListAsync();
 
             List<SyncViewModel> syncValues = new List<SyncViewModel>();
 
@@ -217,7 +408,7 @@ namespace ListaccFinance.API.Controllers
                     case "Departments":
                         obj.dept = await _sservice.DownloadDeptAsync(ch);
                         break;
-                    
+
                     case "Persons":
                         obj.person = await _sservice.DownloadPersonAsync(ch);
                         break;
@@ -243,6 +434,6 @@ namespace ListaccFinance.API.Controllers
             }
 
             return Ok(syncValues);
-    }
+        }
     }
 }

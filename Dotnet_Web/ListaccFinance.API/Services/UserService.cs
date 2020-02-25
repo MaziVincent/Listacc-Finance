@@ -144,7 +144,7 @@ namespace ListaccFinance.API.Services
 
 
         //Create User for uploads
-        public async Task<string> CreateUserUploadAsync(RegisterModel reg)
+        public async Task<User> CreateUserUploadAsync(RegisterModel reg)
         {
             var newUser = new User();
 
@@ -175,7 +175,7 @@ namespace ListaccFinance.API.Services
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
 
-            return "done";
+            return newUser;
 
 
         }

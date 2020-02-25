@@ -4,6 +4,7 @@ using ListaccFinance.API.Data.Model;
 
 namespace ListaccFinance.API.Data.ViewModel
 {
+
     public class SyncViewModel
     {
         public DepartMentViewModel dept {get; set;}
@@ -17,6 +18,7 @@ namespace ListaccFinance.API.Data.ViewModel
         public IncomeViewModel income {get; set;}
         public Change change {get; set;}
         public string Table {get; set;} 
+
     }
 
     public class DepartMentViewModel 
@@ -129,7 +131,7 @@ namespace ListaccFinance.API.Data.ViewModel
         public string Description { get; set; }
         public double Amount { get; set; }
         public int ProjectId { get; set; }
-
+        public bool FixedAmount { get; set; }
         public int OnlineEntryId { get; set; }
         public int ChangeId { get; set; }
     }

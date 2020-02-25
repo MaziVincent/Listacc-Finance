@@ -55,8 +55,13 @@ namespace ListaccFinance.API.Controllers
                 {
                     int myID = currentUser.Id;
 
-                    var message = await _generator.GenerateToken(u, myID);
-                    return Ok(message);
+                    var tokenString = await _generator.GenerateToken(u, myID);
+                    currentUser.PasswordHash = null;
+                    var token = new{
+                                    tokenString = tokenString,
+                                    currentUser = currentUser
+                    };
+                    return Ok(token);
                 }
                 return BadRequest("Wrong password");
             }

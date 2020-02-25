@@ -22,7 +22,7 @@ namespace ListaccFinance.API.Services
         {
             _config = config;
         }
-        public async Task<string> GenerateToken(DesktopClient i) {
+        public async Task<string> GenerateToken(DesktopClient i, int userId) {
 
 
 
@@ -31,6 +31,7 @@ namespace ListaccFinance.API.Services
             tokenClaims.Add(new Claim("name", i.ClientName));
             tokenClaims.Add(new Claim("type", i.ClientType));
             tokenClaims.Add(new Claim("macAddr", i.ClientMacAddress));
+            tokenClaims.Add(new Claim("userId", userId.ToString()));
             
             var keyByte = Encoding.UTF8.GetBytes(_config.GetSection("LoginSettings:Key").Value);
             
@@ -56,8 +57,7 @@ namespace ListaccFinance.API.Services
         {
             var tokenClaims = new List<Claim> { };
             tokenClaims.Add(new Claim("UserID", ID.ToString()));
-            tokenClaims.Add(new Claim("email", u.EmailAddress));
-            tokenClaims.Add(new Claim("password", u.Password));
+            tokenClaims.Add(new Claim("Email", u.EmailAddress));
 
             var keyByte = Encoding.UTF8.GetBytes(_config.GetSection("LoginSettings:Key").Value);
 
@@ -75,7 +75,7 @@ namespace ListaccFinance.API.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
-
+            
             return tokenString;
         }
     }    
