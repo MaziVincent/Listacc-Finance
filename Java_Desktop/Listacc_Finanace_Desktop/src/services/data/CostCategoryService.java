@@ -30,6 +30,17 @@ public class CostCategoryService extends DataService {
         return ccategory.size() > 0;
     }
     
+     public boolean costCategoryNameExists(String name, int id)
+    {
+        
+        List<CostCategories> department = (List<CostCategories>) em.createQuery("SELECT q FROM CostCategories q  where upper(q.name)=:name AND q.id !="+id)
+            .setParameter("name",name.toUpperCase())
+            //.setParameter(id, id)
+                .getResultList();
+        
+        return department.size() > 0;
+    }
+    
     private boolean createCostCategory(CostCategories costCategories){
        try{
             em.getTransaction().begin();
@@ -54,6 +65,26 @@ public class CostCategoryService extends DataService {
             costcat.setName(name);
             costcat.setType(type);
             return createCostCategory(costcat);
+           
+        }catch(NoResultException ex){
+            return false;
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+      return  false;   
+     }
+    
+    public boolean updateCategories( String name, String description, String type, int id){
+        try{
+            em.getTransaction().begin();
+            CostCategories costcat = (CostCategories) em.createNamedQuery("CostCategories.findById").setParameter("id", id).getSingleResult();
+            costcat.setDescription(description);
+            costcat.setName(name);
+            costcat.setType(type);
+            em.persist(costcat);
+            em.getTransaction().commit();
+            em.close();
+            return true;
            
         }catch(NoResultException ex){
             return false;

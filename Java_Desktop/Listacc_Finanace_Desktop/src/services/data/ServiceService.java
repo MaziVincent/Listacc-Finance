@@ -31,6 +31,15 @@ public class ServiceService extends DataService{
         return department.size() > 0;
     }
     
+    public boolean serviceNameExists(String name, int id)
+    {
+        
+        List<Services> department = (List<Services>) em.createQuery("SELECT q FROM Services q  where upper(q.name)=:name AND q.id !="+id) 
+            .setParameter("name",name.toUpperCase()).getResultList();
+        
+        return department.size() > 0;
+    }
+    
     private boolean createService(Services service){
        try{
             em.getTransaction().begin();
@@ -66,4 +75,22 @@ public class ServiceService extends DataService{
         
         return  false;   
      }
+    
+    public boolean updateService(String name, double amount,String description, int projectId, boolean fixedAmount, int serviceId ){
+        try{
+            em.getTransaction().begin();
+            Services service = (Services) em.createNamedQuery("Services.findById").setParameter("id", serviceId).getSingleResult();
+            Projects project = (Projects) em.createNamedQuery("Projects.findById").setParameter("id", projectId).getSingleResult();
+            service.setAmount(amount);
+            service.setName(name);
+            service.setDescription(description);
+            service.setProjectId(project);
+            service.setFixedAmount(fixedAmount? 1: 0);
+            em.persist(service);
+            em.getTransaction().commit();
+            em.close();
+            return true;
+        }catch(Exception ec){
+        return false;}
+    }
 }

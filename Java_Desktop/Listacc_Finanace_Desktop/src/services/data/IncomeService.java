@@ -60,8 +60,6 @@ public class IncomeService extends DataService {
                     em.getTransaction().begin();
                     em.persist(incomePerson);
                     em.getTransaction().commit();
-                    
-                    // insert chage
                     new ChangeService().insertCreateChange(incomePerson);
                 }
 
@@ -84,15 +82,18 @@ public class IncomeService extends DataService {
             Services serv = (Services) em.createNamedQuery("Services.findById")
                .setParameter("id", display.getServiceIdnum()).getSingleResult();
             em.getTransaction().begin();
+            if(display.getParentIncomeId() > 0){
             Incomes pIncome = (Incomes) em.createNamedQuery("Incomes.findById")
                .setParameter("id", display.getParentIncomeId()).getSingleResult();
-            income.setServiceId(serv);
             income.setIncomeId(pIncome);
-            pIncome.setAmountReceivable(pIncome.getAmountReceivable() - income.getAmountReceived());
+             pIncome.setAmountReceivable(pIncome.getAmountReceivable() - income.getAmountReceived());
+              em.persist(pIncome);
+            }
+           
             income.setUserId(display.getUserId());
-         
+            income.setServiceId(serv);
             em.persist(income);
-            em.persist(pIncome);
+           
             em.getTransaction().commit();
             
             // insert chage

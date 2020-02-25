@@ -17,6 +17,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.SqlResultSetMapping;
 import model.Clients;
+import model.Persons;
 import model.display.DisplayClient;
 /**
  *
@@ -26,7 +27,7 @@ public class ClientService extends DataService {
     
      public List<DisplayClient> getAllClients()
     {       
-         Query q =  em.createNativeQuery("SELECT a.id, a.phone, a.businessName, a.address, a.email, p.firstName, p.lastName, a.uId FROM Clients a LEFT JOIN Persons p ON p.id = a.personId");
+         Query q =  em.createNativeQuery("SELECT a.id, a.phone, a.businessName, a.address, a.email, p.firstName, p.lastName, a.uId, p.dateOfBirth, p.gender FROM Clients a LEFT JOIN Persons p ON p.id = a.personId");
         // return em.createQuery("SELECT DISTINCT c FROM Clients c LEFT JOIN c.personId p").getResultList();                                                                                                                                                 
         @SuppressWarnings("unchecked")
        List<Object[]> list = q.getResultList();
@@ -70,5 +71,45 @@ public class ClientService extends DataService {
    } catch (Exception e) {
       throw new RuntimeException(e);
    }
-}
+ }
+   
+   public boolean updateClient(Clients client, int id){
+      try{
+          em.getTransaction().begin();
+          Clients updateClient = (Clients) em.createNamedQuery("Clients.findById").setParameter("id", id).getSingleResult();
+          
+          
+          if (client.getPersonId() == null)
+          updateClient.setPersonId(null);
+          else if(updateClient.getPersonId() != null && client.getPersonId() != null){
+              Persons updatePerson = (Persons) em.createNamedQuery("Persons.findById").setParameter("id", updateClient.getPersonId().getId()).getSingleResult();
+              updatePerson.setFirstName(client.getPersonId().getFirstName());
+              updatePerson.setLastName(client.getPersonId().getLastName());
+              updatePerson.setDateOfBirth(client.getPersonId().getDateOfBirth());
+              updatePerson.setGender(client.getPersonId().getGender());
+          }
+          else {
+              Persons updatePerson = new Persons();
+              updatePerson.setFirstName(client.getPersonId().getFirstName());
+              updatePerson.setLastName(client.getPersonId().getLastName());
+              updatePerson.setDateOfBirth(client.getPersonId().getDateOfBirth());
+              updatePerson.setGender(client.getPersonId().getGender());
+              em.persist(updatePerson);
+             //em.getTransaction().commit();
+              updateClient.setPersonId(updatePerson);
+          }
+          updateClient.setAddress(client.getAddress());
+          updateClient.setBusinessName(client.getBusinessName());
+          updateClient.setEmail(client.getEmail());
+          updateClient.setPhone(client.getPhone());
+          updateClient.setAddress(client.getAddress());
+          em.persist(updateClient);
+          em.getTransaction().commit();
+          em.close();
+          
+          return true;
+      }catch(Exception exc){
+          exc.printStackTrace();
+      return false;} 
+   }
 }

@@ -42,12 +42,15 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.DepthTest;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -55,6 +58,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
@@ -78,6 +83,14 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
+import javax.print.attribute.PrintServiceAttributeSet;
+import javax.print.attribute.standard.PrinterName;
 import model.AppModel;
 import model.Clients;
 import model.CostCategories;
@@ -177,6 +190,7 @@ public class MaiinUI implements Initializable {
             cctgBtnSave.disableProperty().bind(cctgSaveBtnDisableProp);
             incomeBtnSave.disableProperty().bind(incomeSaveBtnDisableProp);
             expBtnEnter.disableProperty().bind(expenditureSaveBtnDisableProp);
+            clientSaveBtn.disableProperty().bind(clientSaveBtnDisableProp);
             prjComboDepartment.valueProperty().addListener((obs, oldval, newval) -> {validateProjectForm();});
             srvComboProject.valueProperty().addListener((obs, oldval, newval) -> {validateServiceForm();});
             cctgComboType.valueProperty().addListener((obs, oldval, newval) -> {validateCctgForm();});
@@ -202,17 +216,260 @@ public class MaiinUI implements Initializable {
                 Platform.runLater(() -> {refreshIncomeView(false);});
                  Platform.runLater(() -> {refreshExpenditureView(false);});
                   Platform.runLater(() -> {refreshUserView();});
-              clientList = new ClientService().getAllClients();
-        
-        
-        ObservableList<DisplayClient> clientData
-            = FXCollections.observableArrayList(clientList);
-                       clientsFiltered =  new FilteredList(clientData,(p -> true ));
-       
-       clientListTable.setItems(clientsFiltered);
-            initializeTableCells();
+                    Platform.runLater(() -> {refreshClientView();});
+                      Platform.runLater(() -> {refreshPrinterList();} );
         }
         
+        private void refreshPrinterList(){
+            try{
+                    DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+                     pservice = PrintServiceLookup.lookupPrintServices(flavor,null);
+                        ObservableList<PrintService> userDisplayData
+            = FXCollections.observableArrayList(pservice);
+           
+                       printerFiltered =  new FilteredList(userDisplayData,(p -> true ));
+                    
+                    printerList.setCellFactory(new Callback<ListView<PrintService>, ListCell<PrintService>>() {
+
+                        @Override
+                        public ListCell<PrintService> call(ListView<PrintService> param) {
+                            ListCell<PrintService> cell = new ListCell<PrintService>() {
+
+                                @Override
+                                protected void updateItem(PrintService item, boolean empty) {
+                                    super.updateItem(item, empty);
+                                    if (item != null) {
+                                        PrintServiceAttributeSet psaSet =item.getAttributes();
+                                       setText(psaSet.get(PrinterName.class).toString());
+                                    }else {
+                                      setText("");   
+                                   }
+                                }
+                            };
+                            return cell;
+                        }
+                    });
+                    printerList.setItems(printerFiltered);
+                   printerList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PrintService>() {
+                        @Override
+                        public void changed(ObservableValue<? extends PrintService> observable, PrintService oldValue, PrintService newValue) {
+                           if(SelectedPrinterIndex != printerList.getSelectionModel().getSelectedIndex() )
+                                {
+                                     makeDefaultBtn.setDisable(false);
+                                 }
+                           
+                        }
+                    });
+                    int size = printerFiltered.getSource().size();
+                    
+            }catch(Exception exc){
+                exc.printStackTrace();
+            }
+        }
+        @FXML
+        private void makeDefault(ActionEvent evt){
+           SelectedPrinterIndex = printerList.getSelectionModel().getSelectedIndex();
+           makeDefaultBtn.setDisable(true);
+        }
+        @FXML
+        private void validateClientForm(KeyEvent evt){
+          Platform.runLater(() -> {
+                    try{
+                          String lName = clientTxtLastName.getText();
+                          String fName =  clientTxtFirstName.getText().trim();
+                          String phone = clientTxtPhone.getText().trim();
+                          String email = clientTxtEmail.getText().trim();
+                           String Uid = clientTxtUid.getText().trim();
+                           String add = clientTxtAddress.getText().trim();
+                           
+                           String editLName = clientListTable.getSelectionModel().getSelectedItem().getLastName();
+                           String editFName = clientListTable.getSelectionModel().getSelectedItem().getFirstName();
+                           String editPhone = clientListTable.getSelectionModel().getSelectedItem().getPhone();
+                           String editEmail = clientListTable.getSelectionModel().getSelectedItem().getEmail();
+                           String editUid = clientListTable.getSelectionModel().getSelectedItem().getUId();
+                           String editAdd =  clientListTable.getSelectionModel().getSelectedItem().getAddress();
+                           if(null == editFName)
+                            editFName = clientListTable.getSelectionModel().getSelectedItem().getBusinessName();
+                           
+                           boolean edit =  
+                                            ((null == editLName && null == lName ) ||  
+                                            (null != editLName && null != lName && lName.compareTo(editLName)==0))
+     
+                                            && 
+                                           fName.compareTo(editFName) == 0 &&
+                                           phone.compareTo(editPhone) == 0 &&
+                                           email.compareTo(editEmail) == 0 &&
+                                           Uid.compareTo(editUid ) == 0 &&
+                                          ((null == editAdd && add.isEmpty()) || (add.compareTo(editAdd ) == 0));
+                           
+                           boolean disable  = (clientRadioPerson.isSelected() && (null == lName ||lName.length()<1) ) || fName.length() < 1 ||
+                                             phone.length() < 1 || email.length() < 1 ||  Uid.length()  < 1
+                                                || edit; 
+                                            clientSaveBtnDisableProp.set(disable) ;
+
+                  }catch(Exception exc)
+                  {
+                       clientSaveBtnDisableProp.set(true);
+                  }
+                } );  
+        }
+        @FXML
+        private void clientSwitchBusiness(ActionEvent evt){
+            RadioButton person = (RadioButton)evt.getSource();
+            if(!clientListTable.getSelectionModel().isEmpty()){
+                    if(person == clientRadioBusiness)
+                    {
+                        clientTxtLastName.setDisable(true);
+                        clientRadioMale.setDisable(true);
+                        clientRadioFemale.setDisable(true);
+                        clientTxtDob.setDisable(true);
+
+                    }else {
+                        clientTxtLastName.setDisable(false);
+                        clientRadioMale.setDisable(false);
+                        clientRadioFemale.setDisable(false);
+                        clientTxtDob.setDisable(false);
+                    }
+            }
+        }
+        @FXML
+        private void saveClient(ActionEvent evt){
+            try{
+                Persons incomePerson = new Persons();
+                Clients client = new Clients();
+                String fname = clientTxtFirstName.getText();
+                 LocalDate localDobDate = clientTxtDob.getValue();
+                 
+                String dob = null == localDobDate ? null :localDobDate.toString();
+                if(clientRadioPerson.isSelected()){
+                                String lname = clientTxtLastName.getText().trim();
+                                incomePerson.setFirstName(fname);
+                                incomePerson.setLastName(lname);
+                                incomePerson.setDateOfBirth(dob);
+                                incomePerson.setGender(clientRadioMale.isSelected() ? "Male": "Female"  );
+                            }
+                else{
+                    client.setBusinessName(fname);
+                    incomePerson = null;
+                }
+
+                            String email = clientTxtEmail.getText().trim();
+                            String phone = clientTxtPhone.getText().trim();
+                            String uid = clientTxtUid.getText().trim();
+                            client.setPersonId(incomePerson);
+                            String add = clientTxtAddress.getText();
+                            client.setEmail(email);
+                            client.setPhone(phone);
+                            client.setUId(uid);
+                           client.setAddress(add);
+                            if(!validateEmail(client.getEmail()))
+                            {
+                                error("Invalid Email address");
+                                return;
+                            }
+                            if(clientTxtPhone.getText().trim().length() != 11)
+                            {
+                                 error("Invalid  phone number");
+                                 return;
+                            }
+                           if(new ClientService().updateClient(client, clientListTable.getSelectionModel().getSelectedItem().getId()))
+                           {    info("Client updated successfully");
+                                   Platform.runLater(() -> {
+                                       refreshClientView();
+                                       clientListTable.refresh();
+                                       clientListTable.getSelectionModel().select(null);
+                                   });
+                           }
+                           
+            }catch(Exception e){
+                error("A problem occured while updating client");
+            }
+                    
+        }
+        
+        private void refreshClientView(){
+             clientList = new ClientService().getAllClients();
+            ObservableList<DisplayClient> clientData
+                = FXCollections.observableArrayList(clientList);
+                           clientsFiltered =  new FilteredList(clientData,(p -> true ));
+           
+           clientListTable.setItems(clientsFiltered);
+            initializeTableCells();
+            clientListTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                  if(null == newSelection)
+                      newSelection = oldSelection;
+                    if (newSelection != null && !businessCreateProp.get() ) {
+                    clientTxtLastName.setText(newSelection.getLastName());
+                    clientTxtFirstName.setText(newSelection.getFirstName());
+                    if(null == newSelection.getFirstName() || newSelection.getFirstName().trim().isEmpty())
+                    {
+                      clientTxtFirstName.setText(newSelection.getBusinessName());  
+                      clientRadioBusiness.setSelected(true);
+                    }
+                    else
+                        clientRadioPerson.setSelected(true);
+                    clientTxtPhone.setText(newSelection.getPhone());
+                    clientTxtEmail.setText(newSelection.getEmail());
+                    
+                    clientTxtUid.setText(newSelection.getUId());
+                    clientTxtAddress.setText(newSelection.getAddress());
+                    if(null == newSelection.getGender() || newSelection.getGender().compareTo("Male") == 0)
+                        clientRadioMale.setSelected(true);
+                    else
+                        clientRadioFemale.setSelected(true);
+                    String date =   newSelection.getDateOfBirth();
+                    if(null != date && date.length() > 1)
+                    {
+                        long dateLong = Long.parseLong(date);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTimeInMillis(dateLong);
+                        Instant instant = calendar.getTime().toInstant();
+                        ZoneId defaultZoneId = ZoneId.systemDefault();
+                        clientTxtDob.setValue(instant.atZone(defaultZoneId).toLocalDate());
+                    }
+                    
+                         clientSaveBtnDisableProp.set(true);
+                         disableClientForm(false);        
+                }
+            });
+             clientSaveBtnDisableProp.set(true);
+                    disableClientForm(true);  
+        }
+        
+        
+        
+        private void resetClientForm(){
+            clientTxtLastName.setText("");
+                    clientTxtFirstName.setText("");
+                    clientTxtPhone.setText("");
+                    clientTxtEmail.setText("");
+                    clientTxtDob.setValue(null);
+                    clientTxtUid.setText("");
+                    clientTxtAddress.setText("");
+                    clientRadioMale.setSelected(true);
+                    
+        }
+        private void disableClientForm(boolean disable){
+                    clientTxtLastName.setDisable(disable);
+                    clientTxtFirstName.setDisable(disable);
+                         clientTxtDob.setDisable(disable);
+                         clientRadioMale.setDisable(disable);
+                         clientRadioFemale.setDisable(disable);
+                    if(!disable && clientRadioBusiness.isSelected())
+                    {
+                         clientTxtLastName.setDisable(true);
+                         clientTxtDob.setDisable(true);
+                         clientRadioMale.setDisable(true);
+                         clientRadioFemale.setDisable(true);
+                    }
+                   
+                    clientTxtPhone.setDisable(disable);
+                    clientTxtEmail.setDisable(disable);
+                    
+                    clientTxtUid.setDisable(disable);
+                    clientTxtAddress.setDisable(disable);
+                    
+        }
         private void refreshUserView(){
                            List<DisplayUser> usersDisplayList = new UserService().getAllDisplayUsers();
                        
@@ -308,10 +565,12 @@ public class MaiinUI implements Initializable {
         private void initializeNumberFields(){
             incomeTxtAmount.textProperty().addListener(new DoubleValuChangeListener(incomeTxtAmount));
             incomeTxtDiscount.textProperty().addListener(new DoubleValuChangeListener(incomeTxtDiscount));
-            srvTextAmount.textProperty().addListener(new NumberChangeListener(srvTextAmount));
+            srvTextAmount.textProperty().addListener(new DoubleValuChangeListener(srvTextAmount));
             incomeTxtPhone.textProperty().addListener(new NumberChangeListener(incomeTxtPhone));
+            clientTxtPhone.textProperty().addListener(new NumberChangeListener(clientTxtPhone));
+            
             expTxtPhone.textProperty().addListener(new NumberChangeListener(expTxtPhone));
-            expTxtAmount.textProperty().addListener(new NumberChangeListener(expTxtAmount));
+            expTxtAmount.textProperty().addListener(new DoubleValuChangeListener(expTxtAmount));
             incomeTxtUnit.textProperty().addListener(new UnitNumberChangeListener(incomeTxtUnit));
             incomeTxtUnit.focusedProperty().addListener(new FocusChangeListener(incomeTxtUnit));
         }
@@ -468,6 +727,22 @@ public class MaiinUI implements Initializable {
                         cctgComboType.setItems(costCategoryTypesData);
                         expComboCost.setItems(costCategoryData);
                         expComboCost.setConverter(new CostCatStringConverter(expComboCost));
+                        costCategoryListTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                  if(null == newSelection)
+                      newSelection = oldSelection;
+                if (newSelection != null && !costCategoryCreateProp.get() ) {
+                    cctgTextName.setText(newSelection.getName());
+                    cctgTextDescription.setText(newSelection.getDescription()+"");
+                    cctgComboType.getSelectionModel().select(cctgComboType.getConverter().fromString(newSelection.getType()));
+                    cctgSaveBtnDisableProp.set(true);
+                    disableCostCategoryForm(false);             
+                }
+                        });
+          }
+        private void disablecostCategoryForm(boolean disable){
+                    cctgTextName.setDisable(disable);
+                    cctgTextDescription.setDisable(disable);
+                    cctgComboType.setDisable(disable);
         }
         private void refreshServiceView()
         {
@@ -479,6 +754,25 @@ public class MaiinUI implements Initializable {
                        srvSaveBtnDisableProp.set(true);
                        incomeComboService.setItems(serviceData);
                        incomeComboService.setConverter(new SrvStringConverter(incomeComboService));
+                       
+              serviceListTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                  if(null == newSelection)
+                      newSelection = oldSelection;
+                if (newSelection != null && !serviceCreateProp.get() ) {
+                    srvTextName.setText(newSelection.getName());
+                    srvTextAmount.setText(newSelection.getAmount()+"");
+                    adminServCheckFixed.setSelected(newSelection.getFixedAmount() == 1);
+                    srvTextDescription.setText(newSelection.getDescription());
+                    srvComboProject.getSelectionModel().select(srvComboProject.getConverter().fromString(newSelection.getProjectName()));
+                    
+                    srvTextName.setDisable(false);
+                    srvTextAmount.setDisable(false);
+                    adminServCheckFixed.setDisable(false);
+                    srvComboProject.setDisable(false);
+                    srvTextDescription.setDisable(false);
+                }
+      
+                });
         }
         private void refreshProjectView(){
             List<DisplayProject> projectList = new ProjectService().getAllProjects();
@@ -491,6 +785,20 @@ public class MaiinUI implements Initializable {
              srvComboProject.setConverter(new PrjStringConverter(srvComboProject));
              expComboProject.setConverter(new PrjStringConverter(expComboProject));
              expComboProject.setItems(projectData);
+             projectListTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                 if(null == newSelection)
+                      newSelection = oldSelection;
+                if (newSelection != null && !projectCreateProp.get() ) {
+                    prjTextName.setText(newSelection.getName());
+                    prjTextDescription.setText(newSelection.getDescription());
+                    prjComboDepartment.getSelectionModel().select(prjComboDepartment.getConverter().fromString(newSelection.getDepartmentName()));
+                    prjTextName.setDisable(false);
+                    prjTextDescription.setDisable(false);
+                    prjComboDepartment.setDisable(false);
+                }
+      
+                });
+
         }
         private void refreshDepartmentTable(){
              List<Departments> departmentList = new DepartmentService().getAllDepartments();
@@ -503,6 +811,16 @@ public class MaiinUI implements Initializable {
              //populate all department list combo box
              prjComboDepartment.setItems(departmentData);
              prjComboDepartment.setConverter(new DeptStringConverter(prjComboDepartment));
+             
+              departmentListTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                  if(null == newSelection)
+                      newSelection = oldSelection;
+                if (newSelection != null && !departmentCreateProp.get() ) {
+                    dptTextName.setText(newSelection.getName());
+                    dptTextName.setDisable(false);
+                }
+      
+                });
 
         }
         
@@ -551,7 +869,7 @@ public class MaiinUI implements Initializable {
             serviceCreateProp.set(true);
             costCategoryCreateProp.set(true);
             userCreateProp.set(true);
-            businessCreateProp.set(true);
+            businessCreateProp.set(false);
         }
         
         public static <T> Callback<TableColumn<T, Void>, TableCell<T, Void>> indexCellFactory() {
@@ -617,15 +935,33 @@ public class MaiinUI implements Initializable {
            error("Department name already exists");
            return;
            }
-           if(dpService.createDepartment(deptName))
+           if(departmentCreateProp.get())
            {
-               info("Department created successfully ");
-               refreshDepartmentTable();
-               dptTextName.setText("");
-               
+                if(dpService.createDepartment(deptName))
+                {
+                    info("Department created successfully ");
+                    Platform.runLater(() -> {refreshDepartmentTable();});
+                    dptTextName.setText("");
+
+                }
+                else{
+                    error("Could not create Department");
+                }
            }
-           else{
-               error("Could not create Department");
+           else if(!departmentCreateProp.get())
+           {
+               Departments dept = departmentListTable.getSelectionModel().getSelectedItem();
+               dept.setName(deptName);
+               if(dpService.updateDepartments(dept))
+               {
+                   info("Department updated successfully ");
+                    Platform.runLater(() -> {refreshDepartmentTable();
+                    departmentListTable.refresh();});
+                    dptTextName.setText("");
+               }
+               else{
+                    error("Could not update Department");
+                }
            }
         }
         
@@ -645,10 +981,17 @@ public class MaiinUI implements Initializable {
                error("Name should be created without any symbol");
                return;
            }
-           if(srvService.serviceNameExists(servName))
+           int id = serviceListTable.getSelectionModel().getSelectedItem().getId();
+           if(serviceCreateProp.get() && srvService.serviceNameExists(servName))
            {
-           error("Project name already exists");
-           return;
+                error("Project name already exists");
+                return;
+           }
+           else if(!serviceCreateProp.get() && srvService.serviceNameExists(servName,id ))
+           {
+               
+               error("Project name already exists");
+                return;
            }
            try{
                
@@ -660,19 +1003,32 @@ public class MaiinUI implements Initializable {
                       return;
                   }
            try{
+               
+               if(serviceCreateProp.get())
                 if(srvService.createService(servName,
                         amount,
                         srvTextDescription.getText().trim(),
                         srvComboProject.getSelectionModel().getSelectedItem().getId()
                         ,adminServCheckFixed.isSelected() ))
+                         {
+                            info("Service created successfully ");
+                            refreshServiceView();
+                            Platform.runLater(() -> {serviceListTable.refresh();});
+                            createService();
+                        } else
+                    error("Error Saving Services");
+               //if update 
+                else if (!serviceCreateProp.get())
+                    if(srvService.updateService(servName, amount, srvTextDescription.getText().trim(), 
+                            srvComboProject.getSelectionModel().getSelectedItem().getId(), 
+                            adminServCheckFixed.isSelected(), id))
                     {
-                    info("Service created successfully ");
-                    refreshServiceView();
-                    srvTextName.setText("");
-                    srvTextAmount.setText("");
-                    srvTextDescription.setText("");
-                    adminServCheckFixed.setSelected(false);
-                }
+                        info("Service updated successfully ");
+                            refreshServiceView();
+                            editService();
+                            Platform.runLater(() -> {serviceListTable.refresh();});
+                    }
+                
            }catch(Exception exc)
            {
                exc.printStackTrace();
@@ -694,21 +1050,43 @@ public class MaiinUI implements Initializable {
                error("Name should be created without any symbol");
                return;
            }
-           if(prjService.projectNameExists(prjName))
-           {
-           error("Project name already exists");
-           return;
-           }
-           if(prjService.createProject(prjName, prjTextDescription.getText().trim(),
-                   
-                   prjComboDepartment.getSelectionModel().getSelectedItem().getId()))
+           
+           if(projectCreateProp.get()){
+               if(prjService.projectNameExists(prjName))
+                {
+                error("Project name already exists");
+                return;
+                }
+           if(prjService.createProject(prjName, prjTextDescription.getText().trim(),prjComboDepartment.getSelectionModel().getSelectedItem().getId()))
            {
                info("Project created successfully ");
                refreshProjectView();
-               prjTextName.setText("");
-               prjTextDescription.setText("");
+               createProject();
                
+           }else {
+                   error("There wsa a problem creating project");
+              
+               }
+           }else if(!projectCreateProp.get()){
+               Projects project = projectListTable.getSelectionModel().getSelectedItem();
+                if(prjService.projectNameExists(prjName, project.getId()))
+                    {
+                    error("Project name already exists");
+                    return;
+                    }
+               
+               if(prjService.updateProject(project.getId(),prjName, prjTextDescription.getText().trim(),prjComboDepartment.getSelectionModel().getSelectedItem().getId()))
+                    {
+                       info("Project updated successfully ");
+                       refreshProjectView();
+                       Platform.runLater(() -> {projectListTable.refresh();});
+                      editProject();
+                   }else {
+                   error("There wsa a problem updating project");
+              
+               }
            }
+          
         }
         
          @FXML
@@ -726,22 +1104,47 @@ public class MaiinUI implements Initializable {
                error("Name should be created without any symbol");
                return;
            }
-           if(ccService.costCategoryNameExists(deptName))
+           if(costCategoryCreateProp.get() )
            {
-           error("Cost Category name already exists");
-           return;
-           }
-           if(ccService.createCategories(deptName, cctgTextDescription.getText().trim(),
+               if( ccService.costCategoryNameExists(deptName))
+               {
+                    error("Cost Category name already exists");
+                    return;
+               }
+                if(ccService.createCategories(deptName, cctgTextDescription.getText().trim(),
                    cctgComboType.getSelectionModel().getSelectedItem()))
+                {
+                    info("Cost Category created successfully ");
+                    refreshCostCategoryView();
+                    cctgTextName.setText("");
+                    cctgTextDescription.setText("");     
+                }
+                else{
+                    error("Could not create Department");
+             }
+           }
+           if((!costCategoryCreateProp.get()) )
            {
-               info("Cost Category created successfully ");
-               refreshCostCategoryView();
-               cctgTextName.setText("");
-               cctgTextDescription.setText("");     
+               int id = costCategoryListTable.getSelectionModel().getSelectedItem().getId();
+               if(ccService.costCategoryNameExists(deptName, id))
+               {
+                    error("Cost Category name already exists");
+                    return;
+               }
+                if(ccService.updateCategories(deptName, cctgTextDescription.getText().trim(),
+                   cctgComboType.getSelectionModel().getSelectedItem(), id))
+                {
+                    info("Cost Category updated successfully ");
+                    refreshCostCategoryView();
+                    costCategoryListTable.getSelectionModel().select(null);
+                    costCategoryListTable.refresh();
+                    editCostCategory();
+                }
+                else{
+                    error("Could not update Department");
+             }
            }
-           else{
-               error("Could not create Department");
-           }
+          
         }
         @FXML 
         private void setIncomeAmount(ActionEvent event){
@@ -920,8 +1323,8 @@ public class MaiinUI implements Initializable {
              incomeTxtFName.setDisable(disable);
              incomeTxtDob.setDisable(disable);
              incomeTxtAdd.setDisable(disable);
-             incomeRadioNew.setDisable(disable);
-             existingClientRadio.setDisable(disable);
+            // incomeRadioNew.setDisable(disable);
+             //existingClientRadio.setDisable(disable);
              incomeRadioBusiness.setDisable(disable);
              incomeRadioPerson.setDisable(disable);
              
@@ -968,33 +1371,109 @@ public class MaiinUI implements Initializable {
         @FXML
         private void validateDepartmentForm(KeyEvent evt)
         {
+             Departments dep  = departmentListTable.getSelectionModel().getSelectedItem();
              TextField tf = ((TextField)evt.getSource());
-             dptSaveBtnDisableProp.set(tf.getText().trim().length() < 1);
+             if(!departmentCreateProp.get() && dep!=null)
+             dptSaveBtnDisableProp.set(tf.getText().trim().length() < 1 || 
+                     tf.getText().trim().compareTo(dep.getName().trim()) ==0);
+             else if(departmentCreateProp.get())
+                 dptSaveBtnDisableProp.set(tf.getText().trim().length() <1 );
+            
         }
         
         @FXML
         private void validateProjectForm(KeyEvent evt)
         {
-             validateProjectForm();
+             Platform.runLater(() ->{validateProjectForm();});
         }
         
         @FXML
         private void validateServiceForm(KeyEvent evt)
         {
-             validateServiceForm();
+            Platform.runLater(() ->{ validateServiceForm();});
+        }
+        
+        @FXML
+        private void validateServiceForm(ActionEvent evt)
+        {
+            Platform.runLater(() ->{ validateServiceForm();});
         }
         
         private void validateProjectForm(){
             try{
+                Projects prj = projectListTable.getSelectionModel().getSelectedItem();
+                Departments comboDept = prjComboDepartment.getSelectionModel().getSelectedItem();
                boolean disable = prjTextName.getText().trim().length() < 1 
                         || prjTextDescription.getText().trim().length() < 1
-                        || prjComboDepartment.getSelectionModel().isEmpty();
+                        || prjComboDepartment.getSelectionModel().isEmpty()
+                       || (!projectCreateProp.get() && null == prj)
+                       ||(!projectCreateProp.get() && prj.getName()
+                               .compareTo(prjTextName.getText().trim()) == 0 
+                                    && prj.getDepartmentId().getId() == comboDept.getId()
+                                    && prj.getDescription().trim().compareTo(prjTextDescription.getText().trim())==0);
                 
              prjSaveBtnDisableProp.set(disable);
             }catch(Exception exc){
                 prjSaveBtnDisableProp.set(true);
             }
         }
+        
+        private void editDepartment(){
+            departmentCreateProp.set(false);
+            dptTextName.setDisable(true);
+            dptTextName.setText("");
+            
+        }
+        
+        private void createDepartment(){
+            departmentCreateProp.set(true);
+            dptTextName.setDisable(false);
+            dptTextName.setText("");
+        }
+        
+        private void editProject(){
+            projectCreateProp.set(false);
+             prjTextName.setText("");
+                    prjTextDescription.setText("");
+                    prjComboDepartment.getSelectionModel().select(null);
+                    prjTextName.setDisable(true);
+                    prjTextDescription.setDisable(true);
+                    prjComboDepartment.setDisable(true);
+        }
+        
+        private void createProject(){
+             projectCreateProp.set(true);
+             prjTextName.setText("");
+                    prjTextDescription.setText("");
+                    prjComboDepartment.getSelectionModel().select(null);
+                    prjTextName.setDisable(false);
+                    prjTextDescription.setDisable(false);
+                    prjComboDepartment.setDisable(false);
+        }
+        
+        private void createService(){
+                    serviceCreateProp.set(true);
+                    clearServiceForm(false);
+                    
+        }
+        private void clearServiceForm(boolean disable){
+            srvTextName.setText("");
+                    srvTextAmount.setText("");
+                    srvTextDescription.setText("");
+                    adminServCheckFixed.setSelected(false);
+                    srvComboProject.getSelectionModel().select(null);
+                    srvTextAmount.setDisable(disable);
+                    srvTextDescription.setDisable(disable);
+                    adminServCheckFixed.setDisable(disable);
+                    srvTextName.setDisable(disable);
+                    srvComboProject.setDisable(disable);
+                    
+        }
+        private void editService(){
+             serviceCreateProp.set(false);
+                    clearServiceForm(true);
+        }
+        
         public static boolean validateEmail(String emailStr) {
             Pattern VALID_EMAIL_ADDRESS_REGEX = 
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -1106,14 +1585,44 @@ public class MaiinUI implements Initializable {
             expRadioMale.setDisable(disable);
             expRadioFemale.setDisable(disable);
         }
-        
+         private void createCostCategory(){
+           costCategoryCreateProp.set(true);
+           resetCostCategoryForm();
+           disableCostCategoryForm(false);
+       }
+       private void editCostCategory(){
+           costCategoryCreateProp.set(false);
+           resetCostCategoryForm();
+           disableCostCategoryForm(true);
+       }
        
+       private void disableCostCategoryForm(boolean disable){
+           cctgComboType.setDisable(disable);
+           cctgTextDescription.setDisable(disable);
+           cctgTextName.setDisable(disable);
+       }
+       private void resetCostCategoryForm(){
+           cctgComboType.getSelectionModel().select(null);
+           cctgTextDescription.setText("");
+           cctgTextName.setText("");
+       }
         private void validateServiceForm(){
             try{
+             boolean edit = !serviceCreateProp.get();
+             
+                DisplayService service = (DisplayService) serviceListTable.getSelectionModel().getSelectedItem();
+                DisplayProject project = (DisplayProject) srvComboProject.getSelectionModel().getSelectedItem();
+                double amount = Double.parseDouble(srvTextAmount.getText().trim());
             boolean disable = srvTextName.getText().trim().length() < 1
                     || srvTextDescription.getText().trim().length() < 1
                     || Double.parseDouble(srvTextAmount.getText().trim()) < 1 
-                    || srvComboProject.getSelectionModel().isEmpty();
+                    || srvComboProject.getSelectionModel().isEmpty()
+                    || (edit && srvTextName.getText().trim().compareTo(service.getName()) == 0
+                                 && srvTextDescription.getText().trim().compareTo(service.getDescription())== 0
+                                 &&  amount == service.getAmount()
+                                 &&  adminServCheckFixed.isSelected() && service.getFixedAmount() == 1
+                                 &&  project.getId() == service.getProjectsId()
+                    );
             
             srvSaveBtnDisableProp.set(disable);
                     }catch(Exception ex){
@@ -1345,15 +1854,63 @@ public class MaiinUI implements Initializable {
         @FXML
         private void validateCctgForm(KeyEvent evt)
         {  
-            validateCctgForm();
+          Platform.runLater(() -> {
+              validateCctgForm();
+          });  
         }
         
         private void validateCctgForm()
         {
-            boolean disable = cctgTextName.getText().trim().length() < 1
-                    || cctgTextDescription.getText().trim().length() < 1
-                    || cctgComboType.getSelectionModel().isEmpty();
+            String tblName = costCategoryListTable.getSelectionModel().getSelectedItem().getName();
+            String tblDesc = costCategoryListTable.getSelectionModel().getSelectedItem().getDescription();
+            String tblType = costCategoryListTable.getSelectionModel().getSelectedItem().getType();
+            String type = cctgComboType.getSelectionModel().getSelectedItem().trim();
+            String name = cctgTextName.getText().trim();
+            String desc =  cctgTextDescription.getText().trim();
+            boolean disable = name.length() < 1
+                    || desc.length() < 1
+                    || cctgComboType.getSelectionModel().isEmpty() ||
+                   ( (!costCategoryCreateProp.get()) && (name.compareTo(tblName)==0
+                    && tblDesc.compareTo(desc) == 0 && type.compareTo(tblType) == 0));
             cctgSaveBtnDisableProp.set(disable);
+        }
+        
+        @FXML
+        private void printReceipt(ActionEvent evt){
+            try{
+                if (SelectedPrinterIndex < 0)
+                {
+                    error("Select a default printer");
+                    return;
+                }
+                 NumberFormat formatter = new DecimalFormat("#,###.00"); 
+              DisplayIncome income = (DisplayIncome) incomeListTable.getSelectionModel().getSelectedItem();
+             String data ="      LISTAACC LTD.\n" 
+                           +"Service: " + income.getServiceName()+ "\n"
+                           + "Fee: NGN " + formatter.format(income.getAmountReceived()) + "\n"      
+                           + "Date:  "+ income.getDateStringWithTime() + "\n"
+                           + "Remaining Balance: NGN " + formatter.format(income.getAmountReceivable())+"\n"
+                           + "Due Date For Balance: " +income.getDateDue()
+                           + "\n"
+                           + "\n"
+                           + "\n"
+                           + "\n"
+                           + "Thank you for serving you."+"\n"
+                           + "call: "+"09078766951,08138699452"+"\n"
+                           + "Annunciation ICT Center \n St. Patrick's Parish \n Kpiri-Kpiri Abakaliki"+"\n"
+                           + "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _"+"\n"
+                           + "\n"
+                           + "\n"
+                           + "\n";
+             byte[] bytes = data.getBytes("CP437");
+             DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+             PrintService[] pservice = PrintServiceLookup.lookupPrintServices(flavor,null);
+            DocPrintJob pjob = pservice[SelectedPrinterIndex].createPrintJob();
+            Doc doc2 = new SimpleDoc(bytes, flavor, null);
+            //pjob.print(doc, null);
+            pjob.print(doc2, null);
+            
+            }catch(Exception exc){exc.printStackTrace();}
         }
         
         @FXML
@@ -1494,28 +2051,29 @@ public class MaiinUI implements Initializable {
             switch(sourceID){
                
                 case "departmentCreateLabel":
-                    departmentCreateProp.set(true);
+                    createDepartment();
                     break;
                 case "departmentEditLabel":
-                    departmentCreateProp.set(false);
+                    editDepartment();
                     break;
                 case "projectCreateLabel":
-                    projectCreateProp.set(true);
+                   createProject();
                     break;
                 case "projectEditLabel":
-                    projectCreateProp.set(false);
+                    editProject();
                     break;
                case "serviceCreateLabel":
-                    serviceCreateProp.set(true);
+                       createService();
+                    //serviceCreateProp.set(true);
                     break;
                 case "serviceEditLabel":
-                    serviceCreateProp.set(false);
+                    editService();
                     break;
                 case "costCategoryCreateLabel":
-                    costCategoryCreateProp.set(true);
+                    createCostCategory();
                     break;
                 case "costCategoryEditLabel":
-                    costCategoryCreateProp.set(false);
+                    editCostCategory();
                     break;
                 case "userCreateLabel":
                     userCreateProp.set(true);
@@ -1524,7 +2082,7 @@ public class MaiinUI implements Initializable {
                     userCreateProp.set(false);
                     break;
                 case "businessCreateLabel":
-                    businessCreateProp.set(true);
+                    businessCreateProp.set(false);
                     break;
                 case "businessEditLabel":
                     businessCreateProp.set(false);
@@ -1533,6 +2091,9 @@ public class MaiinUI implements Initializable {
             }
             }catch(Exception ex){}
         }
+        
+        PrintService[] pservice;
+        int  SelectedPrinterIndex = -1;
         static double totalIncome, totalExpenditure;
         List<DisplayClient> clientList;
         List<DisplayIncome> incomeList;
@@ -1542,8 +2103,18 @@ public class MaiinUI implements Initializable {
         Clients incomeClient, expenditureClient;
         final AppModel model;
          @FXML
-         TableView departmentListTable, projectListTable, serviceListTable, costCategoryListTable, 
-                 userListTable, clientListTable, incomeListTable, expenditureListTable;
+         TableView
+                 userListTable, incomeListTable, expenditureListTable;
+         @FXML
+         TableView<DisplayClient> clientListTable;
+         @FXML
+          TableView<Departments> departmentListTable;
+         @FXML
+          TableView<DisplayProject> projectListTable;
+         @FXML
+         TableView<DisplayService> serviceListTable;
+         @FXML
+         TableView<CostCategories> costCategoryListTable;
          @FXML
          TabPane adminPane, settingsPane; 
          @FXML
@@ -1566,10 +2137,11 @@ public class MaiinUI implements Initializable {
          TextField dptTextName, prjTextName, srvTextName, srvTextAmount, cctgTextName, 
                  incomeTxtAmount, incomeTxtDiscount, IncomeTxtLName, incomeTxtFName,
                  incomeTxtPhone, incomeTxtEmail, incomeTxtUid, incomeTxtSearch, expenditureTxtSearch,
-                 expTxtAmount, expTxtLastName, expFirstName, expTxtEmail, expTxtPhone, incomeTxtUnit;
+                 expTxtAmount, expTxtLastName, expFirstName, expTxtEmail, expTxtPhone, incomeTxtUnit,
+                 clientTxtLastName, clientTxtFirstName, clientTxtPhone, clientTxtEmail, clientTxtUid;
          @FXML
          TextArea prjTextDescription, srvTextDescription, cctgTextDescription, incomeTxtAdd, 
-                 expTxtDescription, expTxtAddress;
+                 expTxtDescription, expTxtAddress, clientTxtAddress;
           
         SimpleStringProperty connectionSp;
         SimpleObjectProperty connectionColorProperty;
@@ -1581,6 +2153,7 @@ public class MaiinUI implements Initializable {
         private final BooleanProperty projectCreateProp = new SimpleBooleanProperty();
         private final BooleanProperty serviceCreateProp = new SimpleBooleanProperty();
         private final BooleanProperty costCategoryCreateProp = new SimpleBooleanProperty();
+        
         private final BooleanProperty userCreateProp = new SimpleBooleanProperty();
         private final BooleanProperty businessCreateProp = new SimpleBooleanProperty();
         private final BooleanProperty dptSaveBtnDisableProp = new SimpleBooleanProperty();
@@ -1588,6 +2161,7 @@ public class MaiinUI implements Initializable {
         private final BooleanProperty srvSaveBtnDisableProp = new SimpleBooleanProperty();
         private final BooleanProperty cctgSaveBtnDisableProp = new SimpleBooleanProperty();
         private final BooleanProperty incomeSaveBtnDisableProp = new SimpleBooleanProperty();
+        private final BooleanProperty clientSaveBtnDisableProp = new SimpleBooleanProperty();
         private final BooleanProperty expenditureSaveBtnDisableProp = new SimpleBooleanProperty();
         private final StringProperty incomeTotalProp = new SimpleStringProperty();
         private final StringProperty expendtureTotalProp = new SimpleStringProperty();
@@ -1596,7 +2170,7 @@ public class MaiinUI implements Initializable {
         
         
         public static FilteredList departmentsFiltered, projectsFiltered, servicesFiltered, costCategoriesFiltered,
-                                               usersFiltered, clientsFiltered;
+                                               usersFiltered, clientsFiltered, printerFiltered;
         private static FilteredList<DisplayIncome> incomesFiltered;
         private static FilteredList<DisplayExpenditure> expenditureFiltered;
         @FXML
@@ -1608,13 +2182,14 @@ public class MaiinUI implements Initializable {
                             incomeColAmount, incomeColDate, incomeColPaymentType, incomeColId, expColSerial,expColRecipient, 
                             expColProject, expColCostCat, expColAmt, expColDate, expIdCol;
         @FXML
-        private Button dptBtnSave, prjBtnSave,expBtnEnter, srvBtnSave, cctgBtnSave, incomeBtnSave, inocmePrintBtn;
+        private Button dptBtnSave, prjBtnSave,expBtnEnter, srvBtnSave, cctgBtnSave, 
+                incomeBtnSave, inocmePrintBtn, clientSaveBtn, makeDefaultBtn;
         
         @FXML
         private ComboBox<Departments> prjComboDepartment ;
-         @FXML
+        @FXML
         private ComboBox<DisplayProject> srvComboProject ;
-         @FXML
+        @FXML
         private ComboBox<DisplayService> incomeComboService;
         @FXML
         private ComboBox<CostCategories> expComboCost;
@@ -1626,16 +2201,18 @@ public class MaiinUI implements Initializable {
          private ComboBox<String> cctgComboType, incomeComboPType ;
          @FXML 
          private DatePicker incomeTxtDate, IncomeTxtDueDate, incomeTxtDob, incomeFromDate, 
-                 expTxtDate, incomeToDate, expFromDate, expToDate;
+                 expTxtDate, incomeToDate, expFromDate, expToDate, clientTxtDob;
          @FXML
          private RadioButton incomeRadioNew, incomeRadioPerson, incomeRadioBusiness, 
                  incomeRadioMale, incomeRadioFemale,  expRadioNew, expRadioBusiness , 
                  incomeRadioNewIncome, existingClientRadio, expRadioPerson, 
                  expRadioMale, expRadioFemale, expRadioExisting, incomeRadioFull, incomeRadioPart,
-                 incomeRadioBalance;
+                 incomeRadioBalance, clientRadioMale, clientRadioFemale, clientRadioBusiness, clientRadioPerson;
          double amountReceived;
          int parentIncomeId;
          @FXML
          private CheckBox adminServCheckFixed;
+         @FXML 
+         private ListView printerList;
         
 }
