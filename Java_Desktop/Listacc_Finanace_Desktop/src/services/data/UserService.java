@@ -31,6 +31,6 @@ public class UserService extends DataService {
              Users user = (Users) em.createNamedQuery("Users.findById")
             .setParameter("id", id).getSingleResult();
              return user;
-        }catch(Exception ex){return null;}
+        }catch(Exception ex){ex.printStackTrace(); return null;}
     }
 }

@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import model.AppModel;
 import model.Users;
 import services.data.UserService;
@@ -62,6 +64,7 @@ public class Login implements Initializable  {
                  }); 
                 Platform.runLater(() ->{
                     try{   
+                        
                         Parent root;
                         FXMLLoader firstLoader = new FXMLLoader(getClass().getResource("/fxml/MainUI.fxml"));
                                 //get User from databse 
@@ -73,10 +76,17 @@ public class Login implements Initializable  {
                                Scene scene = new Scene(root, 1366, 768);
                                
                                primaryStage.setTitle("Listacc");
+                               
                                primaryStage.setScene(scene);
                                primaryStage.centerOnScreen();
                                primaryStage.show();
-                               
+                               primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                                    @Override
+                                    public void handle(WindowEvent t) {
+                                        Platform.exit();
+                                        System.exit(0);
+                                    }
+                                });
                          }catch(Exception exc){exc.printStackTrace();
                          lblLoginStatus.setText("There was a problem initializing");
                          }
