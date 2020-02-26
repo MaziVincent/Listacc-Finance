@@ -131,6 +131,7 @@ namespace ListaccFinance.API.Controllers
                                     if (mapped.Id == sync.user.DepartmentId && mapped.Table == "Departments")
                                     {
                                         deptId = mapped.OnlineEntryId;
+                                        break;
                                     }
                                 }
                             }
@@ -166,6 +167,7 @@ namespace ListaccFinance.API.Controllers
                                     if (mapped.Id == sync.client.PersonId && mapped.Table.CompareTo("Clients") == 0)
                                     {
                                         cChange.PersonId = mapped.OnlineEntryId;
+                                        break;
                                     }
                                 }
                             }
@@ -185,6 +187,7 @@ namespace ListaccFinance.API.Controllers
                                     if (mapped.Id == sync.project.DepartmentId && mapped.Table == "Departments")
                                     {
                                         prChange.DepartmentId = mapped.OnlineEntryId;
+                                        break;
                                     }
                                 }
                             }
@@ -212,6 +215,7 @@ namespace ListaccFinance.API.Controllers
                                     if (mapped.Id == sync.expenditure.ClientId && mapped.Table.CompareTo("Clients") == 0)
                                     {
                                         eChange.ClientId = mapped.OnlineEntryId;
+                                        break;
                                     }
                                 }
                             }
@@ -222,6 +226,7 @@ namespace ListaccFinance.API.Controllers
                                     if (mapped.Id == sync.expenditure.CostCategoryId && mapped.Table.CompareTo("CostCategories") == 0)
                                     {
                                         eChange.CostCategoryId = mapped.OnlineEntryId;
+                                        break;
                                     }
                                 }
                             }
@@ -232,6 +237,7 @@ namespace ListaccFinance.API.Controllers
                                     if (mapped.Id == sync.expenditure.ProjectId && mapped.Table.CompareTo("Projects") == 0)
                                     {
                                         eChange.ProjectId = mapped.OnlineEntryId;
+                                        break;
                                     }
                                 }
                             }
@@ -242,6 +248,7 @@ namespace ListaccFinance.API.Controllers
                                     if (mapped.Id == sync.expenditure.IssuerId && mapped.Table.CompareTo("Users") == 0)
                                     {
                                         eChange.IssuerId = mapped.OnlineEntryId;
+                                        break;
                                     }
                                 }
                             }
@@ -261,6 +268,7 @@ namespace ListaccFinance.API.Controllers
                                     if (mapped.Id == sync.service.ProjectId && mapped.Table.CompareTo("Projects") == 0)
                                     {
                                         sChange.ProjectId = mapped.OnlineEntryId;
+                                        break;
                                     }
                                 }
                             }
@@ -278,6 +286,7 @@ namespace ListaccFinance.API.Controllers
                                     if (saved.Id == sync.income.ServiceId && saved.Table.CompareTo("Clients") == 0)
                                     {
                                         iChange.ClientId = saved.OnlineEntryId;
+                                        break;
                                     }
 
                                 }
@@ -289,6 +298,7 @@ namespace ListaccFinance.API.Controllers
                                     if (saved.Id == sync.income.ServiceId && saved.Table.CompareTo("Services") == 0)
                                     {
                                         iChange.ServiceId = saved.OnlineEntryId;
+                                        break;
                                     }
                                 }
                             }
@@ -300,6 +310,7 @@ namespace ListaccFinance.API.Controllers
                                     if (saved.Id == sync.income.IncomeId && saved.Table.CompareTo("Incomes") == 0)
                                     {
                                         iChange.IncomeId = saved.OnlineEntryId;
+                                        break;
                                     }
                                 }
                             }
@@ -311,6 +322,7 @@ namespace ListaccFinance.API.Controllers
                                     if (saved.Id == sync.income.UserId && saved.Table.CompareTo("Users") == 0)
                                     {
                                         iChange.UserId = saved.OnlineEntryId;
+                                        break;
                                     }
                                 }
                             }

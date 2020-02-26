@@ -8,14 +8,5 @@ namespace ListaccFinance.API.Data.Model
             
         }
 
-       /* public Role role 
-        {
-            get{return role;}
-            set
-                {
-                    role.Name = "Admin";
-                    role.NormalizedName = "Admin".ToLower();
-                }
-        }*/
     }
 }

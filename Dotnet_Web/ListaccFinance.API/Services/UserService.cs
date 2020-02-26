@@ -23,7 +23,7 @@ namespace ListaccFinance.API.Services
         //First User Creation
         public async Task<string> CreateUserAsync(RegisterModel reg)
         {
-            var newUser = new User();
+            var newUser = new Member();
 
             var dept = new Department()
             {
@@ -57,7 +57,7 @@ namespace ListaccFinance.API.Services
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
 
-            var thisUser = _context.Users.
+            var thisUser = _context.Members.
                 Where(x => x.Email.CompareTo(reg.EmailAddress) == 0 &&
                  x.PasswordHash.CompareTo(hash) == 0).FirstOrDefault();
 
@@ -83,7 +83,8 @@ namespace ListaccFinance.API.Services
         //Subsequent User Creation
         public  async Task<string> CreateUserAsync( RegisterModel reg, int userId)
         {
-            var newUser = new User();
+            
+            var newUser = new Member();
             
             var dept = new Department()
             {
@@ -117,7 +118,7 @@ namespace ListaccFinance.API.Services
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
 
-            var thisUser = _context.Users.
+            var thisUser = _context.Members.
                             Where(x => x.Email.CompareTo(reg.EmailAddress) == 0 &&
                              x.PasswordHash.CompareTo(hash) == 0).FirstOrDefault();
 
@@ -215,12 +216,60 @@ namespace ListaccFinance.API.Services
             return true;
         }
 
-        public async Task CreateAdmin(RegisterModel reg)
+        public async Task CreateAdmin(RegisterModel reg, int userId)
         {
-            await this.CreateUserAsync(reg);
-            var ad = new Admin{
+            var newUser = new Admin();
+
+            var dept = new Department()
+            {
+                Name = reg.Department
             };
-            
+
+            var per = new Person()
+            {
+                firstName = reg.firstName,
+                LastName = reg.LastName,
+                Gender = reg.Gender,
+                DateOfBirth = reg.DateOfBirth,
+            };
+
+            newUser.Email = reg.EmailAddress;
+            newUser.Address = reg.Address;
+            newUser.Phone = reg.Phone;
+
+
+            // Password Hash
+            var message = reg.Password;
+            var salt = Salt.Create();
+            var hash = Hash.Create(message, salt);
+            newUser.PasswordHash = hash;
+            newUser.salt = salt;
+
+
+            newUser.Person = per;
+            newUser.Department = dept;
+
+            await _context.Admins.AddAsync(newUser);
+            await _context.SaveChangesAsync();
+
+            var thisUser = _context.Admins.
+                            Where(x => x.Email.CompareTo(reg.EmailAddress) == 0 &&
+                             x.PasswordHash.CompareTo(hash) == 0).FirstOrDefault();
+
+            int thisUserID = thisUser.Id;
+
+            var change = new Change()
+            {
+                Table = "Users",
+                EntryId = thisUserID,
+                ChangeType = "Create",
+                OnlineTimeStamp = DateTime.Now,
+                OfflineTimeStamp = DateTime.Now,
+                UserId = userId,
+            };
+            await _context.Changes.AddAsync(change); ;
+            await _context.SaveChangesAsync();
+
         }
     }
 
