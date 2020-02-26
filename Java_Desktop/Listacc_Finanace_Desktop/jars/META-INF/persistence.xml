@@ -19,7 +19,7 @@
     <class>model.Persons</class>
     <class>model.Changes</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:sqlite:C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/ListaccFinance.db"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:sqlite:ListaccFinance.db"/>
       <property name="javax.persistence.jdbc.user" value=""/>
       <property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
       <property name="javax.persistence.jdbc.password" value=""/>

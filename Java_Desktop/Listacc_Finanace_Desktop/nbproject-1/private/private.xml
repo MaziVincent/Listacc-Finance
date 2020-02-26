@@ -2,7 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-<<<<<<< HEAD
         <group>
             <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/src/helpers/DeptStringConverter.java</file>
             <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/src/model/Services.java</file>
@@ -29,9 +28,7 @@
             <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/src/model/AppModel.java</file>
             <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/src/services/data/ServiceService.java</file>
             <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/src/services/data/DataService.java</file>
-            <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/jars/META-INF/persistence.xml</file>
             <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/src/model/display/DisplayService.java</file>
-            <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/src/controllers/Login.java</file>
             <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/src/helpers/SrvStringConverter.java</file>
             <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/src/helpers/DoubleValuChangeListener.java</file>
             <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/src/model/display/DisplayClient.java</file>
@@ -42,8 +39,5 @@
             <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/src/model/Expenditures.java</file>
             <file>file:/C:/prjs/Listacc_Finance/Java_Desktop/Listacc_Finanace_Desktop/src/controllers/IncomeBalanceList.java</file>
         </group>
-=======
-        <group/>
->>>>>>> 276758922dc4eaa3120ac5e605d1173a4e78f03f
     </open-files>
 </project-private>

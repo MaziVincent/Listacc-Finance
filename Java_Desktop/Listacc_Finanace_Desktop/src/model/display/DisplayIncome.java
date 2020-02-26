@@ -51,6 +51,17 @@ public class DisplayIncome extends Incomes{
         DateFormat df = new SimpleDateFormat("dd-EEE, MM, yyyy");
         return df.format(calendar.getTime());
     }
+    
+   
+    
+    public String getDateStringWithTime() {
+        String date =   getDate();
+        long dateLong = Long.parseLong(date);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(dateLong);
+        DateFormat df = new SimpleDateFormat("HH:MM - dd-EEE, MM, yyyy");
+        return df.format(calendar.getTime());
+    }
 
     public void setDateString(String dateString) {
         this.dateString = dateString;

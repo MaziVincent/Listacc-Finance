@@ -55,7 +55,16 @@ public class DisplayClient implements Serializable
     private String firstName;
       @Column(name = "lastName")
     private String lastName;
-   
+   String dateOfBirth;
+   String gender;
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
     public DisplayClient() {
     }
@@ -116,7 +125,7 @@ public class DisplayClient implements Serializable
         this.uId = uid;
     }
 
-    public DisplayClient(Integer id, String phone, String businessName, String address, String email, String  firstName, String lastName, String uid) {
+    public DisplayClient(Integer id, String phone, String businessName, String address, String email, String  firstName, String lastName, String uid, String dob, String gender) {
         this.id = id;
         this.phone = phone;
         this.businessName = businessName;
@@ -125,6 +134,17 @@ public class DisplayClient implements Serializable
         this.firstName = firstName;
         this.lastName = lastName;
         this.uId = uid;
+        this.dateOfBirth = dob;
+        this.gender = gender;
+       
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
     
     public int getId() {
