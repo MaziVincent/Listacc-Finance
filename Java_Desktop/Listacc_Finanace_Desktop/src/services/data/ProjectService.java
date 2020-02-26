@@ -7,10 +7,14 @@ package services.data;
 
 import java.util.List;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import model.Changes;
 import model.Departments;
 import model.Projects;
 
 import model.display.DisplayProject;
+import services.net.view_model.ProjectSyncItem;
+import services.net.view_model.UploadResponseViewModel;
 
 /**
  *
@@ -20,7 +24,7 @@ public class ProjectService extends DataService {
     
     public List<DisplayProject> getAllProjects()
     {
-        return em.createQuery("SELECT new model.display.DisplayProject(a.id, a.name,a.description, a.departmentId.name, a.departmentId)FROM Projects a").getResultList();
+        return em.createQuery("SELECT new model.display.DisplayProject(a.id, a.name,a.description, a.department.name, a.department)FROM Projects a").getResultList();
     }
     
     public boolean projectNameExists(String name)
@@ -54,7 +58,7 @@ public class ProjectService extends DataService {
             project.setDescription(description);
             Departments dept = (Departments) em.createNamedQuery("Departments.findById")
             .setParameter("id", departmentId).getSingleResult();
-            project.setDepartmentId(dept);
+            project.setDepartment(dept);
             return createProject(project);
         }catch(NoResultException ex){
             return false;
@@ -62,5 +66,89 @@ public class ProjectService extends DataService {
             exc.printStackTrace();
         }
         return  false;   
+    }
+    
+    public Projects getProjectByOnlineEntryId(int onlineEntryId)
+    {
+        try{
+            Query q = em.createNamedQuery("Projects.findByOnlineEntryId");
+            q.setParameter("onlineEntryId", onlineEntryId);
+            Projects a = (Projects)q.getSingleResult();
+      
+            return a;
+        }catch(NoResultException ex){
+            return null;
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null;
+    }
+    
+    public ProjectSyncItem getProjectByChange(Changes ch)
+    {
+        try{
+            Query q = em.createQuery("SELECT new services.net.view_model.ProjectSyncItem(c.id, c.name, c.description, c.department.id, c.department.onlineEntryId, c.onlineEntryId) "
+                    + "FROM Projects c WHERE c.id = :id");
+            q.setParameter("id", ch.getEntryId());
+            ProjectSyncItem a = (ProjectSyncItem)q.getSingleResult();
+            a.setChange(ch.getChanges());
+            a.setChange(ch.getChanges());
+            a.setChangeTimestamp(ch.getTimeStamp());
+            a.setChangeUserOnlineEntryId(ch.getUser() != null ? ch.getUser().getOnlineEntryId(): null);
+      
+            return a;
+        }catch(NoResultException ex){
+            return null;
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null;
+    }
+    
+    public boolean addDownloadedEntry(ProjectSyncItem item)
+    {
+        try{
+            em.getTransaction().begin();
+            
+            Projects existingRecord = getProjectByOnlineEntryId(item.getId());
+            Departments department = new DepartmentService().getDepartmentByOnlineEntryId(item.getDepartmentId());
+            if(existingRecord == null){
+                Projects newRecord = ProjectSyncItem.map(item, department);
+                em.persist(newRecord);
+            }
+            else{
+                existingRecord = ProjectSyncItem.map(existingRecord, item, item.getId(), department);
+                em.merge(existingRecord);
+            }
+            
+            em.getTransaction().commit();
+        
+            return true;
+        }catch(Exception exc){
+            return false;
+        }
+    }
+    
+    public boolean updateEntryAsSynced(UploadResponseViewModel entry)
+    {
+        try{
+            em.getTransaction().begin();
+            Query q = em.createNamedQuery("Projects.findById");
+            q.setParameter("id", entry.getId());
+            Projects a = (Projects)q.getSingleResult();
+                
+            a.setOnlineEntryId(entry.getOnlineEntryId()); // true
+            em.merge(a);
+            em.getTransaction().commit();
+        
+            return true;
+        }
+        catch(Exception exc){
+            return false;
+        }
+    }
+    
+    public void close(){
+        em.close();
     }
 }

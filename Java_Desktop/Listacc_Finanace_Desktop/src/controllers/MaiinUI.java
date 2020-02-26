@@ -102,6 +102,8 @@ import services.data.ProjectService;
 import services.data.ServiceService;
 import services.data.UserService;
 import services.net.ConnectionService;
+import services.net.Network;
+import services.net.SynchronizationDownloadService;
 import services.net.SynchronizationUploadService;
 
 /**
@@ -119,6 +121,7 @@ public class MaiinUI implements Initializable {
         
         @Override
         public void initialize(URL url, ResourceBundle rb) {
+            loginUser = this.model.getUser();
             adminDisplayProp.set(true);
             adminPane.visibleProperty().bind(adminDisplayProp);
             incomePane.visibleProperty().bind(incomeDisplayProp);
@@ -151,13 +154,13 @@ public class MaiinUI implements Initializable {
             }, 0, 10, TimeUnit.SECONDS);
 
             // run synchronization download operation
-            /*ScheduledExecutorService synDownExec = Executors.newSingleThreadScheduledExecutor();
+            ScheduledExecutorService synDownExec = Executors.newSingleThreadScheduledExecutor();
             synDownExec.scheduleAtFixedRate(() -> {
                 Platform.runLater(() -> {
-                    SynchronizationDownloadService conn = new SynchronizationDownloadService(activitySp);
+                    SynchronizationDownloadService conn = new SynchronizationDownloadService(); //activitySp
                     conn.execute();
                 });
-            }, 0, 5, TimeUnit.MINUTES);*/
+            }, 0, 5, TimeUnit.MINUTES);
         
             // run synchronization upload operation
             ScheduledExecutorService synUpExec = Executors.newSingleThreadScheduledExecutor();
@@ -166,7 +169,7 @@ public class MaiinUI implements Initializable {
                     SynchronizationUploadService conn = new SynchronizationUploadService(null); //activitySp
                     conn.execute();
                 });
-            }, 0, 60, TimeUnit.SECONDS);
+            }, 0, 5, TimeUnit.MINUTES);
         }
         
         private void initializeButtonEnableProp()
@@ -835,7 +838,7 @@ public class MaiinUI implements Initializable {
                        income.setDateDue(dueDate);
                        income.setType(incomeRadioNewIncome.isSelected() ?"New" :"Balance");
                        income.setPaymentType(incomeComboPType.getSelectionModel().getSelectedItem());
-                       income.setUserId(model.getUser());
+                       income.setUser(model.getUser());
                        income.setServiceIdnum(incomeComboService.getSelectionModel().getSelectedItem().getId());
                 if(!validateEmail(incomeClient.getEmail()))
                 {
@@ -1170,7 +1173,7 @@ public class MaiinUI implements Initializable {
                                     ?client.getBusinessName() : client.getFirstName() );
                          Platform.runLater(() -> {
                             incomeClient = new ClientService().getClientById(client.getId());
-                            if(null == incomeClient.getPersonId())
+                            if(null == incomeClient.getPerson())
                                  incomeRadioBusiness.setSelected(true);
                          });
                          validateIncomeForm();
@@ -1253,9 +1256,9 @@ public class MaiinUI implements Initializable {
                         incomeTxtAdd.setText(client.getAddress());
                         incomeTxtUid.setText(client.getUId()); 
                         parentIncomeId = popIncome.getId();
-                        if(null != client.getPersonId() ){
-                            IncomeTxtLName.setText( client.getPersonId().getLastName());
-                            incomeTxtFName.setText(client.getPersonId().getFirstName());
+                        if(null != client.getPerson()){
+                            IncomeTxtLName.setText( client.getPerson().getLastName());
+                            incomeTxtFName.setText(client.getPerson().getFirstName());
                         }else 
                         {
                             incomeTxtFName.setText(client.getBusinessName());
@@ -1265,7 +1268,7 @@ public class MaiinUI implements Initializable {
                         incomeTxtEmail.setText(client.getEmail());
                          Platform.runLater(() -> {
                             incomeClient = new ClientService().getClientById(client.getId());
-                            if(null == incomeClient.getPersonId())
+                            if(null == incomeClient.getPerson())
                                  incomeRadioBusiness.setSelected(true);
                          });
                          setIncomeAmount();
@@ -1321,7 +1324,7 @@ public class MaiinUI implements Initializable {
                                     ?client.getBusinessName() : client.getFirstName() );
                          Platform.runLater(() -> {
                             expenditureClient = new ClientService().getClientById(client.getId());
-                            if(null == expenditureClient.getPersonId())
+                            if(null == expenditureClient.getPerson())
                                  expRadioBusiness.setSelected(true);
                          });
                         
@@ -1541,6 +1544,7 @@ public class MaiinUI implements Initializable {
         Region popupRegion = new Region();
         Clients incomeClient, expenditureClient;
         final AppModel model;
+        public static Users loginUser;
          @FXML
          TableView departmentListTable, projectListTable, serviceListTable, costCategoryListTable, 
                  userListTable, clientListTable, incomeListTable, expenditureListTable;
