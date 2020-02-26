@@ -3,7 +3,8 @@ using System.Threading.Tasks;
 using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Interfaces;
-using ListaccFinance.API.ViewModels;
+using ListaccFinance.API.SendModel;
+using ListaccFinance.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,32 +28,7 @@ namespace ListaccFinance.API.Controllers
         }
 
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login (UserLogin u)
-        {
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-
-            var thisUser = _context.Users.
-                Where(x => x.UserName.CompareTo(u.UserName) == 0 &&
-                 x.Password.CompareTo(u.Password) == 0).FirstOrDefault();
-
-            int myID = thisUser.Id;
-
-            if (thisUser is null)
-            {
-                return Unauthorized(new {message = "Not authorized"});
-            }
-
-
-
-            var message = await _generator.GenerateToken(u, myID);
-            return Ok(message);
-        }
+        
 
 
 
@@ -64,14 +40,8 @@ namespace ListaccFinance.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var aUser = new UserLogin
+            if (!_uService.IsUserExist())
             {
-                Password = me.Password,
-                UserName = me.UserName,
-            };
-            if (!_uService.IsUserExist(aUser))
-            {
-
                 var resp = await _uService.CreateUserAsync(me);
                 return Ok("successful");
             }
@@ -93,12 +63,20 @@ namespace ListaccFinance.API.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
-            string userIdString = this.User.Claims.First(i => i.Type == "UserID").Value;
-            int userId = int.Parse(userIdString);
-            var u = new User();
-            var resp = await _uService.CreateUserAsync(me, userId);
-            return Ok("successful");
+
+            if (!await _uService.IsThisUserExist(me.EmailAddress))
+            {
+                string userIdString = this.User.Claims.First(i => i.Type == "UserID").Value;
+                int userId = int.Parse(userIdString);
+                var u = new User();
+                var resp = await _uService.CreateUserAsync(me, userId);
+                return Ok("successful");
+            }
+
+            return BadRequest(new {message = " User already exists"});
+
+            //return RedirectToAction(string actionName, string controllerName, object routeValues);
+
         }
 
         

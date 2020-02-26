@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using ListaccFinance.API.Data.Model;
 using Microsoft.AspNetCore.Identity;
 
@@ -14,6 +15,8 @@ namespace ListaccFinance.API.Data.Model
 
         public string Phone {get;set;}
         public string Address {get;set;}
+        
+        [NotMapped]
         public string Password {get;set;}
         public ICollection<Expenditure> Expenditures {get;set;}
         public ICollection<Income> Incomes {get;set;}
@@ -21,5 +24,6 @@ namespace ListaccFinance.API.Data.Model
         public int DepartmentId { get; set; }
         public Person Person { get; set; }
         public int PersonId { get; set; }
+        public string salt {get; set;}
     }
 }

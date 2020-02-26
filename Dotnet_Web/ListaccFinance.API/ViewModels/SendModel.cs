@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using ListaccFinance.API.Data.Model;
 
-namespace ListaccFinance.API.ViewModels
+namespace ListaccFinance.API.SendModel
 
 {
     public class SyncLoginModel
@@ -19,7 +17,7 @@ namespace ListaccFinance.API.ViewModels
         public string Password {get; set;}
 
         [Required]
-        public string UserName {get; set;}
+        public string EmailAddress {get; set;}
     }
 
     public class UserLogin 
@@ -28,7 +26,7 @@ namespace ListaccFinance.API.ViewModels
         public string Password { get; set; }
 
         [Required]
-        public string UserName { get; set; }
+        public string EmailAddress { get; set; }
     }
 
     public class RegisterModel
@@ -42,10 +40,10 @@ namespace ListaccFinance.API.ViewModels
         public string Phone { get; set; }
         public string Address { get; set; }
 
-        public string UserName {get; set;}
+        public string EmailAddress {get; set;}
         public string Password { get; set; }
-
         public string Department {get; set;}
+        public Nullable<int> DepartmentId {get; set;}
         
     }
 
@@ -59,6 +57,13 @@ namespace ListaccFinance.API.ViewModels
         public string ClientMacAddress { get; set; }
         [Required]
         public string ClientType { get; set; }
+    }
+
+    public class DataDownload
+    {
+        [Required]
+        public string MacAddress {get; set;}
+        public DateTime lastUpdate {get; set;}
     }
 
 

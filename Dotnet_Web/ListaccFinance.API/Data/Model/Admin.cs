@@ -7,5 +7,15 @@ namespace ListaccFinance.API.Data.Model
          public Admin():base(){
             
         }
+
+       /* public Role role 
+        {
+            get{return role;}
+            set
+                {
+                    role.Name = "Admin";
+                    role.NormalizedName = "Admin".ToLower();
+                }
+        }*/
     }
 }

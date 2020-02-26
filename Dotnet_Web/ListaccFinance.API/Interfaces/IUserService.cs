@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using ListaccFinance.API.Data.Model;
-using ListaccFinance.API.ViewModels;
+using ListaccFinance.API.SendModel;
 
 namespace ListaccFinance.API.Interfaces
 {
@@ -8,6 +8,8 @@ namespace ListaccFinance.API.Interfaces
     {
         Task<string> CreateUserAsync(RegisterModel reg);
         Task<string> CreateUserAsync(RegisterModel reg, int userId);
-        bool IsUserExist(UserLogin u);
+        bool IsUserExist();
+        Task<bool> IsThisUserExist(string UserEmail);
+        Task<User> CreateUserUploadAsync(RegisterModel reg);
     }
 }

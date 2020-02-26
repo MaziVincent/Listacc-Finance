@@ -1,4 +1,6 @@
+using System;
 using System.Text;
+using AutoMapper;
 using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Interfaces;
@@ -38,11 +40,15 @@ namespace ListaccFinance.API
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDesktopService, DesktopService>();
+            services.AddScoped<ISyncService, SyncService>();
+
+            //services.AddScoped(typeof(ISyncService<>),typeof(SyncService<>));
             //DBContext
             services.AddDbContext<DataContext>(con => con.UseSqlite(
                 Configuration.GetConnectionString("DefaultConnection")));
 
 
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddMvc(opt => {
                 opt.EnableEndpointRouting = false;
