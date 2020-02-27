@@ -478,15 +478,17 @@ public class MaiinUI implements Initializable {
     }
 
     private void refreshUserView(){
+        try{
                            List<DisplayUser> usersDisplayList = new UserService().getAllDisplayUsers();
                        
             ObservableList<DisplayUser> userDisplayData
             = FXCollections.observableArrayList(usersDisplayList);
            
                        usersFiltered =  new FilteredList(userDisplayData,(p -> true ));
-                       userListTable.setItems(usersFiltered);
+                       //userListTable.setItems(usersFiltered);
                        expComboIssuer.setItems(usersFiltered);
                        expComboIssuer.setConverter(new UserStringConverter(expComboIssuer));
+        }catch(Exception ex){ex.printStackTrace();}
         }
         
     public void initializeTableCells(){
@@ -996,13 +998,13 @@ public class MaiinUI implements Initializable {
            error("Name should be created without any symbol");
            return;
        }
-       int id = serviceListTable.getSelectionModel().getSelectedItem().getId();
+      
        if(serviceCreateProp.get() && srvService.serviceNameExists(servName))
        {
             error("Project name already exists");
             return;
        }
-       else if(!serviceCreateProp.get() && srvService.serviceNameExists(servName,id ))
+       else if(!serviceCreateProp.get() && srvService.serviceNameExists(servName,serviceListTable.getSelectionModel().getSelectedItem().getId() ))
        {
 
            error("Project name already exists");
@@ -1036,7 +1038,7 @@ public class MaiinUI implements Initializable {
             else if (!serviceCreateProp.get())
                 if(srvService.updateService(servName, amount, srvTextDescription.getText().trim(), 
                         srvComboProject.getSelectionModel().getSelectedItem().getId(), 
-                        adminServCheckFixed.isSelected(), id))
+                        adminServCheckFixed.isSelected(), serviceListTable.getSelectionModel().getSelectedItem().getId()))
                 {
                     info("Service updated successfully ");
                         refreshServiceView();
@@ -2140,7 +2142,7 @@ public class MaiinUI implements Initializable {
     public static Users loginUser;
     @FXML
     TableView
-            userListTable, incomeListTable, expenditureListTable;
+            incomeListTable, expenditureListTable;
     @FXML
     TableView<DisplayClient> clientListTable;
     @FXML
