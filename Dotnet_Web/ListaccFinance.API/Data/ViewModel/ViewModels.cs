@@ -1,19 +1,24 @@
 
+using System;
 using ListaccFinance.API.Data.Model;
 
 namespace ListaccFinance.API.Data.ViewModel
 {
+
     public class SyncViewModel
     {
         public DepartMentViewModel dept {get; set;}
         public PersonViewModel person{get; set;} 
         public UserViewModel user {get; set;} 
         public ClientViewModel client {get; set;}
-        public ProjectViewModel project {get; set;}//= new ProjectViewModel();
-        public CostCategoryViewModel costCategory{get; set;}// = new CostCategoryViewModel();
-        public ServiceViewModel service{get; set;}// = new ServiceViewModel();
+        public ProjectViewModel project {get; set;}
+        public CostCategoryViewModel costCategory{get; set;}
+        public ExpenditureViewModel expenditure {get; set;}
+        public ServiceViewModel service{get; set;}
+        public IncomeViewModel income {get; set;}
         public Change change {get; set;}
         public string Table {get; set;} 
+
     }
 
     public class DepartMentViewModel 
@@ -107,6 +112,18 @@ namespace ListaccFinance.API.Data.ViewModel
 
     }
 
+    public class ExpenditureViewModel 
+    {
+        public int Id {get; set;}
+        public int ClientId { get; set; }
+        public DateTime Date { get; set; }
+        public string Description { get; set; }
+        public double Amount { get; set; }
+        public int CostCategoryId { get; set; }
+        public int ProjectId { get; set; }
+        public int IssuerId { get; set; }
+    }
+
     public class ServiceViewModel
     {
         public int Id { get; set; }
@@ -114,8 +131,26 @@ namespace ListaccFinance.API.Data.ViewModel
         public string Description { get; set; }
         public double Amount { get; set; }
         public int ProjectId { get; set; }
-
+        public bool FixedAmount { get; set; }
         public int OnlineEntryId { get; set; }
         public int ChangeId { get; set; }
+    }
+
+    public class IncomeViewModel
+    {
+        public int Id { get; set; }
+        public string Type { get; set; }
+        public DateTime Date { get; set; }
+        public int ServiceId { get; set; }
+        public int ClientId { get; set; }
+        public double AmountReceived { get; set; }
+        public double Discount { get; set; }
+        public string PaymentType { get; set; }
+        public double AmountReceivable { get; set; }
+        public DateTime DateDue { get; set; }
+        public int Unit { get; set; }
+        public int IncomeId { get; set; }
+        public int UserId { get; set; }
+
     }
 }

@@ -7,5 +7,6 @@ namespace ListaccFinance.API.Data.Model
          public Admin():base(){
             
         }
+
     }
 }

@@ -94,7 +94,7 @@ public class Login implements Initializable  {
             signinStatuSP.set("Invalid username or password");
             lblLoginStatus.setTextFill(Color.RED);
             enableComponents();
-        };
+        }
     }
     
     

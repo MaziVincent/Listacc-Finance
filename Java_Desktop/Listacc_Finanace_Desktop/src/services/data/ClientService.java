@@ -28,26 +28,26 @@ public class ClientService extends DataService {
     
     public List<DisplayClient> getAllClients()
     {       
-         Query q =  em.createNativeQuery("SELECT a.id, a.phone, a.businessName, a.address, a.email, p.firstName, p.lastName, a.uId FROM Clients a LEFT JOIN Persons p ON p.id = a.personId");
+        Query q =  em.createNativeQuery("SELECT a.id, a.phone, a.businessName, a.address, a.email, p.firstName, p.lastName, a.uId, p.dateOfBirth, p.gender FROM Clients a LEFT JOIN Persons p ON p.id = a.personId");
         // return em.createQuery("SELECT DISTINCT c FROM Clients c LEFT JOIN c.personId p").getResultList();                                                                                                                                                 
         @SuppressWarnings("unchecked")
-       List<Object[]> list = q.getResultList();
+        List<Object[]> list = q.getResultList();
         
         return map(DisplayClient.class, list);
     }
      
     public Clients getClientById(int id)
     {
-         try{
+        try{
            Clients a = (Clients) em.createNamedQuery("Clients.findById").
            setParameter("id", id).getSingleResult();
            return a;
-       }catch(NoResultException ex){
-           return null; 
-       }catch(Exception exc){
-           exc.printStackTrace();
-       }
-       return null; 
+        }catch(NoResultException ex){
+            return null; 
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null; 
     }
     
     public ClientSyncItem getClientByChange(Changes ch)
@@ -79,12 +79,12 @@ public class ClientService extends DataService {
         }
         return result;
     }
-     
+
     public static <T> T map(Class<T> type, Object[] tuple){
         List<Class<?>> tupleTypes = new ArrayList<>();
         for(Object field : tuple){
             if (null != field)
-           tupleTypes.add(field.getClass());
+                tupleTypes.add(field.getClass());
             else
                tupleTypes.add(String.class);
         }
@@ -166,6 +166,50 @@ public class ClientService extends DataService {
             return false;
         }
     }
+    
+    public boolean updateClient(Clients client, int id){
+        try{
+            em.getTransaction().begin();
+            Clients updateClient = (Clients) em.createNamedQuery("Clients.findById").setParameter("id", id).getSingleResult();
+
+
+            if (client.getPerson() == null)
+            updateClient.setPerson(null);
+            else if(updateClient.getPerson() != null && client.getPerson() != null){
+                Persons updatePerson = (Persons) em.createNamedQuery("Persons.findById").setParameter("id", updateClient.getPerson().getId()).getSingleResult();
+                updatePerson.setFirstName(client.getPerson().getFirstName());
+                updatePerson.setLastName(client.getPerson().getLastName());
+                updatePerson.setDateOfBirth(client.getPerson().getDateOfBirth());
+                updatePerson.setGender(client.getPerson().getGender());
+            }
+            else {
+                Persons updatePerson = new Persons();
+                updatePerson.setFirstName(client.getPerson().getFirstName());
+                updatePerson.setLastName(client.getPerson().getLastName());
+                updatePerson.setDateOfBirth(client.getPerson().getDateOfBirth());
+                updatePerson.setGender(client.getPerson().getGender());
+                em.persist(updatePerson);
+               //em.getTransaction().commit();
+                updateClient.setPerson(updatePerson);
+            }
+            updateClient.setAddress(client.getAddress());
+            updateClient.setBusinessName(client.getBusinessName());
+            updateClient.setEmail(client.getEmail());
+            updateClient.setPhone(client.getPhone());
+            updateClient.setAddress(client.getAddress());
+            em.persist(updateClient);
+            em.getTransaction().commit();
+            em.close();
+
+            // insert chage
+            new ChangeService().insertUpdateChange(client);
+            
+            return true;
+        }catch(Exception exc){
+            exc.printStackTrace();
+            return false;
+        } 
+   }
     
     public void close(){
         em.close();

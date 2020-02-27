@@ -53,10 +53,10 @@ public class Projects implements Serializable {
     private Integer onlineEntryId;
     @JoinColumn(name = "DepartmentId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Departments departmentId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectId")
+    private Departments department;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Collection<Services> servicesCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Collection<Expenditures> expendituresCollection;
 
     public Projects() {
@@ -103,12 +103,12 @@ public class Projects implements Serializable {
         this.onlineEntryId = onlineEntryId;
     }
 
-    public Departments getDepartmentId() {
-        return departmentId;
+    public Departments getDepartment() {
+        return department;
     }
 
-    public void setDepartmentId(Departments departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartment(Departments department) {
+        this.department = department;
     }
 
     @XmlTransient

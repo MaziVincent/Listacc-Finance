@@ -26,14 +26,26 @@ namespace ListaccFinance.API.Interfaces
 
 
         //Uploads
-        Task UploadDeptAsync(Department d);
-        Task UploadPersonAsync(Person p);
-        Task UploadUserAsync(RegisterModel u);
-        Task UploadClientAsync(Client c);
-        Task UploadProjectAsync(Project p);
-        Task UploadCostAsync(CostCategory c);
-        Task UploadServiceAsync(Service s);
-        Task UploadChanges(Change ch);
+
+        bool IsExist<T>(int Id) where T : class;
+        Task<SavedList> UploadDeptAsync(Department d, int OffId);
+        Task<SavedList> UploadOldDeptAsync(Department d, int OnlineId);
+        Task<SavedList> UploadPersonAsync(Person p, int OffId);
+        Task<SavedList> UploadOldPersonAsync(Person p, int OnlineId);
+        Task<SavedList> UploadUserAsync(RegisterModel u, int OffId);
+        Task<SavedList> UploadClientAsync(Client c, int OldId);
+        Task<SavedList> UploadOldClientAsync(Client c, int OnlineId);
+        Task<SavedList> UploadProjectAsync(Project p, int OldId);
+        Task<SavedList> UploadOldProjectAsync(Project p, int OnlineId);
+        Task<SavedList> UploadCostAsync(CostCategory c, int OffId);
+        Task<SavedList> UploadOldCostAsync(CostCategory c, int OnlineId);
+        Task<SavedList> UploadExpenditureAsync(Expenditure e, int OffId);
+        Task<SavedList> UploadOldExpenditureAsync(Expenditure e, int OnlineId);
+        Task<SavedList> UploadServiceAsync(Service s, int OldId);
+        Task<SavedList> UploadOldServiceAsync(Service s, int OnlineId);
+        Task<SavedList> UploadIncomeAsync(Income i, int OldId);
+        Task<SavedList> UploadOldIncomeAsync(Income i, int OnlineId);
+        Task HandleChangeUpload(Change ch);
     }
 
 }

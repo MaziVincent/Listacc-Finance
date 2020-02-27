@@ -53,16 +53,16 @@ public class Expenditures implements Serializable {
     private Integer onlineEntryId;
     @JoinColumn(name = "ClientId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Clients clientId;
+    private Clients client;
     @JoinColumn(name = "CostCategoryId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private CostCategories costCategoryId;
+    private CostCategories costCategory;
     @JoinColumn(name = "ProjectId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Projects projectId;
+    private Projects project;
     @JoinColumn(name = "IssuerId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Users issuerId;
+    private Users issuer;
 
     public Expenditures() {
     }
@@ -117,36 +117,36 @@ public class Expenditures implements Serializable {
         this.onlineEntryId = onlineEntryId;
     }
 
-    public Clients getClientId() {
-        return clientId;
+    public Clients getClient() {
+        return client;
     }
 
-    public void setClientId(Clients clientId) {
-        this.clientId = clientId;
+    public void setClient(Clients client) {
+        this.client = client;
     }
 
-    public CostCategories getCostCategoryId() {
-        return costCategoryId;
+    public CostCategories getCostCategory() {
+        return costCategory;
     }
 
-    public void setCostCategoryId(CostCategories costCategoryId) {
-        this.costCategoryId = costCategoryId;
+    public void setCostCategory(CostCategories costCategory) {
+        this.costCategory = costCategory;
     }
 
-    public Projects getProjectId() {
-        return projectId;
+    public Projects getProject() {
+        return project;
     }
 
-    public void setProjectId(Projects projectId) {
-        this.projectId = projectId;
+    public void setProject(Projects project) {
+        this.project = project;
     }
 
-    public Users getIssuerId() {
-        return issuerId;
+    public Users getIssuer() {
+        return issuer;
     }
 
-    public void setIssuerId(Users issuerId) {
-        this.issuerId = issuerId;
+    public void setIssuer(Users issuer) {
+        this.issuer = issuer;
     }
 
     @Override

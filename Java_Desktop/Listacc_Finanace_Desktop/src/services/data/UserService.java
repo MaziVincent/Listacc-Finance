@@ -29,16 +29,16 @@ public class UserService extends DataService {
     
     public List<Users> getAllUsers()
     {
-         return em.createQuery("SELECT a FROM Users a", Users.class).getResultList();
+        return em.createQuery("SELECT a FROM Users a", Users.class).getResultList();
     }
     
     public Users getUserById(int id)
     {
         try{
-             Users user = (Users) em.createNamedQuery("Users.findById")
-            .setParameter("id", id).getSingleResult();
-             return user;
-        }catch(Exception ex){return null;}
+            Users user = (Users) em.createNamedQuery("Users.findById")
+                .setParameter("id", id).getSingleResult();
+            return user;
+        }catch(Exception ex){ex.printStackTrace(); return null;}
     }
     
     public Users getUserByEmail(String email)

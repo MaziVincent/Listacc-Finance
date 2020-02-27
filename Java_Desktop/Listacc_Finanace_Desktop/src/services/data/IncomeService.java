@@ -125,14 +125,15 @@ public class IncomeService extends DataService {
             em.getTransaction().begin();
             income.setService(serv);
             income.setUser(display.getUser());
-            if(display.getParentIncomeId() != 0) {
+            
+            if(display.getParentIncomeId() > 0) {
                 Incomes pIncome = (Incomes) em.createNamedQuery("Incomes.findById")
                    .setParameter("id", display.getParentIncomeId()).getSingleResult();
                 income.setIncome(pIncome);
                 pIncome.setAmountReceivable(pIncome.getAmountReceivable() - income.getAmountReceived());
                 em.persist(pIncome);
             }
-         
+           
             em.persist(income);
             em.getTransaction().commit();
             
@@ -142,7 +143,8 @@ public class IncomeService extends DataService {
             // return
             return true;
         }
-        catch(Exception xx){xx.printStackTrace();
+        catch(Exception xx){
+            xx.printStackTrace();
             return false;
         }
          
@@ -176,19 +178,19 @@ public class IncomeService extends DataService {
     }
      
     public static <T> T map(Class<T> type, Object[] tuple){
-    List<Class<?>> tupleTypes = new ArrayList<>();
-    for(Object field : tuple){
-        if (null != field)
-       tupleTypes.add(field.getClass());
-        else
-           tupleTypes.add(String.class);
-    }
-    try {
-       Constructor<T> ctor = type.getConstructor(tupleTypes.toArray(new Class<?>[tuple.length]));
-       return ctor.newInstance(tuple);
-    } catch (Exception e) {
-       throw new RuntimeException(e);
-    }
+        List<Class<?>> tupleTypes = new ArrayList<>();
+        for(Object field : tuple){
+            if (null != field)
+           tupleTypes.add(field.getClass());
+            else
+               tupleTypes.add(String.class);
+        }
+        try {
+           Constructor<T> ctor = type.getConstructor(tupleTypes.toArray(new Class<?>[tuple.length]));
+           return ctor.newInstance(tuple);
+        } catch (Exception e) {
+           throw new RuntimeException(e);
+        }
     }
     
     public void close(){

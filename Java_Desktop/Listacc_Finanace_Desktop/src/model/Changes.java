@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Changes.findAll", query = "SELECT c FROM Changes c"),
     @NamedQuery(name = "Changes.findById", query = "SELECT c FROM Changes c WHERE c.id = :id"),
-    @NamedQuery(name = "Changes.findByTable", query = "SELECT c FROM Changes c WHERE c.table = :table"),
+    @NamedQuery(name = "Changes.findByTableName", query = "SELECT c FROM Changes c WHERE c.tableName = :table"),
     @NamedQuery(name = "Changes.findByEntryId", query = "SELECT c FROM Changes c WHERE c.entryId = :entryId"),
     @NamedQuery(name = "Changes.findByChanges", query = "SELECT c FROM Changes c WHERE c.changes = :changes"),
     @NamedQuery(name = "Changes.findByTimeStamp", query = "SELECT c FROM Changes c WHERE c.timeStamp = :timeStamp"),
@@ -43,8 +43,8 @@ public class Changes implements Serializable {
     @Basic(optional = false)
     @Column(name = "Id")
     private Integer id;
-    @Column(name = "Table")
-    private String table;
+    @Column(name = "TableName")
+    private String tableName;
     @Basic(optional = false)
     @Column(name = "EntryId")
     private int entryId;
@@ -61,7 +61,7 @@ public class Changes implements Serializable {
     private int onlineEntryId;
     @JoinColumn(name = "UserId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Users userId;
+    private Users user;
     /*@JoinColumn(name = "UserId", referencedColumnName = "Id", insertable = false, updatable = false)
     @ManyToOne
     private Users user;
@@ -83,16 +83,20 @@ public class Changes implements Serializable {
         this.onlineEntryId = onlineEntryId;
     }
     
-    public Changes(String table, int entryId) {
-        this.table = table;
+    public Changes(String tableName, int entryId) {
+        this.tableName = tableName;
         this.entryId = entryId;
         this.pushed = 0;
     }
     
-    public Changes(String table, int entryId, String change) {
-        this.table = table;
+    public Changes(Integer id, String tableName, int entryId, String change, String timestamp, int userOnlineEntryId) {
+        this.id = id;
+        this.tableName = tableName;
         this.entryId = entryId;
         this.changes = change;
+        this.timeStamp = timestamp;
+        this.user = new Users();
+        this.user.setOnlineEntryId(userOnlineEntryId);
     }
 
     public Integer getId() {
@@ -103,12 +107,12 @@ public class Changes implements Serializable {
         this.id = id;
     }
 
-    public String getTable() {
-        return table;
+    public String getTableName() {
+        return tableName;
     }
 
-    public void setTable(String table) {
-        this.table = table;
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
     public int getEntryId() {
@@ -151,12 +155,12 @@ public class Changes implements Serializable {
         this.onlineEntryId = onlineEntryId;
     }
 
-    public Users getUserId() {
-        return userId;
+    public Users getUser() {
+        return user;
     }
 
-    public void setUserId(Users userId) {
-        this.userId = userId;
+    public void setUser(Users user) {
+        this.user = user;
     }
     
     /*public Users getUser() {

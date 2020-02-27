@@ -41,6 +41,25 @@ public class DepartmentService extends DataService {
         return createDepartment(department);
     }
     
+    public boolean updateDepartments(Departments dept){
+        try{
+            em.getTransaction().begin();
+             Departments department = (Departments) em.createNamedQuery("Departments.findById")
+            .setParameter("id", dept.getId()).getSingleResult();
+             department.setName(dept.getName());
+            em.persist(department);
+            em.getTransaction().commit();
+            em.close();
+            new ChangeService().insertUpdateChange(dept);
+            return true;
+            
+        }catch(Exception ex)
+        {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+    
     public List<Departments> getAllDepartments()
     {
         return em.createQuery("SELECT a FROM Departments a", Departments.class).getResultList();

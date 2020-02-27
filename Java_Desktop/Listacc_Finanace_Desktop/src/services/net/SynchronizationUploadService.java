@@ -9,14 +9,22 @@ import android.util.Pair;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.victorlaerte.asynctask.AsyncTask;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javafx.beans.property.StringProperty;
 import model.Changes;
-import model.Departments;
 import services.data.ChangeService;
+import services.data.ClientService;
+import services.data.CostCategoryService;
 import services.data.DepartmentService;
-import services.net.view_model.DepartmentUploadItem;
-import services.net.view_model.OnlineEntryMapping;
+import services.data.ExpenditureService;
+import services.data.IncomeService;
+import services.data.ProjectService;
+import services.data.ServiceService;
+import services.net.view_model.SyncDownloadEntryViewModel;
+import services.net.view_model.SyncInfo;
+import services.net.view_model.UploadResponseViewModel;
 
 /**
  *
@@ -51,19 +59,10 @@ public class SynchronizationUploadService extends AsyncTask<Void, String, Void> 
             publishProgress("Syncing is in process...");
             
             // get token
-            Network.token = Network.getTokenUsingHash(Network.login);
+            // Network.token = Network.getTokenUsingHash(Network.login);
             
             // upload according to data hierarchy
-            uploadDepartments();
-            // uploadPersons();
-            // uploadUsers();
-            // uploadClients();
-            // uploadProjects();
-            // uploadCostCategories();
-            // uploadExpenditures();
-            // uploadServices();
-            // uploadIncomes();
-            // uploadChanges();
+            uploadData();
             
             // clean up operation
             cleanUpUploadOperations();
@@ -88,61 +87,145 @@ public class SynchronizationUploadService extends AsyncTask<Void, String, Void> 
     }
     
     private void updateStatusLabel(String content){
-        activitySp.set(content);
+        // activitySp.set(content);
     }
     
-    private void uploadDepartments(){
-        // get department changes from changes table
-        List<Changes> departmentChanges = changeService.getUnpushedChanges(Departments.class.toString());
+    private void uploadData(){
+        boolean continueUpload;
         
-        // get full department info for unpushed changes
-        DepartmentService departmentService = new DepartmentService();
+        do {
+            // get full info for each unpushed change
+            List<SyncDownloadEntryViewModel> syncValues = new ArrayList<>();
         
-        List<DepartmentUploadItem> departmentList = departmentService.getUnpushedChanges(departmentChanges);
-        if(departmentList != null && departmentList.size() > 0)
-        {
-            
-            Gson g = new Gson();
-                    
-            // upload department information
-            Pair<Boolean, String> result = Network.uploadDepartmentData(departmentList);
-            
-            // set online entry id for newly created items
-            if(result.first){
-                List<OnlineEntryMapping> mapping = g.fromJson(result.second, new TypeToken<List<OnlineEntryMapping>>(){}.getType());
-                departmentService.updateNewDepartments(mapping);
-            }
-            
-            // mark change as pushed
-            changeService.updateChangesAsPushed(departmentChanges);
-        }
-        
-        departmentService.close();
-    }
-    
-    /*private void uploadBiometrics(){
-        BiometricsService biometriceService = new BiometricsService();
-        List<BiometricsUploadEntryViewModel> biometricsUploadList = biometriceService.getUnSyncedBiometrics();
-        if(biometricsUploadList != null && biometricsUploadList.size() > 0)
-        {                       
-            // upload
-            Pair<Boolean, String> result = Network.uploadBiometricsData(biometricsUploadList);
+            // get unpushed changes from changes table
+            List<Changes> changes = changeService.getUnpushedChanges();
+            continueUpload = changes.size() == 10;
 
-            // update db
-            if(result.first){
-                Gson g = new Gson();
-                List<OnlineEntryMapping> mapping = g.fromJson(result.second, new TypeToken<List<OnlineEntryMapping>>(){}.getType());
-                biometriceService.updateBiometricsAsSynced(mapping);
+            // process and separate into correct objects
+            for(Changes ch: changes){
+                SyncDownloadEntryViewModel obj = new SyncDownloadEntryViewModel();
+                switch(ch.getTableName())
+                {
+                    case "Departments":
+                        DepartmentService dService = new DepartmentService();
+                        obj.setDepartment(dService.getDepartmentByChange(ch));
+                        dService.close();
+                        break;
+                    /*case "Persons":
+                        obj.person = await _sservice.DownloadPersonAsync(ch);
+                        break;*/
+                    case "Clients":
+                        ClientService cService = new ClientService();
+                        obj.setClient(cService.getClientByChange(ch));
+                        cService.close();
+                        break;
+                    case "Projects":
+                        ProjectService pService = new ProjectService();
+                        obj.setProject(pService.getProjectByChange(ch));
+                        pService.close();
+                        break;
+                    case "CostCategories":
+                        CostCategoryService ccService = new CostCategoryService();
+                        obj.setCostCategory(ccService.getCostCategoryByChange(ch));
+                        ccService.close();
+                        break;
+                    case "Expenditures":
+                        ExpenditureService eService = new ExpenditureService();
+                        obj.setExpenditure(eService.getExpenditureByChange(ch));
+                        eService.close();
+                        break;
+                    case "Services":
+                        ServiceService sService = new ServiceService();
+                        obj.setService(sService.getServiceByChange(ch));
+                        sService.close();
+                        break;
+                    case "Incomes":
+                        IncomeService iService = new IncomeService();
+                        obj.setIncome(iService.getIncomeByChange(ch));
+                        iService.close();
+                        break;
+                }
+                obj.setTable(ch.getTableName());
+                syncValues.add(obj);
+            }
+            
+            if(syncValues.size() > 0)
+            {
+                // get synchronization version
+                SyncInfo syncInfo = SyncInfo.getLastSyncInfo();
+
+                // upload information
+                Pair<Boolean, String> result = Network.uploadData(syncInfo, syncValues);
+
+                // set online entry id for newly created items
+                if(result.first){
+                    Gson g = new Gson();
+
+                    List<UploadResponseViewModel> response = g.fromJson(result.second, new TypeToken<List<UploadResponseViewModel>>(){}.getType());
+                    processUploadResponse(response);
+
+                    // mark change as pushed
+                    changeService.updateChangesAsPushed(changes);
+                }
+
             }
         }
-        biometriceService.close();
-    }*/
+        while(continueUpload);
+        
+    }
     
+    private void processUploadResponse(List<UploadResponseViewModel> response){
+        for(UploadResponseViewModel ch: response){
+            switch(ch.getTable())
+            {
+                case "Departments":
+                    DepartmentService dService = new DepartmentService();
+                    dService.updateEntryAsSynced(ch);
+                    dService.close();
+                    break;
+                /*case "Persons":
+                    obj.person = await _sservice.DownloadPersonAsync(ch);
+                    break;*/
+                case "Clients":
+                    ClientService cService = new ClientService();
+                    cService.updateEntryAsSynced(ch);
+                    cService.close();
+                    break;
+                case "Projects":
+                    ProjectService pService = new ProjectService();
+                    pService.updateEntryAsSynced(ch);
+                    pService.close();
+                    break;
+                case "CostCategories":
+                    CostCategoryService ccService = new CostCategoryService();
+                    ccService.updateEntryAsSynced(ch);
+                    ccService.close();
+                    break;
+                case "Expenditures":
+                    ExpenditureService eService = new ExpenditureService();
+                    eService.updateEntryAsSynced(ch);
+                    eService.close();
+                    break;
+                case "Services":
+                    ServiceService sService = new ServiceService();
+                    sService.updateEntryAsSynced(ch);
+                    sService.close();
+                    break;
+                case "Incomes":
+                    IncomeService iService = new IncomeService();
+                    iService.updateEntryAsSynced(ch);
+                    iService.close();
+                    break;
+            }
+        }
+    }
     
     private void cleanUpUploadOperations(){
         // close database connection
         changeService.close();
         
-        // record 
+        // set time of sync
+        SyncInfo.saveLastUpdateTimestamp(new Date().getTime() + "");
+        
     }
 }

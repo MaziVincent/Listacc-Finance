@@ -5,34 +5,24 @@
  */
 package services.net.view_model;
 
-import java.util.List;
-
 /**
  *
  * @author E-book
  */
-public class ChangeUpload<T> {
-    private String token;
-    private List<T> departmentList;
+public class UploadResponseViewModel {
+    private int entryId;
+    private int onlineEntryId;
+    private String table;
     
-    public ChangeUpload(String token, List<T> departmentList){
-        setToken(token);
-        setDepartmentList(departmentList);
-    }
-    
-    public String getToken() {
-        return token;
+    public int getId() {
+        return entryId;
     }
 
-    public final void setToken(String token) {
-        this.token = token;
+    public int getOnlineEntryId() {
+        return onlineEntryId;
     }
     
-    public List<T> getDepartmentList() {
-        return departmentList;
-    } 
-
-    public final void setDepartmentList(List<T> departmentList) {
-        this.departmentList = departmentList;
+    public String getTable() {
+        return table;
     }
 }

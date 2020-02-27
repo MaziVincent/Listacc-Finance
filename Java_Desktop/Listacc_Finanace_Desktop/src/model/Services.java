@@ -57,12 +57,12 @@ public class Services implements Serializable {
     private Integer onlineEntryId;
     @Basic(optional = false)
     @Column(name = "FixedAmount")
-    private int fixedAmount;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "serviceId")
+    private Integer fixedAmount;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
     private Collection<Incomes> incomesCollection;
     @JoinColumn(name = "ProjectId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Projects projectId;
+    private Projects project;
 
     public Services() {
     }
@@ -134,12 +134,12 @@ public class Services implements Serializable {
         this.incomesCollection = incomesCollection;
     }
 
-    public Projects getProjectId() {
-        return projectId;
+    public Projects getProject() {
+        return project;
     }
 
-    public void setProjectId(Projects projectId) {
-        this.projectId = projectId;
+    public void setProject(Projects project) {
+        this.project = project;
     }
 
     @Override

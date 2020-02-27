@@ -36,6 +36,17 @@ public class ProjectService extends DataService {
         return department.size() > 0;
     }
     
+    public boolean projectNameExists(String name, int id)
+    {
+        
+        List<Projects> department = (List<Projects>) em.createQuery("SELECT q FROM Projects q  where upper(q.name)=:name AND q.id !="+id)
+            .setParameter("name",name.toUpperCase())
+            //.setParameter(id, id)
+                .getResultList();
+        
+        return department.size() > 0;
+    }
+    
     private boolean createProject(Projects project){
         try{
             em.getTransaction().begin();
@@ -144,6 +155,26 @@ public class ProjectService extends DataService {
             return true;
         }
         catch(Exception exc){
+            return false;
+        }
+    }
+    
+    public boolean updateProject(int id, String name, String description, int departmentId){
+        try{
+            em.getTransaction().begin();
+            Projects project = (Projects) em.createNamedQuery("Projects.findById").setParameter("id", id).getSingleResult();
+            Departments dept = (Departments) em.createNamedQuery("Departments.findById").setParameter("id", departmentId).getSingleResult();
+            project.setName(name);
+            project.setDescription(description);
+            project.setDepartment(dept);
+            em.persist(project);
+            em.getTransaction().commit();
+            em.close();
+            new ChangeService().insertUpdateChange(project);
+            return true;
+        }catch(Exception ex)
+        {
+            ex.printStackTrace();
             return false;
         }
     }

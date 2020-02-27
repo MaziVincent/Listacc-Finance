@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Users.findById", query = "SELECT u FROM Users u WHERE u.id = :id"),
     @NamedQuery(name = "Users.findByUserName", query = "SELECT u FROM Users u WHERE u.userName = :userName"),
     @NamedQuery(name = "Users.findByNormalizedUserName", query = "SELECT u FROM Users u WHERE u.normalizedUserName = :normalizedUserName"),
-    @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email"),
+    @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE UPPER(u.email) = :email"),
     @NamedQuery(name = "Users.findByNormalizedEmail", query = "SELECT u FROM Users u WHERE u.normalizedEmail = :normalizedEmail"),
     @NamedQuery(name = "Users.findByEmailConfirmed", query = "SELECT u FROM Users u WHERE u.emailConfirmed = :emailConfirmed"),
     @NamedQuery(name = "Users.findByPasswordHash", query = "SELECT u FROM Users u WHERE u.passwordHash = :passwordHash"),
@@ -50,10 +50,12 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Users.findByAccessFailedCount", query = "SELECT u FROM Users u WHERE u.accessFailedCount = :accessFailedCount"),
     @NamedQuery(name = "Users.findByPhone", query = "SELECT u FROM Users u WHERE u.phone = :phone"),
     @NamedQuery(name = "Users.findByAddress", query = "SELECT u FROM Users u WHERE u.address = :address"),
-    @NamedQuery(name = "Users.findByPassword", query = "SELECT u FROM Users u WHERE u.password = :password"),
     @NamedQuery(name = "Users.findByOnlineEntryId", query = "SELECT u FROM Users u WHERE u.onlineEntryId = :onlineEntryId"),
     @NamedQuery(name = "Users.findByDiscriminator", query = "SELECT u FROM Users u WHERE u.discriminator = :discriminator")})
 public class Users implements Serializable {
+
+    @Column(name = "Salt")
+    private String salt;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -98,8 +100,6 @@ public class Users implements Serializable {
     private String phone;
     @Column(name = "Address")
     private String address;
-    @Column(name = "Password")
-    private String password;
     @Column(name = "OnlineEntryId")
     private Integer onlineEntryId;
     @Basic(optional = false)
@@ -107,23 +107,23 @@ public class Users implements Serializable {
     private String discriminator;
     @ManyToMany(mappedBy = "usersCollection")
     private Collection<AspNetRoles> aspNetRolesCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Collection<Changes> changesCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Collection<Incomes> incomesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Collection<AspNetUserLogins> aspNetUserLoginsCollection;
     @JoinColumn(name = "DepartmentId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Departments departmentId;
+    private Departments department;
     @JoinColumn(name = "PersonId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Persons personId;
+    private Persons person;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "users")
     private Collection<AspNetUserTokens> aspNetUserTokensCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Collection<AspNetUserClaims> aspNetUserClaimsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "issuerId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "issuer")
     private Collection<Expenditures> expendituresCollection;
 
     public Users() {
@@ -279,14 +279,6 @@ public class Users implements Serializable {
         this.address = address;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Integer getOnlineEntryId() {
         return onlineEntryId;
     }
@@ -339,20 +331,20 @@ public class Users implements Serializable {
         this.aspNetUserLoginsCollection = aspNetUserLoginsCollection;
     }
 
-    public Departments getDepartmentId() {
-        return departmentId;
+    public Departments getDepartment() {
+        return department;
     }
 
-    public void setDepartmentId(Departments departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartment(Departments department) {
+        this.department = department;
     }
 
-    public Persons getPersonId() {
-        return personId;
+    public Persons getPerson() {
+        return person;
     }
 
-    public void setPersonId(Persons personId) {
-        this.personId = personId;
+    public void setPerson(Persons person) {
+        this.person = person;
     }
 
     @XmlTransient
@@ -405,6 +397,14 @@ public class Users implements Serializable {
     @Override
     public String toString() {
         return "model.Users[ id=" + id + " ]";
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
     
 }

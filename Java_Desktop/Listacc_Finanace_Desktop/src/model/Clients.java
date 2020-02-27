@@ -66,12 +66,12 @@ public class Clients implements Serializable {
     private double amountReceivable;
     @Column(name = "OnlineEntryId")
     private Integer onlineEntryId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clientId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client")
     private Collection<Incomes> incomesCollection;
     @JoinColumn(name = "PersonId", referencedColumnName = "Id")
     @ManyToOne
-    private Persons personId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clientId")
+    private Persons person;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client")
     private Collection<Expenditures> expendituresCollection;
 
     public Clients() {
@@ -167,12 +167,12 @@ public class Clients implements Serializable {
         this.incomesCollection = incomesCollection;
     }
 
-    public Persons getPersonId() {
-        return personId;
+    public Persons getPerson() {
+        return person;
     }
 
-    public void setPersonId(Persons personId) {
-        this.personId = personId;
+    public void setPerson(Persons person) {
+        this.person = person;
     }
 
     @XmlTransient

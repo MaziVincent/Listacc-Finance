@@ -10,3 +10,4 @@ namespace ListaccFinance.API.Data.Model
     }
 }
 
+
