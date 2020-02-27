@@ -9,13 +9,16 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import model.Changes;
 import model.Clients;
 import model.Incomes;
 import model.Persons;
 import model.Services;
 import model.display.DisplayIncome;
-import static services.data.ClientService.map;
+import services.net.view_model.IncomeSyncItem;
+import services.net.view_model.UploadResponseViewModel;
 
 /**
  *
@@ -25,7 +28,7 @@ public class IncomeService extends DataService {
 //    (String serviceName, String clientName, int clientId,   Integer id, String date, double amountReceived, double discount, String paymentType, double amountReceivable, String dateDue) {
     public List<DisplayIncome> getAllIncomes()
     { 
-        return em.createQuery("SELECT new model.display.DisplayIncome(a.serviceId.name,a.clientId.businessName,a.clientId.id,a.id, a.date,a.unit,a.amountReceived, a.discount, a.paymentType, a.amountReceivable, a.dateDue)FROM Incomes a ORDER BY a.id desc").getResultList();
+        return em.createQuery("SELECT new model.display.DisplayIncome(a.service.name,a.client.businessName,a.client.id,a.id, a.date,a.unit,a.amountReceived, a.discount, a.paymentType, a.amountReceivable, a.dateDue)FROM Incomes a ORDER BY a.id desc").getResultList();
     }
       
     public List<DisplayIncome> getAllReceivableIncomes()
@@ -47,6 +50,42 @@ public class IncomeService extends DataService {
             return null;
         }
     }
+    
+    public IncomeSyncItem getIncomeById(int id)
+    {
+        try{
+            Query q = em.createQuery("SELECT new services.net.view_model.IncomeSyncItem(c.id, c.type, c.date, c.unit, c.amountReceived, c.discount, c.paymentType, c.amountReceivable, c.dateDue, c.onlineEntryId, c.client.id, c.incomeId, c.client.onlineEntryId, c.service.id, c.service.onlineEntryId, c.user.id, c.user.onlineEntryId) "
+                    + "FROM Incomes c  WHERE c.id = :id");
+            q.setParameter("id", id);
+            IncomeSyncItem a = (IncomeSyncItem)q.getSingleResult();
+            return a;
+        }catch(NoResultException ex){
+            return null;
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null;
+    }
+    
+    public IncomeSyncItem getIncomeByChange(Changes ch)
+    {
+        try{
+            Query q = em.createQuery("SELECT new services.net.view_model.IncomeSyncItem(c.id, c.type, c.date, c.unit, c.amountReceived, c.discount, c.paymentType, c.amountReceivable, c.dateDue, c.onlineEntryId, c.client.id, c.incomeId, c.client.onlineEntryId, c.service.id, c.service.onlineEntryId, c.user.id, c.user.onlineEntryId) "
+                    + "FROM Incomes c  WHERE c.id = :id");
+            q.setParameter("id", ch.getEntryId());
+            IncomeSyncItem a = (IncomeSyncItem)q.getSingleResult();
+            a.setChange(ch.getChanges());
+            a.setChange(ch.getChanges());
+            a.setChangeTimestamp(ch.getTimeStamp());
+            a.setChangeUserOnlineEntryId(ch.getUser() != null ? ch.getUser().getOnlineEntryId(): null);
+            return a;
+        }catch(NoResultException ex){
+            return null;
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null;
+    }
 
     public boolean createIncome(DisplayIncome display)
     {
@@ -60,10 +99,12 @@ public class IncomeService extends DataService {
                     em.getTransaction().begin();
                     em.persist(incomePerson);
                     em.getTransaction().commit();
-                    new ChangeService().insertCreateChange(incomePerson);
+                    
+                    // insert chage
+                    // new ChangeService().insertCreateChange(incomePerson);
                 }
 
-                incomeClient.setPersonId(incomePerson);
+                incomeClient.setPerson(incomePerson);
                 em.getTransaction().begin();
                 em.persist(incomeClient);
                 em.getTransaction().commit();
@@ -71,7 +112,7 @@ public class IncomeService extends DataService {
                 // insert chage
                 new ChangeService().insertCreateChange(incomeClient);
             }
-            income.setClientId(incomeClient);
+            income.setClient(incomeClient);
             income.setAmountReceivable(display.getAmountReceivable());
             income.setAmountReceived(display.getAmountReceived());
             income.setDiscount(display.getDiscount());
@@ -82,18 +123,18 @@ public class IncomeService extends DataService {
             Services serv = (Services) em.createNamedQuery("Services.findById")
                .setParameter("id", display.getServiceIdnum()).getSingleResult();
             em.getTransaction().begin();
-            if(display.getParentIncomeId() > 0){
-            Incomes pIncome = (Incomes) em.createNamedQuery("Incomes.findById")
-               .setParameter("id", display.getParentIncomeId()).getSingleResult();
-            income.setIncomeId(pIncome);
-             pIncome.setAmountReceivable(pIncome.getAmountReceivable() - income.getAmountReceived());
-              em.persist(pIncome);
+            income.setService(serv);
+            income.setUser(display.getUser());
+            
+            if(display.getParentIncomeId() > 0) {
+                Incomes pIncome = (Incomes) em.createNamedQuery("Incomes.findById")
+                   .setParameter("id", display.getParentIncomeId()).getSingleResult();
+                income.setIncome(pIncome);
+                pIncome.setAmountReceivable(pIncome.getAmountReceivable() - income.getAmountReceived());
+                em.persist(pIncome);
             }
            
-            income.setUserId(display.getUserId());
-            income.setServiceId(serv);
             em.persist(income);
-           
             em.getTransaction().commit();
             
             // insert chage
@@ -102,13 +143,33 @@ public class IncomeService extends DataService {
             // return
             return true;
         }
-        catch(Exception xx){xx.printStackTrace();
+        catch(Exception xx){
+            xx.printStackTrace();
             return false;
         }
          
      }
+    
+    public boolean updateEntryAsSynced(UploadResponseViewModel entry)
+    {
+        try{
+            em.getTransaction().begin();
+            Query q = em.createNamedQuery("Incomes.findById");
+            q.setParameter("id", entry.getId());
+            Incomes a = (Incomes)q.getSingleResult();
+                
+            a.setOnlineEntryId(entry.getOnlineEntryId()); // true
+            em.merge(a);
+            em.getTransaction().commit();
+        
+            return true;
+        }
+        catch(Exception exc){
+            return false;
+        }
+    }
      
-     public static <T> List<T> map(Class<T> type, List<Object[]> records){
+    public static <T> List<T> map(Class<T> type, List<Object[]> records){
         List<T> result = new LinkedList<>();
         for(Object[] record : records){
            result.add(map(type, record));
@@ -116,19 +177,23 @@ public class IncomeService extends DataService {
         return result;
     }
      
-   public static <T> T map(Class<T> type, Object[] tuple){
-    List<Class<?>> tupleTypes = new ArrayList<>();
-    for(Object field : tuple){
-        if (null != field)
-       tupleTypes.add(field.getClass());
-        else
-           tupleTypes.add(String.class);
+    public static <T> T map(Class<T> type, Object[] tuple){
+        List<Class<?>> tupleTypes = new ArrayList<>();
+        for(Object field : tuple){
+            if (null != field)
+           tupleTypes.add(field.getClass());
+            else
+               tupleTypes.add(String.class);
+        }
+        try {
+           Constructor<T> ctor = type.getConstructor(tupleTypes.toArray(new Class<?>[tuple.length]));
+           return ctor.newInstance(tuple);
+        } catch (Exception e) {
+           throw new RuntimeException(e);
+        }
     }
-    try {
-       Constructor<T> ctor = type.getConstructor(tupleTypes.toArray(new Class<?>[tuple.length]));
-       return ctor.newInstance(tuple);
-    } catch (Exception e) {
-       throw new RuntimeException(e);
-    }
+    
+    public void close(){
+        em.close();
     }
 }

@@ -25,9 +25,9 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.List;
-import services.net.view_model.ChangeUpload;
-import services.net.view_model.DepartmentUploadItem;
-import services.net.view_model.Login;
+import services.net.view_model.LoginViewModel;
+import services.net.view_model.SyncDownloadEntryViewModel;
+import services.net.view_model.SyncInfo;
 
 /**
  *
@@ -36,17 +36,15 @@ import services.net.view_model.Login;
 public class Network {
     
     public final static String hostUrl = "http://localhost:5000/"; // 192.168.43.135:49659
-    public static String authUrl = hostUrl + "api/accountwebapi";
+    public static String authUrl = hostUrl + "api/auth";
     public static String baseUrl = hostUrl + "api/sync";
-    public static String token = "";
-    public static Login login ;
     public static boolean isConnected = false;
     public static boolean isSyncingUp = false;
     public static boolean isSyncingDown = false;
     
     public static boolean isConnected(){
         try {
-            URL url = new URL(baseUrl + "/pingserver"); //values
+            URL url = new URL(authUrl + "/pingserver"); //values
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
@@ -70,12 +68,14 @@ public class Network {
     }
     
     // RETRIVE TOKEN
-    public static String getToken(Login login){
+    public static String getToken(LoginViewModel login){
         try {               
             Gson gson = new Gson();
+            login = LoginViewModel.getFullDetails(login);
+            if(login == null) return "";
             String json = gson.toJson(login);
 
-            URL url = new URL(authUrl+ "/desktopappsignin");
+            URL url = new URL(authUrl + "/desktoplogin");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Accept", "application/json");
@@ -90,25 +90,27 @@ public class Network {
                 os.write(out);
             }
             if (conn.getResponseCode() != 200) {
-                    throw new RuntimeException("Failed : HTTP error code : "
-                                    + conn.getResponseCode());
+                if(conn.getResponseCode() == 401){
+                    return "";
+                }
+                System.out.println("Failed : HTTP error code : "
+                    + conn.getResponseCode());
+                return "";
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(
                     (conn.getInputStream())));
 
             String output;
-            // System.out.println("Output from Server .... \n");
             String body = "";
             while ((output = br.readLine()) != null) {
                     body += output;
             }
-            JsonElement elem = new JsonParser().parse(body);
-            JsonObject obj = elem.getAsJsonObject();
-            body = obj.get("token").getAsString();
 
+            br.close();
             conn.disconnect();
             return body;
+            
          } catch (MalformedURLException e) {
                e.getMessage();
          } catch (IOException e) {
@@ -117,13 +119,13 @@ public class Network {
         return "";
     }
     
-    public static String getTokenUsingHash(Login login){
+    public static String getTokenUsingHash(LoginViewModel login){
         try {               
             Gson gson = new Gson();
-            login.setPassword(login.getPasswordHash());
+            // login.setPassword(login.getPasswordHash());
             String json = gson.toJson(login);
 
-            URL url = new URL(authUrl+ "/desktopapphashsignin");
+            URL url = new URL(baseUrl+ "/desktopapphashsignin");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Accept", "application/json");
@@ -180,17 +182,20 @@ public class Network {
     public static String GetAddress(String addressType) {
         String address = "";
         InetAddress lanIp = null;
+        boolean correctInterfaceFound = false;
+        
         try {
-
             String ipAddress = null;
             Enumeration<NetworkInterface> net = null;
             net = NetworkInterface.getNetworkInterfaces();
 
-            while (net.hasMoreElements()) {
+            while (net.hasMoreElements() && !correctInterfaceFound) {
                 NetworkInterface element = net.nextElement();
                 Enumeration<InetAddress> addresses = element.getInetAddresses();
 
-                while (addresses.hasMoreElements() && element.getHardwareAddress().length > 0 && !isVMMac(element.getHardwareAddress())) {
+                while (addresses.hasMoreElements() 
+                        && element.getHardwareAddress() != null && element.getHardwareAddress().length > 0 
+                        && !isVMMac(element.getHardwareAddress()) && !correctInterfaceFound) {
                     InetAddress ip = addresses.nextElement();
                     if (ip instanceof Inet4Address) {
 
@@ -281,31 +286,48 @@ public class Network {
         return false;
     }
     
+    public static String getMacAddress2(){
+
+	InetAddress ip;
+	try {			
+            ip = InetAddress.getLocalHost();
+            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+
+            byte[] mac = network.getHardwareAddress();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < mac.length; i++) {
+                    sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));		
+            }
+            return sb.toString();
+			
+	} 
+        catch (SocketException | UnknownHostException | NullPointerException e) {		
+            //e.printStackTrace();
+            e.getMessage();
+	}
+	return null;
+   }
+
+    
     
     // UPLOAD
-    public static Pair<Boolean, String> uploadDepartmentData(List<DepartmentUploadItem> departmentList) 
-    {
-        return uploadData("UploadDepartments", departmentList);
-    }
-    
-    private static <T> Pair<Boolean, String> uploadData(String myUrl, List<T> departmentList){
+    public static Pair<Boolean, String> uploadData(SyncInfo syncInfo, List<SyncDownloadEntryViewModel> uploadList){
         try{
             boolean success = false;
-            ChangeUpload uploadModel = new ChangeUpload(token, departmentList);
+            //ChangeUpload uploadModel = new UploadResponseViewModel(null, departmentList);
             Gson gson = new Gson();
-            String json = gson.toJson(uploadModel);
+            String json = gson.toJson(uploadList);
                 
-            URL url = new URL(baseUrl+ "/" + myUrl);
+            URL url = new URL(baseUrl+ "/upload");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
-            conn.setRequestProperty("Accept", "application/json");
-            //conn.setRequestProperty("Authorization","Bearer "+ token);
+            // conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestProperty("Authorization","Bearer "+ syncInfo.getToken());
+            conn.setRequestProperty("Content-Type", "application/json;");
             conn.setDoOutput( true );
             byte[] out = json.getBytes(StandardCharsets.UTF_8);
             int length = out.length;
-
             conn.setFixedLengthStreamingMode(length);
-            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             conn.connect();
             try(OutputStream os = conn.getOutputStream()) {
                 os.write(out);
@@ -337,5 +359,47 @@ public class Network {
             e.printStackTrace();
         }
         return new Pair(false, "");
+    }
+    
+    
+    // DOWNLOAD
+    public static String downloadData(SyncInfo syncInfo) {
+        try{
+            URL url = new URL(baseUrl+ "/download/" + syncInfo.getLastChangeId());
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            //conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestProperty("Authorization","Bearer "+ syncInfo.getToken());
+            conn.setRequestProperty("Content-Type", "application/json;");
+            conn.connect();
+            
+            if (conn.getResponseCode() != 200) {
+                System.out.println("Failed : HTTP error code : " + conn.getResponseCode());
+                return null;
+                // throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+
+            String output;
+            String body = "";
+            while ((output = br.readLine()) != null) {
+                    body += output;
+            }
+            //JsonElement elem = new JsonParser().parse(body);
+            //JsonObject obj = elem.getAsJsonObject();
+            //body = obj.get("token").getAsString();
+
+            conn.disconnect();
+            return body;
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

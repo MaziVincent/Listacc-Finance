@@ -11,7 +11,7 @@
       <TableView fx:id="incomeTablePop" layoutX="7.0" layoutY="56.0" prefHeight="332.0" prefWidth="683.0">
          <columns>
             <TableColumn fx:id="incomeColSerial" prefWidth="40.0" text="S/N" />
-            <TableColumn fx:id="incomeColClient" prefWidth="145.0" style="-fx-alignment: center;" text="Clent " />
+            <TableColumn fx:id="incomeColClient" prefWidth="145.0" style="-fx-alignment: center;" text="Client " />
             <TableColumn fx:id="incomeColService" prefWidth="130.0" style="-fx-alignment: center;" text="Service" />
             <TableColumn fx:id="incomeColPayment" prefWidth="124.0" style="-fx-alignment: center;" text="First Payment" />
             <TableColumn fx:id="incomeColBalance" prefWidth="117.0" style="-fx-text-fill: Red; -fx-alignment: center;" text="Balance" />

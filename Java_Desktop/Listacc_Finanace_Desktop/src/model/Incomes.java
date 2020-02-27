@@ -75,18 +75,20 @@ public class Incomes implements Serializable {
     private Integer onlineEntryId;
     @JoinColumn(name = "ClientId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Clients clientId;
-    @OneToMany(mappedBy = "incomeId")
+    private Clients client;
+    @OneToMany(mappedBy = "income")
     private Collection<Incomes> incomesCollection;
-    @JoinColumn(name = "IncomeId", referencedColumnName = "Id")
+    @JoinColumn(name = "IncomeId", referencedColumnName = "Id", insertable = false, updatable = false)
     @ManyToOne
-    private Incomes incomeId;
+    private Incomes income;
+    @Column(name = "IncomeId")
+    private Integer incomeId;
     @JoinColumn(name = "ServiceId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Services serviceId;
+    private Services service;
     @JoinColumn(name = "UserId", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Users userId;
+    private Users user;
 
     public Incomes() {
     }
@@ -185,12 +187,12 @@ public class Incomes implements Serializable {
         this.onlineEntryId = onlineEntryId;
     }
 
-    public Clients getClientId() {
-        return clientId;
+    public Clients getClient() {
+        return client;
     }
 
-    public void setClientId(Clients clientId) {
-        this.clientId = clientId;
+    public void setClient(Clients client) {
+        this.client = client;
     }
 
     @XmlTransient
@@ -202,28 +204,32 @@ public class Incomes implements Serializable {
         this.incomesCollection = incomesCollection;
     }
 
-    public Incomes getIncomeId() {
-        return incomeId;
+    public Incomes getIncome() {
+        return income;
     }
 
-    public void setIncomeId(Incomes incomeId) {
+    public void setIncome(Incomes income) {
+        this.income = income;
+    }
+
+    public void setIncomeId(Integer incomeId) {
         this.incomeId = incomeId;
     }
 
-    public Services getServiceId() {
-        return serviceId;
+    public Services getService() {
+        return service;
     }
 
-    public void setServiceId(Services serviceId) {
-        this.serviceId = serviceId;
+    public void setService(Services service) {
+        this.service = service;
     }
 
-    public Users getUserId() {
-        return userId;
+    public Users getUser() {
+        return user;
     }
 
-    public void setUserId(Users userId) {
-        this.userId = userId;
+    public void setUser(Users user) {
+        this.user = user;
     }
 
     @Override

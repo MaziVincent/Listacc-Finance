@@ -46,9 +46,9 @@ public class Departments implements Serializable {
     private String name;
     @Column(name = "OnlineEntryId")
     private Integer onlineEntryId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "departmentId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "department")
     private Collection<Projects> projectsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "departmentId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "department")
     private Collection<Users> usersCollection;
 
     public Departments() {

@@ -19,6 +19,7 @@ public class AppModel {
     public Users getUser() {
         return user;
     }
+    
     public AppModel(final Stage stage, final Users user){
         this.stage = stage;
         this.user = user;
@@ -31,6 +32,5 @@ public class AppModel {
     public AppModel(Stage stage) {
         this.stage = stage;
     }
-    
-    
+      
 }

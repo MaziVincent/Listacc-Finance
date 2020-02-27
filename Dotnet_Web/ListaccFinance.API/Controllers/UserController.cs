@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ListaccFinance.API.Controllers
 {
-    [AllowAnonymous]
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class UserController: ControllerBase
     {
@@ -28,11 +28,11 @@ namespace ListaccFinance.API.Controllers
         }
 
 
-        
 
 
 
-        [HttpPost("firstcreateuser")]
+        [Authorize(Roles = "Admin")]
+        [HttpPost("FirstCreateUser")]
         public async Task<IActionResult> FirstCreateUser(RegisterModel me)
         {
             if (!ModelState.IsValid)
@@ -52,11 +52,33 @@ namespace ListaccFinance.API.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPost("CreateAdmin")]
+        public async Task<IActionResult> CreateAdmin(RegisterModel reg)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!await _uService.IsThisUserExist(reg.EmailAddress))
+            {
+                string userIdString = this.User.Claims.First(i => i.Type == "UserID").Value;
+                int userId = int.Parse(userIdString);
+                var u = new Admin();
+                await _uService.CreateAdmin(reg, userId);
+                
+                return Ok("successful");
+            }
+
+            return BadRequest(new { message = " User already exists" });
+        }
 
 
-        [Authorize]
-        [HttpPost("createUser")]
-        public async Task<IActionResult> CreateUser(RegisterModel me) 
+        [Authorize(Roles = "Admin")]
+        [HttpPost("CreateMember")]
+
+        public async Task<IActionResult> CreateMember(RegisterModel me) 
         {
 
             if (!ModelState.IsValid)

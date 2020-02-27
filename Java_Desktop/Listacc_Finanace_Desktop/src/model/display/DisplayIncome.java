@@ -76,10 +76,12 @@ public class DisplayIncome extends Incomes{
         this.displayPaymentType = paymentType;
     }
 
+    @Override
     public Clients getClient() {
-        return  client == null? super.getClientId(): client;
+        return  client == null? super.getClient(): client;
     }
 
+    @Override
     public void setClient(Clients client) {
         this.client = client;
     }
@@ -154,8 +156,8 @@ public class DisplayIncome extends Incomes{
         {
             Clients clien = new ClientService().getClientById(clientId);
                 this.client = clien;
-            if(null != clien.getPersonId())
-             this.clientName = clien.getPersonId().getLastName() + " " + clien.getPersonId().getFirstName();
+            if(null != clien.getPerson())
+             this.clientName = clien.getPerson().getLastName() + " " + clien.getPerson().getFirstName();
             else 
                 this.clientName = clien.getBusinessName();
            this.clientNumId = clien.getId();
@@ -175,9 +177,9 @@ public class DisplayIncome extends Incomes{
         if (null == clientName || clientName.isEmpty())
         { 
             Clients clien = new ClientService().getClientById(clientId);
-            this.setClientId(clien);
-            if(null != clien.getPersonId())
-             this.clientName = clien.getPersonId().getLastName() + " " + clien.getPersonId().getFirstName();
+            this.setClient(clien);
+            if(null != clien.getPerson())
+             this.clientName = clien.getPerson().getLastName() + " " + clien.getPerson().getFirstName();
             else 
                 this.clientName = clien.getBusinessName();
            this.clientNumId = clien.getId();

@@ -130,7 +130,7 @@ namespace ListaccFinance.API.Data.ViewModel
         public string Name { get; set; }
         public string Description { get; set; }
         public double Amount { get; set; }
-        public bool FixedAmount { get; set; }
+        public int FixedAmount { get; set; }
         public int ProjectId { get; set; }
         public int? ProjectOnlineEntryId {get; set;}
         public int? OnlineEntryId { get; set; }
