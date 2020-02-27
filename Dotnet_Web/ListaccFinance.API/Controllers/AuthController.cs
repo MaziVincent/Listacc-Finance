@@ -25,12 +25,14 @@ namespace ListaccFinance.API.Controllers
 
         private readonly ISyncService _sservice;
         private readonly IMapper _mapper;
+        private readonly IOtherServices _oService;
 
         public AuthController(DataContext context,
                                 ITokenGenerator tokGen,
                                 IDesktopService dService,
                                 ISyncService sservice,
-                                IMapper mapper
+                                IMapper mapper,
+                                IOtherServices oService
                              )
         {
             _context = context;
@@ -38,6 +40,7 @@ namespace ListaccFinance.API.Controllers
             _dService = dService;
             _sservice = sservice;
             _mapper = mapper;
+            _oService = oService;
 
         }
 
@@ -68,6 +71,8 @@ namespace ListaccFinance.API.Controllers
                                              && mod.ClientMacAddress.ToUpper().CompareTo(x.ClientMacAddress.ToUpper()) == 0
                                              && mod.ClientType.ToUpper().CompareTo(x.ClientType.ToUpper()) == 0).FirstOrDefaultAsync();
 
+            //gets the type of the user
+            var type = _oService.Strip(currentUser.GetType().ToString());
 
             if (d == null)
             {
@@ -80,7 +85,7 @@ namespace ListaccFinance.API.Controllers
                 d = await _dService.CreateDesktopClientAsync(dc);
             }
 
-            var token = await _tokGen.GenerateToken(d, currentUser.Id);
+            var token = await _tokGen.GenerateToken(d, currentUser.Id, type);
 
 
             return Ok(token);
@@ -114,7 +119,10 @@ namespace ListaccFinance.API.Controllers
                 {
                     int myID = currentUser.Id;
 
-                    var tokenString = await _tokGen.GenerateToken(u, myID);
+                    //gets the type of the user
+                    var type = _oService.Strip(currentUser.GetType().ToString());
+
+                    var tokenString = await _tokGen.GenerateToken(u, myID, type);
                     currentUser.PasswordHash = null;
                     var token = new
                     {
