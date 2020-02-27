@@ -272,6 +272,7 @@ namespace ListaccFinance.API.Controllers
                                     }
                                 }
                             }
+                            sChange.FixedAmount = sync.service.FixedAmount == 1? true: false;
                             save = sync.service.OnlineEntryId is null ? await _sservice.UploadServiceAsync(sChange, sId) : await _sservice.UploadOldServiceAsync(sChange, sync.service.OnlineEntryId.Value);
                             if (save != null) mapList.Add(save);
                             await SaveChangesAsync(sync.service.ChangeTimeStamp, sync.service.Change, sync.Table, sId);

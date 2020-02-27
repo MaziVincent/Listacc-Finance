@@ -7,8 +7,8 @@ namespace ListaccFinance.API.Interfaces
 
     public interface ITokenGenerator
     {
-        Task<string> GenerateToken(DesktopClient i, int userId);
+        Task<string> GenerateToken(DesktopClient i, int userId, string type);
 
-        Task<string> GenerateToken(UserLogin u, int ID);
+        Task<string> GenerateToken(UserLogin u, int ID, string type);
     }
 }
