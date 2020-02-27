@@ -43,7 +43,8 @@ public class AutoMapperProfile : Profile
                                               .ForMember(dest => dest.UserId, opt => opt.MapFrom(x => x.UserOnlineEntryId))
                                               .ForMember(dest => dest.Id, opt => opt.Ignore());
 
-    // Mapper for creating admin and 
+    // Mapper for CurrentUser login
+        CreateMap<User, CurrentUser>();
 
     }
 }

@@ -25,5 +25,7 @@ namespace ListaccFinance.API.Data.Model
         public Person Person { get; set; }
         public int PersonId { get; set; }
         public string salt {get; set;}
+        public bool Status{get; set;}
+        public string SearchString {get; set;}
     }
 }

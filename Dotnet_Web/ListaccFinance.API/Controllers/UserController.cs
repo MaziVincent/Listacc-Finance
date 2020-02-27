@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
+using ListaccFinance.API.Data.ViewModel;
 using ListaccFinance.API.Interfaces;
 using ListaccFinance.API.SendModel;
 using ListaccFinance.API.Services;
@@ -20,7 +21,7 @@ namespace ListaccFinance.API.Controllers
         private readonly DataContext _context;
         private readonly ITokenGenerator _generator;
 
-        public UserController(IUserService uservice, DataContext context, ITokenGenerator generator)
+        public UserController(IUserService uservice, DataContext context, ITokenGenerator generator )
         {
             _uService =uservice;
             _context = context;
@@ -102,7 +103,28 @@ namespace ListaccFinance.API.Controllers
         }
 
         
+        [Authorize(Roles = "Admin")]
+        [HttpPost("DeactivateUser")]
+        public async Task<IActionResult> Deactivate (int Id)
+        {
+            await _uService.Deactivate(Id);
+            return Ok();
+        }
 
 
+        [HttpGet("ReturnUsers")]
+        public async Task<IActionResult> ReturnUsers ([FromQuery] SearchPaging props)
+        {
+            if (!string.IsNullOrEmpty(props.SearchString))
+            {
+                await _uService.ReturnUsers(props);
+            }
+            else
+            {
+                await  _uService.ReturnAllUsers(props);
+            }
+
+            return Ok();
+        }
     }
 }

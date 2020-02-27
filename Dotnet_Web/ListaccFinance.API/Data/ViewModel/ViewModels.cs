@@ -5,6 +5,46 @@ using ListaccFinance.API.Data.Model;
 namespace ListaccFinance.API.Data.ViewModel
 {
 
+    // Return for search
+    public class SearchProps
+    {
+        //Search Terms
+        public int Id {get; set;}
+        public string LastName {get; set;}
+        public string FirstName {get; set;}
+        public string Gender {get; set;}
+        public string Email {get; set;}
+        public string Phone { get; set; }
+
+
+    }
+    public class SearchPaging
+    {
+
+        public string SearchString { get; set; }
+
+        //Filter
+        public string Role { get; set; }
+        public bool Status { get; set; }
+        // Pagination
+        public int PageNumber { get; set; } = 1;
+        public int _pageSize { get; set; } = 5;
+        public int PageSize
+        {
+            get { return _pageSize; }
+            set { _pageSize = value > MaxPageSize ? MaxPageSize : value; }
+        }
+        const int MaxPageSize = 20;
+    }
+
+    public class CurrentUser
+    {
+        public string Phone { get; set; }
+        public string Address { get; set; }
+        public Department Department { get; set; }
+        public Person Person { get; set; }
+        public bool Status { get; set; }
+    }
     public class SyncViewModel
     {
         public DepartMentViewModel dept {get; set;}

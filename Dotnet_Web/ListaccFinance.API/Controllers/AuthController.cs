@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ListaccFinance.Api.Data;
+using ListaccFinance.API.Data.ViewModel;
 using ListaccFinance.API.Interfaces;
 using ListaccFinance.API.SendModel;
 using ListaccFinance.API.Services;
@@ -61,7 +62,7 @@ namespace ListaccFinance.API.Controllers
 
 
             // Password Hash
-            var currentUser = _context.Users.Where(x => x.Email.ToUpper().CompareTo(mod.EmailAddress.ToUpper()) == 0).FirstOrDefault();
+            var currentUser = _context.Users.Where(x => x.Email.ToUpper().CompareTo(mod.EmailAddress.ToUpper()) == 0 && x.Status == true).FirstOrDefault();
             if (currentUser == null || !Hash.Validate(mod.Password, currentUser.salt, currentUser.PasswordHash))
             {
                 return Unauthorized(new { message = "Your login input is incorrect" });
@@ -103,7 +104,7 @@ namespace ListaccFinance.API.Controllers
 
             // Password Hash Comparison
             var pmessage = u.Password;
-            var currentUser = _context.Users.Where(x => x.Email.ToUpper().CompareTo(u.EmailAddress.ToUpper()) == 0).FirstOrDefault();
+            var currentUser = _context.Users.Where(x => x.Email.ToUpper().CompareTo(u.EmailAddress.ToUpper()) == 0 && x.Status == true).Include(x => x.Person).FirstOrDefault();
 
             if (currentUser is null)
             {
@@ -123,11 +124,12 @@ namespace ListaccFinance.API.Controllers
                     var type = _oService.Strip(currentUser.GetType().ToString());
 
                     var tokenString = await _tokGen.GenerateToken(u, myID, type);
-                    currentUser.PasswordHash = null;
+                    var theCurrentUser = _mapper.Map<CurrentUser>(currentUser);
+                    
                     var token = new
                     {
                         tokenString = tokenString,
-                        currentUser = currentUser
+                        currentUser = theCurrentUser
                     };
                     return Ok(token);
                 }
