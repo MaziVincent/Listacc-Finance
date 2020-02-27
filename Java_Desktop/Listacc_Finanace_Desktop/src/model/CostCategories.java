@@ -51,7 +51,7 @@ public class CostCategories implements Serializable {
     private String description;
     @Column(name = "OnlineEntryId")
     private Integer onlineEntryId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "costCategoryId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "costCategory")
     private Collection<Expenditures> expendituresCollection;
 
     public CostCategories() {

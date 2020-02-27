@@ -119,10 +119,10 @@ public class DisplayExpenditure {
         {
             Clients clien = new ClientService().getClientById(clientId);
             
-            if(null != clien.getPersonId())
+            if(null != clien.getPerson())
                 {
-                    this.lastName = clien.getPersonId().getLastName();
-                    this.firstName =clien.getPersonId().getFirstName();
+                    this.lastName = clien.getPerson().getLastName();
+                    this.firstName =clien.getPerson().getFirstName();
                 }
         }
             
@@ -144,10 +144,10 @@ public class DisplayExpenditure {
         {
             Clients clien = new ClientService().getClientById(clientId);
             
-            if(null != clien.getPersonId())
+            if(null != clien.getPerson())
                 {
-                    this.lastName = clien.getPersonId().getLastName();
-                    this.firstName =clien.getPersonId().getFirstName();
+                    this.lastName = clien.getPerson().getLastName();
+                    this.firstName =clien.getPerson().getFirstName();
                     this.businessName = this.firstName + " "+ this.lastName;
                 }
             

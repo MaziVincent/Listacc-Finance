@@ -54,9 +54,9 @@ public class Persons implements Serializable {
     private String dateOfBirth;
     @Column(name = "OnlineEntryId")
     private Integer onlineEntryId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "person")
     private Collection<Users> usersCollection;
-    @OneToMany(mappedBy = "personId")
+    @OneToMany(mappedBy = "person")
     private Collection<Clients> clientsCollection;
 
     public Persons() {

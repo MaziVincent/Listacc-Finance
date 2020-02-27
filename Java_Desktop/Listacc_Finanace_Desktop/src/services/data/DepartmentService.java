@@ -5,13 +5,14 @@
  */
 package services.data;
 
-import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import model.Changes;
 import model.Departments;
-import services.net.view_model.DepartmentUploadItem;
+import services.net.view_model.DepartmentSyncItem;
 import services.net.view_model.OnlineEntryMapping;
+import services.net.view_model.UploadResponseViewModel;
 /**
  *
  * @author Agozie
@@ -39,6 +40,7 @@ public class DepartmentService extends DataService {
         Departments department = new Departments(0,name);
         return createDepartment(department);
     }
+    
     public boolean updateDepartments(Departments dept){
         try{
             em.getTransaction().begin();
@@ -57,6 +59,7 @@ public class DepartmentService extends DataService {
             return false;
         }
     }
+    
     public List<Departments> getAllDepartments()
     {
         return em.createQuery("SELECT a FROM Departments a", Departments.class).getResultList();
@@ -71,23 +74,6 @@ public class DepartmentService extends DataService {
         return department.size() > 0;
     }
     
-    public List<DepartmentUploadItem> getUnpushedChanges(List<Changes> departmentChanges){    
-        try{
-            List<Integer> ids = new ArrayList<>();
-            for(Changes c: departmentChanges){
-                ids.add(c.getEntryId());
-            }
-            Query query = em.createQuery( "SELECT new services.net.view_model.DepartmentUploadItem(s.id, s.onlineEntryId, s.name)"
-                    + " FROM Departments s WHERE s.id IN :ids" );
-            query.setParameter("ids", ids);
-            List<DepartmentUploadItem> changeList = (List<DepartmentUploadItem>)query.getResultList();
-
-            return changeList;
-        }
-        catch(Exception exc){exc.getMessage();}
-        return null;
-    }
-       
     public boolean updateNewDepartments(List<OnlineEntryMapping> mapping)
     {
         try{
@@ -111,6 +97,86 @@ public class DepartmentService extends DataService {
             return true;
         }
         catch(Exception exc){
+            return false;
+        }
+    }
+    
+    public boolean updateEntryAsSynced(UploadResponseViewModel entry)
+    {
+        try{
+            em.getTransaction().begin();
+            Query q = em.createNamedQuery("Departments.findById");
+            q.setParameter("id", entry.getId());
+            Departments a = (Departments)q.getSingleResult();
+                
+            a.setOnlineEntryId(entry.getOnlineEntryId()); // true
+            em.merge(a);
+            em.getTransaction().commit();
+        
+            return true;
+        }
+        catch(Exception exc){
+            return false;
+        }
+    }
+    
+    public Departments getDepartmentByOnlineEntryId(int onlineEntryId)
+    {
+        try{
+            Query q = em.createNamedQuery("Departments.findByOnlineEntryId");
+            q.setParameter("onlineEntryId", onlineEntryId);
+            Departments a = (Departments)q.getSingleResult();
+      
+            return a;
+        }catch(NoResultException ex){
+            return null;
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null;
+    }
+    
+    public DepartmentSyncItem getDepartmentByChange(Changes ch)
+    {
+        try{
+            Query q = em.createQuery("SELECT new services.net.view_model.DepartmentSyncItem(c.id, c.onlineEntryId, c.name) "
+                    + "FROM Departments c WHERE c.id = :id");
+            q.setParameter("id", ch.getEntryId());
+            DepartmentSyncItem a = (DepartmentSyncItem)q.getSingleResult();
+            a.setChange(ch.getChanges());
+            a.setChangeTimestamp(ch.getTimeStamp());
+            a.setChangeUserOnlineEntryId(ch.getUser() != null ? ch.getUser().getOnlineEntryId(): null);
+      
+            return a;
+        }catch(NoResultException ex){
+            return null;
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null;
+    }
+    
+    public boolean addDownloadedEntry(DepartmentSyncItem item)
+    {
+        try{
+            em.getTransaction().begin();
+            
+            Departments existingRecord = getDepartmentByOnlineEntryId(item.getId());
+            if(existingRecord == null){
+                Departments newRecord = DepartmentSyncItem.map(item);
+                em.persist(newRecord);
+            }
+            else{
+                existingRecord = DepartmentSyncItem.map(existingRecord, item, item.getId());
+                em.merge(existingRecord);
+            }
+            
+            em.getTransaction().commit();
+        
+            return true;
+        }catch(Exception exc){
+            exc.printStackTrace();
+            exc.getMessage();
             return false;
         }
     }

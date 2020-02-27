@@ -25,13 +25,13 @@ public class DisplayProject extends Projects{
         super(id, name);
         setDescription(description);
         setDepartmentName(departmentName);
-        setDepartmentId(departmentID);
+        setDepartment(departmentID);
     }
     
     public DisplayProject(Integer id, String description, String name, Departments departmentID) {
         super(id, name);
         setDescription(description);
-        setDepartmentId(departmentID);
+        setDepartment(departmentID);
     }
     
     private String DepartmentName;
