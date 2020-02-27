@@ -971,9 +971,11 @@ public class MaiinUI implements Initializable {
            if(dpService.updateDepartments(dept))
            {
                info("Department updated successfully ");
-                Platform.runLater(() -> {refreshDepartmentTable();
+                Platform.runLater(() -> {
+                departmentListTable.getSelectionModel().select(null);
+                refreshDepartmentTable();
                 departmentListTable.refresh();
-                departmentListTable.getSelectionModel().select(null);});
+                });
                 dptTextName.setText("");
            }
            else{
@@ -1095,9 +1097,11 @@ public class MaiinUI implements Initializable {
                if(prjService.updateProject(project.getId(),prjName, prjTextDescription.getText().trim(),prjComboDepartment.getSelectionModel().getSelectedItem().getId()))
                     {
                        info("Project updated successfully ");
-                       Platform.runLater(() -> {projectListTable.getSelectionModel().select(null);});
+                       Platform.runLater(() -> {projectListTable.getSelectionModel().select(null);
+                       projectListTable.refresh();
                        refreshProjectView();
-                       Platform.runLater(() -> {projectListTable.refresh();});
+                       });
+                      
                       editProject();
                    }else {
                    error("There wsa a problem updating project");
@@ -1416,7 +1420,7 @@ public class MaiinUI implements Initializable {
     @FXML
     private void validateServiceForm(KeyEvent evt)
     {
-        Platform.runLater(() ->{ validateServiceForm();});
+        Platform.runLater(() -> { validateServiceForm();});
     }
         
     @FXML
@@ -1650,18 +1654,24 @@ public class MaiinUI implements Initializable {
              DisplayService service = (DisplayService) serviceListTable.getSelectionModel().getSelectedItem();
              DisplayProject project = (DisplayProject) srvComboProject.getSelectionModel().getSelectedItem();
              double amount = Double.parseDouble(srvTextAmount.getText().trim());
-         boolean disable = srvTextName.getText().trim().length() < 1
+             if(serviceCreateProp.get()){
+                 boolean disable = srvTextName.getText().trim().length() < 1
                  || srvTextDescription.getText().trim().length() < 1
                  || Double.parseDouble(srvTextAmount.getText().trim()) < 1 
-                 || srvComboProject.getSelectionModel().isEmpty()
-                 || (edit && (srvTextName.getText().trim().compareTo(service.getName()) == 0
+                 || srvComboProject.getSelectionModel().isEmpty();
+                
+                 srvSaveBtnDisableProp.set(disable);
+             }
+         
+         else{
+                boolean dis =  (edit && (srvTextName.getText().trim().compareTo(service.getName()) == 0
                               && srvTextDescription.getText().trim().compareTo(service.getDescription())== 0
                               &&  amount == service.getAmount()
                               &&  ((adminServCheckFixed.isSelected() && service.getFixedAmount() == 1) || (!adminServCheckFixed.isSelected() && service.getFixedAmount() == 0 ))
                               &&  project.getId() == service.getProjectsId()
                  ));
-
-         srvSaveBtnDisableProp.set(disable);
+                srvSaveBtnDisableProp.set(dis);
+                 }
                  }catch(Exception ex){
                      srvSaveBtnDisableProp.set(true);
                      ex.printStackTrace();
