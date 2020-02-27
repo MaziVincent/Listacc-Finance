@@ -954,8 +954,13 @@ public class MaiinUI implements Initializable {
                if(dpService.updateDepartments(dept))
                {
                    info("Department updated successfully ");
-                    Platform.runLater(() -> {refreshDepartmentTable();
-                    departmentListTable.refresh();});
+                    
+                    Platform.runLater(() -> {
+                        refreshDepartmentTable();
+                        departmentListTable.getSelectionModel().select(null);
+                        departmentListTable.refresh();
+                   });
+                    
                     dptTextName.setText("");
                }
                else{
@@ -1077,6 +1082,7 @@ public class MaiinUI implements Initializable {
                if(prjService.updateProject(project.getId(),prjName, prjTextDescription.getText().trim(),prjComboDepartment.getSelectionModel().getSelectedItem().getId()))
                     {
                        info("Project updated successfully ");
+                       Platform.runLater(() -> {projectListTable.getSelectionModel().select(null);});
                        refreshProjectView();
                        Platform.runLater(() -> {projectListTable.refresh();});
                       editProject();
