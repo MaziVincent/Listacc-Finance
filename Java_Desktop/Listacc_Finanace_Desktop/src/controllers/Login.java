@@ -15,6 +15,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -26,8 +27,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import model.AppModel;
 import model.Users;
+import services.data.UserService;
 import services.net.AuthenticationService;
 import services.net.ConnectionService;
 
@@ -83,18 +86,21 @@ public class Login implements Initializable  {
         
         String username = txtUsername.getText().trim();
         String password = txtPassword.getText().trim();
-        
-        if(username.length() > 4 && password.length() > 4)
-        {
-            AuthenticationService authService = new AuthenticationService(username, password, this);
-            authService.execute();
-        }      
-        else
-        {
-            signinStatuSP.set("Invalid username or password");
-            lblLoginStatus.setTextFill(Color.RED);
-            enableComponents();
-        }
+         UserService userService = new UserService();
+        Users user = userService.getUserById(8);
+//        if(username.length() > 4 && password.length() > 4)
+//        {
+//            AuthenticationService authService = new AuthenticationService(username, password, this);
+//            authService.execute();
+//        }      
+//        else
+//        {
+//            signinStatuSP.set("Invalid username or password");
+//            lblLoginStatus.setTextFill(Color.RED);
+//            enableComponents();
+//        }
+
+        loadMainUI(user);
     }
     
     
@@ -128,6 +134,13 @@ public class Login implements Initializable  {
                 primaryStage.setScene(scene);
                 primaryStage.centerOnScreen();
                 primaryStage.show();
+                primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent e) {
+                     Platform.exit();
+                     System.exit(0);
+                    }
+                  });
 
             }
             catch(Exception exc){

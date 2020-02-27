@@ -148,6 +148,7 @@ public class MaiinUI implements Initializable {
         InitializePopup();
         initializeNumberFields();
         initializeNetworkActivities();  
+        initializeTableCells();
     }
     
     private void initializeNetworkActivities(){
@@ -400,7 +401,7 @@ public class MaiinUI implements Initializable {
                        clientsFiltered =  new FilteredList(clientData,(p -> true ));
 
        clientListTable.setItems(clientsFiltered);
-        initializeTableCells();
+        
         clientListTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
               if(null == newSelection)
                   newSelection = oldSelection;
@@ -510,14 +511,14 @@ public class MaiinUI implements Initializable {
             cctgColType.setCellValueFactory(new PropertyValueFactory<CostCategories, String>("type"));
             cctgColSerial.setCellFactory(indexCellFactory());
             //User
-            userColLastName.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("lastName"));
-            userColId.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("id"));
-            userColFirstName.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("firstName"));
-            userColEmail.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("email"));
-            userColPhone.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("phone"));
-            userColDepartment.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("departmentName"));
-            userColRole.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("role"));
-            userColSerial.setCellFactory(indexCellFactory());
+//            userColLastName.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("lastName"));
+//            userColId.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("id"));
+//            userColFirstName.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("firstName"));
+//            userColEmail.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("email"));
+//            userColPhone.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("phone"));
+//            userColDepartment.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("departmentName"));
+//            userColRole.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("role"));
+//            userColSerial.setCellFactory(indexCellFactory());
             //Client
             clientColSerial.setCellFactory(indexCellFactory());
             clientColId.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("id"));
@@ -869,11 +870,7 @@ public class MaiinUI implements Initializable {
         costCategoryEditLine.visibleProperty().bind(costCategoryCreateProp.not());
         costCategoryInfoLabel.visibleProperty().bind(costCategoryCreateProp.not());
         costCategoryInfoBullet.visibleProperty().bind(costCategoryCreateProp.not());
-         //user
-        userCreateLine.visibleProperty().bind(userCreateProp);
-        userEditLine.visibleProperty().bind(userCreateProp.not());
-        userInfoLabel.visibleProperty().bind(userCreateProp.not());
-        userInfoBullet.visibleProperty().bind(userCreateProp.not());
+     
         //business
         businessCreateLine.visibleProperty().bind(businessCreateProp);
         businessEditLine.visibleProperty().bind(businessCreateProp.not());
@@ -973,7 +970,8 @@ public class MaiinUI implements Initializable {
            {
                info("Department updated successfully ");
                 Platform.runLater(() -> {refreshDepartmentTable();
-                departmentListTable.refresh();});
+                departmentListTable.refresh();
+                departmentListTable.getSelectionModel().select(null);});
                 dptTextName.setText("");
            }
            else{
@@ -1046,6 +1044,7 @@ public class MaiinUI implements Initializable {
                         Platform.runLater(() -> {serviceListTable.refresh();});
                 }
 
+
        }catch(Exception exc)
        {
            exc.printStackTrace();
@@ -1091,20 +1090,22 @@ public class MaiinUI implements Initializable {
                 error("Project name already exists");
                 return;
                 }
-
-           if(prjService.updateProject(project.getId(),prjName, prjTextDescription.getText().trim(),prjComboDepartment.getSelectionModel().getSelectedItem().getId()))
-                {
-                   info("Project updated successfully ");
-                   refreshProjectView();
-                   Platform.runLater(() -> {projectListTable.refresh();});
-                  editProject();
-               }else {
-               error("There wsa a problem updating project");
-
+               if(prjService.updateProject(project.getId(),prjName, prjTextDescription.getText().trim(),prjComboDepartment.getSelectionModel().getSelectedItem().getId()))
+                    {
+                       info("Project updated successfully ");
+                       Platform.runLater(() -> {projectListTable.getSelectionModel().select(null);});
+                       refreshProjectView();
+                       Platform.runLater(() -> {projectListTable.refresh();});
+                      editProject();
+                   }else {
+                   error("There wsa a problem updating project");
+              
+               }
            }
-       }
-
-    }
+          
+        }
+        
+     
 
     @FXML
     private void saveCostCategory(ActionEvent event)
@@ -1259,7 +1260,7 @@ public class MaiinUI implements Initializable {
                    income.setPaymentType(incomeComboPType.getSelectionModel().getSelectedItem());
                    income.setUser(model.getUser());
                    income.setServiceIdnum(incomeComboService.getSelectionModel().getSelectedItem().getId());
-            if(!validateEmail(incomeClient.getEmail()))
+            if(null != email && email.trim().length() > 1 && !validateEmail(incomeClient.getEmail()))
             {
                 error("Invalid Email address");
                 return;
@@ -1298,7 +1299,10 @@ public class MaiinUI implements Initializable {
             info("Income entered successfully");
             incomeClient = null;
 
-            refreshIncomeView(false);
+            Platform.runLater(() -> {
+                refreshIncomeView(false);
+                refreshClientView();
+            });
         }
     }
 
@@ -1442,6 +1446,7 @@ public class MaiinUI implements Initializable {
         departmentCreateProp.set(false);
         dptTextName.setDisable(true);
         dptTextName.setText("");
+        departmentListTable.getSelectionModel().select(null);
 
     }
 
@@ -1459,6 +1464,7 @@ public class MaiinUI implements Initializable {
                 prjTextName.setDisable(true);
                 prjTextDescription.setDisable(true);
                 prjComboDepartment.setDisable(true);
+                
     }
 
     private void createProject(){
@@ -1488,6 +1494,7 @@ public class MaiinUI implements Initializable {
                 adminServCheckFixed.setDisable(disable);
                 srvTextName.setDisable(disable);
                 srvComboProject.setDisable(disable);
+                serviceListTable.getSelectionModel().select(null);
 
     }
 
@@ -1619,6 +1626,7 @@ public class MaiinUI implements Initializable {
        costCategoryCreateProp.set(false);
        resetCostCategoryForm();
        disableCostCategoryForm(true);
+       costCategoryListTable.getSelectionModel().select(null);
    }
 
     private void disableCostCategoryForm(boolean disable){
@@ -1644,12 +1652,12 @@ public class MaiinUI implements Initializable {
                  || srvTextDescription.getText().trim().length() < 1
                  || Double.parseDouble(srvTextAmount.getText().trim()) < 1 
                  || srvComboProject.getSelectionModel().isEmpty()
-                 || (edit && srvTextName.getText().trim().compareTo(service.getName()) == 0
+                 || (edit && (srvTextName.getText().trim().compareTo(service.getName()) == 0
                               && srvTextDescription.getText().trim().compareTo(service.getDescription())== 0
                               &&  amount == service.getAmount()
-                              &&  adminServCheckFixed.isSelected() && service.getFixedAmount() == 1
+                              &&  ((adminServCheckFixed.isSelected() && service.getFixedAmount() == 1) || (!adminServCheckFixed.isSelected() && service.getFixedAmount() == 0 ))
                               &&  project.getId() == service.getProjectsId()
-                 );
+                 ));
 
          srvSaveBtnDisableProp.set(disable);
                  }catch(Exception ex){
@@ -2107,16 +2115,11 @@ public class MaiinUI implements Initializable {
             case "costCategoryEditLabel":
                 editCostCategory();
                 break;
-            case "userCreateLabel":
-                userCreateProp.set(true);
-                break;
-            case "userEditLabel":
-                userCreateProp.set(false);
-                break;
             case "businessCreateLabel":
                 businessCreateProp.set(false);
                 break;
             case "businessEditLabel":
+                clientListTable.getSelectionModel().select(null);
                 businessCreateProp.set(false);
                 break;
             default:;
@@ -2155,16 +2158,16 @@ public class MaiinUI implements Initializable {
     @FXML
     Label adminLabel, departmentCreateLabel, departmentEditLabel, departmentInfoLabel,projectCreateLabel, projectEditLabel, projectInfoLabel,
             serviceCreateLabel, serviceEditLabel, serviceInfoLabel,costCategoryCreateLabel, costCategoryEditLabel, costCategoryInfoLabel, 
-            userCreateLabel, userEditLabel, userInfoLabel,businessCreateLabel, businessEditLabel, businessInfoLabel,
+            userCreateLabel,businessCreateLabel, businessEditLabel, businessInfoLabel,
             incomeLabelAmountRecieved;
     @FXML
     Label incomeLabel, expenditureLabel, settingsLabel, totalLabel, totalLabel1, connectionStatus;
         
     @FXML
     Line departmentCreateLine, departmentEditLine, projectCreateLine, projectEditLine,serviceCreateLine, serviceEditLine, costCategoryCreateLine, 
-            costCategoryEditLine,userCreateLine, userEditLine, businessCreateLine, businessEditLine;
+            costCategoryEditLine, businessCreateLine, businessEditLine;
     @FXML
-    Circle departmentInfoBullet, projectInfoBullet, serviceInfoBullet, costCategoryInfoBullet, userInfoBullet, businessInfoBullet;
+    Circle departmentInfoBullet, projectInfoBullet, serviceInfoBullet, costCategoryInfoBullet, businessInfoBullet;
 
     @FXML
     TextField dptTextName, prjTextName, srvTextName, srvTextAmount, cctgTextName, 
@@ -2209,8 +2212,9 @@ public class MaiinUI implements Initializable {
     @FXML
     private TableColumn dptColSerial, dptColName, dptColId, prjColSerial, prjColName, prjColDepartment, prjColId,
                         srvColSerial, srvColName, srvColProject, srvColAmount, srvColId, cctgColSerial, cctgColName,
-                        cctgColType, cctgColId, userColId, userColFirstName, userColLastName, userColEmail, userColPhone,
-                        userColRole, userColSerial, userColDepartment, clientColSerial, clientColName, clientColPhone, 
+                        cctgColType, cctgColId, userColId, 
+                        //userColFirstName, userColLastName, userColEmail, userColPhone,userColRole, userColSerial, userColDepartment, 
+                        clientColSerial, clientColName, clientColPhone, 
                         clientColEmail, clientColAddress, clientColId, incomeColSerial, incomeColService, incomeColClient,
                         incomeColAmount, incomeColDate, incomeColPaymentType, incomeColId, expColSerial,expColRecipient, 
                         expColProject, expColCostCat, expColAmt, expColDate, expIdCol;
