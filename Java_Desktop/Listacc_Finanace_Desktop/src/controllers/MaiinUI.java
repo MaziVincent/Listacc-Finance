@@ -194,6 +194,9 @@ public class MaiinUI implements Initializable {
         expBtnEnter.disableProperty().bind(expenditureSaveBtnDisableProp);
         clientSaveBtn.disableProperty().bind(clientSaveBtnDisableProp);
         prjComboDepartment.valueProperty().addListener((obs, oldval, newval) -> {validateProjectForm();});
+        clientTxtDob.valueProperty().addListener((obs, oldval, newval) -> {validateClientForm();});
+        clientRadioFemale.selectedProperty().addListener((obs, oldval, newval) -> {validateClientForm();});
+        clientRadioMale.selectedProperty().addListener((obs, oldval, newval) -> {validateClientForm();});
         srvComboProject.valueProperty().addListener((obs, oldval, newval) -> {validateServiceForm();});
         cctgComboType.valueProperty().addListener((obs, oldval, newval) -> {validateCctgForm();});
         cctgComboType.valueProperty().addListener((obs, oldval, newval) -> {validateCctgForm();});
@@ -277,39 +280,56 @@ public class MaiinUI implements Initializable {
     
     @FXML
     private void validateClientForm(KeyEvent evt){
-        Platform.runLater(() -> {
+       validateClientForm();
+    }
+    
+     @FXML
+    private void validateClientForm(ActionEvent evt){
+       validateClientForm();
+    }
+    
+    private void validateClientForm(){
+         Platform.runLater(() -> {
             try{
                 String lName = clientTxtLastName.getText();
                 String fName =  clientTxtFirstName.getText().trim();
                 String phone = clientTxtPhone.getText().trim();
                 String email = clientTxtEmail.getText().trim();
+                email = null == email?"": email;
                 String Uid = clientTxtUid.getText().trim();
                 String add = clientTxtAddress.getText().trim();
-
+                String dob = null == clientTxtDob.getValue()? "": clientTxtDob.getValue().toString();
+                String gender = clientRadioMale.isSelected() ? "Male": "Female" ;
+                        
                 String editLName = clientListTable.getSelectionModel().getSelectedItem().getLastName();
                 String editFName = clientListTable.getSelectionModel().getSelectedItem().getFirstName();
                 String editPhone = clientListTable.getSelectionModel().getSelectedItem().getPhone();
                 String editEmail = clientListTable.getSelectionModel().getSelectedItem().getEmail();
+                editEmail = null == editEmail?"": editEmail;
                 String editUid = clientListTable.getSelectionModel().getSelectedItem().getUId();
                 String editAdd =  clientListTable.getSelectionModel().getSelectedItem().getAddress();
+                editAdd = null == editAdd?"": editAdd;
+                String editGender = clientListTable.getSelectionModel().getSelectedItem().getGender();
+                String editDob = clientListTable.getSelectionModel().getSelectedItem().getDateOfBirth();
+                editDob = null == editDob?"": editDob;
                 if(null == editFName)
                     editFName = clientListTable.getSelectionModel().getSelectedItem().getBusinessName();
 
-                    boolean edit =  
-                        ((null == editLName && null == lName ) ||  
-                        (null != editLName && null != lName && lName.compareTo(editLName)==0))
-
+                    boolean edit =  lName.compareTo(editLName)==0
+                        &&
+                        dob.compareTo(editDob)==0
                         && 
                        fName.compareTo(editFName) == 0 &&
                        phone.compareTo(editPhone) == 0 &&
                        email.compareTo(editEmail) == 0 &&
                        Uid.compareTo(editUid ) == 0 &&
-                      ((null == editAdd && add.isEmpty()) || (add.compareTo(editAdd ) == 0));
+                       gender.compareTo(editGender) == 0 &&
+                      add.compareTo(editAdd ) == 0;
 
-                    boolean disable  = (clientRadioPerson.isSelected() && (null == lName ||lName.length()<1) ) || fName.length() < 1 ||
-                                      phone.length() < 1 || email.length() < 1 ||  Uid.length()  < 1
-                                         || edit; 
-                    clientSaveBtnDisableProp.set(disable) ;
+//                    boolean disable  = (clientRadioPerson.isSelected() && (null == lName ||lName.length()<1) ) || fName.length() < 1 ||
+//                                      phone.length() < 1 ||  Uid.length()  < 1
+//                                         ; 
+                    clientSaveBtnDisableProp.set(edit) ;
 
             }
             catch(Exception exc)
@@ -369,7 +389,7 @@ public class MaiinUI implements Initializable {
             client.setPhone(phone);
             client.setUId(uid);
             client.setAddress(add);
-            if(!validateEmail(client.getEmail()))
+            if(null == email && !email.trim().isEmpty()&& !validateEmail(client.getEmail()))
             {
                 error("Invalid Email address");
                 return;
@@ -386,6 +406,9 @@ public class MaiinUI implements Initializable {
                         clientListTable.refresh();
                         clientListTable.getSelectionModel().select(null);
                     });
+            }
+            else { 
+                error("A problem occured while updating client information");
             }
 
         }catch(Exception e){
@@ -406,6 +429,7 @@ public class MaiinUI implements Initializable {
               if(null == newSelection)
                   newSelection = oldSelection;
                 if (newSelection != null && !businessCreateProp.get() ) {
+                    resetClientForm();
                 clientTxtLastName.setText(newSelection.getLastName());
                 clientTxtFirstName.setText(newSelection.getFirstName());
                 if(null == newSelection.getFirstName() || newSelection.getFirstName().trim().isEmpty())
@@ -747,7 +771,7 @@ public class MaiinUI implements Initializable {
                   newSelection = oldSelection;
             if (newSelection != null && !costCategoryCreateProp.get() ) {
                 cctgTextName.setText(newSelection.getName());
-                cctgTextDescription.setText(newSelection.getDescription()+"");
+                cctgTextDescription.setText(newSelection.getDescription());
                 cctgComboType.getSelectionModel().select(cctgComboType.getConverter().fromString(newSelection.getType()));
                 cctgSaveBtnDisableProp.set(true);
                 disableCostCategoryForm(false);             
@@ -1908,6 +1932,8 @@ public class MaiinUI implements Initializable {
           validateCctgForm();
       });  
     }
+    
+    
 
     private void validateCctgForm()
     {
