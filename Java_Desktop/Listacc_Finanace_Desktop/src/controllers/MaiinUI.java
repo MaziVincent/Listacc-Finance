@@ -1664,12 +1664,12 @@ public class MaiinUI implements Initializable {
              }
          
          else{
-                boolean dis =  (edit && (srvTextName.getText().trim().compareTo(service.getName()) == 0
+                boolean dis =   (srvTextName.getText().trim().compareTo(service.getName()) == 0
                               && srvTextDescription.getText().trim().compareTo(service.getDescription())== 0
                               &&  amount == service.getAmount()
                               &&  ((adminServCheckFixed.isSelected() && service.getFixedAmount() == 1) || (!adminServCheckFixed.isSelected() && service.getFixedAmount() == 0 ))
                               &&  project.getId() == service.getProjectsId()
-                 ));
+                 );
                 srvSaveBtnDisableProp.set(dis);
                  }
                  }catch(Exception ex){
