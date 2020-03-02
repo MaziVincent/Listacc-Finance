@@ -152,8 +152,6 @@ namespace ListaccFinance.API.Services
 
         }
 
-
-
         //Create User for uploads
         public async Task<User> CreateUserUploadAsync(RegisterModel reg)
         {
@@ -217,6 +215,22 @@ namespace ListaccFinance.API.Services
             return true; */
         }
 
+        public async Task EditUserAsync(int Id, RegisterModel reg)
+        {
+            var u = await _context.Users.FindAsync(Id);
+            u.Address = reg.Address;
+            u.Department.Name = reg.Department;
+            u.Email = reg.EmailAddress;
+            u.Person.firstName = reg.firstName;
+            u.Person.DateOfBirth = reg.DateOfBirth;
+            u.Person.DateOfBirth = reg.DateOfBirth;
+            u.Person.LastName = reg.LastName;
+            u.Person.Gender = reg.Gender;
+            // Do password Change later
+
+            await _context.SaveChangesAsync();
+
+        }
         public async Task<bool> IsThisUserExist(string UserEmail)
         {
             var thisU = await _context.Users.Where(x => x.Email.CompareTo(UserEmail) == 0).FirstOrDefaultAsync();
@@ -288,12 +302,38 @@ namespace ListaccFinance.API.Services
 
         }
 
-        public async Task Deactivate(int Id)
+        public async Task Deactivate(int Id, int MyId)
         {
             User u = await _context.Users.FindAsync(Id);
             u.Status = false;
             await _context.SaveChangesAsync();
+            var change = new Change
+            {
+                Table = u.GetType().Name,
+                EntryId = u.Id,
+                ChangeType = "Edit",
+                OfflineTimeStamp = DateTime.Now,
+                OnlineTimeStamp = DateTime.Now,
+                UserId = MyId
+            };
+            await _context.Changes.AddAsync(change);
+        }
 
+        
+        public async Task Activate(int Id, int MyId)
+        {
+            User u = await _context.Users.FindAsync(Id);
+            u.Status = true;
+            await _context.SaveChangesAsync();
+            var change = new Change{
+                Table = u.GetType().Name,
+                EntryId = u.Id,
+                ChangeType = "Edit",
+                OfflineTimeStamp = DateTime.Now,
+                OnlineTimeStamp =DateTime.Now,
+                UserId = MyId
+            };
+            await _context.Changes.AddAsync(change);
         }
 
 
