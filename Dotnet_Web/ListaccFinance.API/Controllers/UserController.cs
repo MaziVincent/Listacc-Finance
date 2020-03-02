@@ -7,7 +7,6 @@ using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Data.ViewModel;
 using ListaccFinance.API.Interfaces;
 using ListaccFinance.API.SendModel;
-using ListaccFinance.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -81,6 +80,13 @@ namespace ListaccFinance.API.Controllers
 
 
         [Authorize(Roles = "Admin")]
+        [HttpPost("EditUser")]
+        public async Task<IActionResult> EditUser(int Id, RegisterModel ed)
+        {
+            
+            return Ok("done");
+        }
+        [Authorize(Roles = "Admin")]
         [HttpPost("CreateMember")]
 
         public async Task<IActionResult> CreateMember(RegisterModel me) 
@@ -111,7 +117,17 @@ namespace ListaccFinance.API.Controllers
         [HttpPost("DeactivateUser")]
         public async Task<IActionResult> Deactivate (int Id)
         {
-            await _uService.Deactivate(Id);
+            int MyId = int.Parse(this.User.Claims.First(x => x.Type == "Id").Value);
+            await _uService.Deactivate(Id, MyId);
+            return Ok();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("ActivateUser")]
+        public async Task<IActionResult> Activate(int Id)
+        {
+            int MyId = int.Parse(this.User.Claims.First(x => x.Type == "Id").Value);
+            await _uService.Activate(Id, MyId);
             return Ok();
         }
 
