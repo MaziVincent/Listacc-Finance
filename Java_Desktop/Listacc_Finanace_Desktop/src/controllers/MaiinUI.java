@@ -194,6 +194,9 @@ public class MaiinUI implements Initializable {
         expBtnEnter.disableProperty().bind(expenditureSaveBtnDisableProp);
         clientSaveBtn.disableProperty().bind(clientSaveBtnDisableProp);
         prjComboDepartment.valueProperty().addListener((obs, oldval, newval) -> {validateProjectForm();});
+        clientTxtDob.valueProperty().addListener((obs, oldval, newval) -> {validateClientForm();});
+        clientRadioFemale.selectedProperty().addListener((obs, oldval, newval) -> {validateClientForm();});
+        clientRadioMale.selectedProperty().addListener((obs, oldval, newval) -> {validateClientForm();});
         srvComboProject.valueProperty().addListener((obs, oldval, newval) -> {validateServiceForm();});
         cctgComboType.valueProperty().addListener((obs, oldval, newval) -> {validateCctgForm();});
         cctgComboType.valueProperty().addListener((obs, oldval, newval) -> {validateCctgForm();});
@@ -277,39 +280,56 @@ public class MaiinUI implements Initializable {
     
     @FXML
     private void validateClientForm(KeyEvent evt){
-        Platform.runLater(() -> {
+       validateClientForm();
+    }
+    
+     @FXML
+    private void validateClientForm(ActionEvent evt){
+       validateClientForm();
+    }
+    
+    private void validateClientForm(){
+         Platform.runLater(() -> {
             try{
                 String lName = clientTxtLastName.getText();
                 String fName =  clientTxtFirstName.getText().trim();
                 String phone = clientTxtPhone.getText().trim();
                 String email = clientTxtEmail.getText().trim();
+                email = null == email?"": email;
                 String Uid = clientTxtUid.getText().trim();
                 String add = clientTxtAddress.getText().trim();
-
+                String dob = null == clientTxtDob.getValue()? "": clientTxtDob.getValue().toString();
+                String gender = clientRadioMale.isSelected() ? "Male": "Female" ;
+                        
                 String editLName = clientListTable.getSelectionModel().getSelectedItem().getLastName();
                 String editFName = clientListTable.getSelectionModel().getSelectedItem().getFirstName();
                 String editPhone = clientListTable.getSelectionModel().getSelectedItem().getPhone();
                 String editEmail = clientListTable.getSelectionModel().getSelectedItem().getEmail();
+                editEmail = null == editEmail?"": editEmail;
                 String editUid = clientListTable.getSelectionModel().getSelectedItem().getUId();
                 String editAdd =  clientListTable.getSelectionModel().getSelectedItem().getAddress();
+                editAdd = null == editAdd?"": editAdd;
+                String editGender = clientListTable.getSelectionModel().getSelectedItem().getGender();
+                String editDob = clientListTable.getSelectionModel().getSelectedItem().getDateOfBirth();
+                editDob = null == editDob?"": editDob;
                 if(null == editFName)
                     editFName = clientListTable.getSelectionModel().getSelectedItem().getBusinessName();
 
-                    boolean edit =  
-                        ((null == editLName && null == lName ) ||  
-                        (null != editLName && null != lName && lName.compareTo(editLName)==0))
-
+                    boolean edit =  lName.compareTo(editLName)==0
+                        &&
+                        dob.compareTo(editDob)==0
                         && 
                        fName.compareTo(editFName) == 0 &&
                        phone.compareTo(editPhone) == 0 &&
                        email.compareTo(editEmail) == 0 &&
                        Uid.compareTo(editUid ) == 0 &&
-                      ((null == editAdd && add.isEmpty()) || (add.compareTo(editAdd ) == 0));
+                       gender.compareTo(editGender) == 0 &&
+                      add.compareTo(editAdd ) == 0;
 
-                    boolean disable  = (clientRadioPerson.isSelected() && (null == lName ||lName.length()<1) ) || fName.length() < 1 ||
-                                      phone.length() < 1 || email.length() < 1 ||  Uid.length()  < 1
-                                         || edit; 
-                    clientSaveBtnDisableProp.set(disable) ;
+//                    boolean disable  = (clientRadioPerson.isSelected() && (null == lName ||lName.length()<1) ) || fName.length() < 1 ||
+//                                      phone.length() < 1 ||  Uid.length()  < 1
+//                                         ; 
+                    clientSaveBtnDisableProp.set(edit) ;
 
             }
             catch(Exception exc)
@@ -369,7 +389,7 @@ public class MaiinUI implements Initializable {
             client.setPhone(phone);
             client.setUId(uid);
             client.setAddress(add);
-            if(!validateEmail(client.getEmail()))
+            if(null == email && !email.trim().isEmpty()&& !validateEmail(client.getEmail()))
             {
                 error("Invalid Email address");
                 return;
@@ -386,6 +406,9 @@ public class MaiinUI implements Initializable {
                         clientListTable.refresh();
                         clientListTable.getSelectionModel().select(null);
                     });
+            }
+            else { 
+                error("A problem occured while updating client information");
             }
 
         }catch(Exception e){
@@ -406,6 +429,7 @@ public class MaiinUI implements Initializable {
               if(null == newSelection)
                   newSelection = oldSelection;
                 if (newSelection != null && !businessCreateProp.get() ) {
+                    resetClientForm();
                 clientTxtLastName.setText(newSelection.getLastName());
                 clientTxtFirstName.setText(newSelection.getFirstName());
                 if(null == newSelection.getFirstName() || newSelection.getFirstName().trim().isEmpty())
@@ -478,15 +502,17 @@ public class MaiinUI implements Initializable {
     }
 
     private void refreshUserView(){
+        try{
                            List<DisplayUser> usersDisplayList = new UserService().getAllDisplayUsers();
                        
             ObservableList<DisplayUser> userDisplayData
             = FXCollections.observableArrayList(usersDisplayList);
            
                        usersFiltered =  new FilteredList(userDisplayData,(p -> true ));
-                       userListTable.setItems(usersFiltered);
+                       //userListTable.setItems(usersFiltered);
                        expComboIssuer.setItems(usersFiltered);
                        expComboIssuer.setConverter(new UserStringConverter(expComboIssuer));
+        }catch(Exception ex){ex.printStackTrace();}
         }
         
     public void initializeTableCells(){
@@ -745,7 +771,7 @@ public class MaiinUI implements Initializable {
                   newSelection = oldSelection;
             if (newSelection != null && !costCategoryCreateProp.get() ) {
                 cctgTextName.setText(newSelection.getName());
-                cctgTextDescription.setText(newSelection.getDescription()+"");
+                cctgTextDescription.setText(newSelection.getDescription());
                 cctgComboType.getSelectionModel().select(cctgComboType.getConverter().fromString(newSelection.getType()));
                 cctgSaveBtnDisableProp.set(true);
                 disableCostCategoryForm(false);             
@@ -969,9 +995,11 @@ public class MaiinUI implements Initializable {
            if(dpService.updateDepartments(dept))
            {
                info("Department updated successfully ");
-                Platform.runLater(() -> {refreshDepartmentTable();
+                Platform.runLater(() -> {
+                departmentListTable.getSelectionModel().select(null);
+                refreshDepartmentTable();
                 departmentListTable.refresh();
-                departmentListTable.getSelectionModel().select(null);});
+                });
                 dptTextName.setText("");
            }
            else{
@@ -996,13 +1024,13 @@ public class MaiinUI implements Initializable {
            error("Name should be created without any symbol");
            return;
        }
-       int id = serviceListTable.getSelectionModel().getSelectedItem().getId();
+      
        if(serviceCreateProp.get() && srvService.serviceNameExists(servName))
        {
             error("Project name already exists");
             return;
        }
-       else if(!serviceCreateProp.get() && srvService.serviceNameExists(servName,id ))
+       else if(!serviceCreateProp.get() && srvService.serviceNameExists(servName,serviceListTable.getSelectionModel().getSelectedItem().getId() ))
        {
 
            error("Project name already exists");
@@ -1036,7 +1064,7 @@ public class MaiinUI implements Initializable {
             else if (!serviceCreateProp.get())
                 if(srvService.updateService(servName, amount, srvTextDescription.getText().trim(), 
                         srvComboProject.getSelectionModel().getSelectedItem().getId(), 
-                        adminServCheckFixed.isSelected(), id))
+                        adminServCheckFixed.isSelected(), serviceListTable.getSelectionModel().getSelectedItem().getId()))
                 {
                     info("Service updated successfully ");
                         refreshServiceView();
@@ -1093,9 +1121,11 @@ public class MaiinUI implements Initializable {
                if(prjService.updateProject(project.getId(),prjName, prjTextDescription.getText().trim(),prjComboDepartment.getSelectionModel().getSelectedItem().getId()))
                     {
                        info("Project updated successfully ");
-                       Platform.runLater(() -> {projectListTable.getSelectionModel().select(null);});
+                       Platform.runLater(() -> {projectListTable.getSelectionModel().select(null);
+                       projectListTable.refresh();
                        refreshProjectView();
-                       Platform.runLater(() -> {projectListTable.refresh();});
+                       });
+                      
                       editProject();
                    }else {
                    error("There wsa a problem updating project");
@@ -1414,7 +1444,7 @@ public class MaiinUI implements Initializable {
     @FXML
     private void validateServiceForm(KeyEvent evt)
     {
-        Platform.runLater(() ->{ validateServiceForm();});
+        Platform.runLater(() -> { validateServiceForm();});
     }
         
     @FXML
@@ -1648,18 +1678,24 @@ public class MaiinUI implements Initializable {
              DisplayService service = (DisplayService) serviceListTable.getSelectionModel().getSelectedItem();
              DisplayProject project = (DisplayProject) srvComboProject.getSelectionModel().getSelectedItem();
              double amount = Double.parseDouble(srvTextAmount.getText().trim());
-         boolean disable = srvTextName.getText().trim().length() < 1
+             if(serviceCreateProp.get()){
+                 boolean disable = srvTextName.getText().trim().length() < 1
                  || srvTextDescription.getText().trim().length() < 1
                  || Double.parseDouble(srvTextAmount.getText().trim()) < 1 
-                 || srvComboProject.getSelectionModel().isEmpty()
-                 || (edit && (srvTextName.getText().trim().compareTo(service.getName()) == 0
+                 || srvComboProject.getSelectionModel().isEmpty();
+                
+                 srvSaveBtnDisableProp.set(disable);
+             }
+         
+         else{
+                boolean dis =   (srvTextName.getText().trim().compareTo(service.getName()) == 0
                               && srvTextDescription.getText().trim().compareTo(service.getDescription())== 0
                               &&  amount == service.getAmount()
                               &&  ((adminServCheckFixed.isSelected() && service.getFixedAmount() == 1) || (!adminServCheckFixed.isSelected() && service.getFixedAmount() == 0 ))
                               &&  project.getId() == service.getProjectsId()
-                 ));
-
-         srvSaveBtnDisableProp.set(disable);
+                 );
+                srvSaveBtnDisableProp.set(dis);
+                 }
                  }catch(Exception ex){
                      srvSaveBtnDisableProp.set(true);
                      ex.printStackTrace();
@@ -1896,6 +1932,8 @@ public class MaiinUI implements Initializable {
           validateCctgForm();
       });  
     }
+    
+    
 
     private void validateCctgForm()
     {
@@ -2140,7 +2178,7 @@ public class MaiinUI implements Initializable {
     public static Users loginUser;
     @FXML
     TableView
-            userListTable, incomeListTable, expenditureListTable;
+            incomeListTable, expenditureListTable;
     @FXML
     TableView<DisplayClient> clientListTable;
     @FXML
