@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Data.ViewModel;
@@ -20,12 +22,14 @@ namespace ListaccFinance.API.Controllers
         private readonly IUserService _uService;
         private readonly DataContext _context;
         private readonly ITokenGenerator _generator;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserService uservice, DataContext context, ITokenGenerator generator )
+        public UserController(IUserService uservice, DataContext context, ITokenGenerator generator, IMapper mapper )
         {
             _uService =uservice;
             _context = context;
             _generator = generator;
+            _mapper = mapper;
         }
 
 
@@ -115,16 +119,46 @@ namespace ListaccFinance.API.Controllers
         [HttpGet("ReturnUsers")]
         public async Task<IActionResult> ReturnUsers ([FromQuery] SearchPaging props)
         {
+            List<SearchProps> finalReturn = new List<SearchProps>();
+            
             if (!string.IsNullOrEmpty(props.SearchString))
             {
-                await _uService.ReturnUsers(props);
+                var userList = await _uService.ReturnUsers(props);
+                var returnList = _mapper.Map<List<SearchProps>>(userList);
+                
+                for (int i =0; i < returnList.Count; i++)
+                {
+                    returnList.ElementAt(i).Role = userList.ElementAt(i).GetType().Name;
+                }
+                for (int i = 0; i < returnList.Count; i ++)
+                {
+                    if (returnList.ElementAt(i).Role.CompareTo(props.Role) == 0)
+                    {
+                        finalReturn.Add(returnList.ElementAt(i));
+                    }
+                }
+                return Ok(finalReturn);
             }
             else
             {
-                await  _uService.ReturnAllUsers(props);
+                var userList = await  _uService.ReturnAllUsers(props);
+                var returnList = _mapper.Map<List<SearchProps>>(userList);
+
+                for (int i = 0; i < returnList.Count; i++)
+                {
+                    returnList.ElementAt(i).Role = userList.ElementAt(i).GetType().Name.ToString();
+                }
+                for (int i = 0; i < returnList.Count; i++)
+                {
+                    if (returnList.ElementAt(i).Role.CompareTo(props.Role) == 0)
+                    {
+                        finalReturn.Add(returnList.ElementAt(i));
+                    }
+                }
+                return Ok(finalReturn);
             }
 
-            return Ok();
+
         }
     }
 }

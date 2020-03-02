@@ -4,7 +4,7 @@ using ListaccFinance.API.Data.Model;
 
 namespace ListaccFinance.API.Data.ViewModel
 {
-
+    
     // Return for search
     public class SearchProps
     {
@@ -15,12 +15,12 @@ namespace ListaccFinance.API.Data.ViewModel
         public string Gender {get; set;}
         public string Email {get; set;}
         public string Phone { get; set; }
-
+        public string Role { get; set; }
+        public bool Status { get; set; }
 
     }
     public class SearchPaging
     {
-
         public string SearchString { get; set; }
 
         //Filter

@@ -12,16 +12,18 @@ using Microsoft.EntityFrameworkCore;
 namespace ListaccFinance.API.Services
 
 {
-    public class UserService: IUserService
+    public class UserService : IUserService
     {
-        private readonly  DataContext _context;
+        private readonly DataContext _context;
+        private readonly IOtherServices _oService;
 
-        public UserService(DataContext context) 
+        public UserService(DataContext context, IOtherServices oService)
         {
+            _oService = oService;
             _context = context;
-        }
+               }
 
-        
+
         //First User Creation
         public async Task<string> CreateUserAsync(RegisterModel reg)
         {
@@ -51,7 +53,7 @@ namespace ListaccFinance.API.Services
             var hash = Hash.Create(message, salt);
             newUser.PasswordHash = hash;
             newUser.salt = salt;
-            
+
 
 
             newUser.Person = per;
@@ -60,7 +62,7 @@ namespace ListaccFinance.API.Services
 
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
-            newUser.SearchString =(newUser.Id + " " + newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " Member").ToUpper();
+            newUser.SearchString = (newUser.Id + " " + newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " Member").ToUpper();
             await _context.SaveChangesAsync();
             var thisUser = _context.Members.
                 Where(x => x.Email.CompareTo(reg.EmailAddress) == 0 &&
@@ -86,11 +88,11 @@ namespace ListaccFinance.API.Services
         }
 
         //Subsequent User(member) Creation
-        public  async Task<string> CreateUserAsync( RegisterModel reg, int userId)
+        public async Task<string> CreateUserAsync(RegisterModel reg, int userId)
         {
-            
+
             var newUser = new Member();
-            
+
             var dept = new Department()
             {
                 Name = reg.Department
@@ -132,7 +134,7 @@ namespace ListaccFinance.API.Services
 
             int thisUserID = thisUser.Id;
 
-            var change =  new Change()
+            var change = new Change()
             {
                 Table = "Users",
                 EntryId = thisUserID,
@@ -141,12 +143,12 @@ namespace ListaccFinance.API.Services
                 OfflineTimeStamp = DateTime.Now,
                 UserId = userId,
             };
-            await _context.Changes.AddAsync(change);;
+            await _context.Changes.AddAsync(change); ;
             await _context.SaveChangesAsync();
 
 
-             return "done";
-   
+            return "done";
+
 
         }
 
@@ -192,7 +194,7 @@ namespace ListaccFinance.API.Services
 
         }
 
-        public bool IsUserExist ()
+        public bool IsUserExist()
         {
             var nr = _context.Users.Count();
             if (nr == 0)
@@ -214,7 +216,7 @@ namespace ListaccFinance.API.Services
 
             return true; */
         }
-    
+
         public async Task<bool> IsThisUserExist(string UserEmail)
         {
             var thisU = await _context.Users.Where(x => x.Email.CompareTo(UserEmail) == 0).FirstOrDefaultAsync();
@@ -223,7 +225,7 @@ namespace ListaccFinance.API.Services
             {
                 return false;
             }
-            
+
             return true;
         }
 
@@ -286,34 +288,41 @@ namespace ListaccFinance.API.Services
 
         }
 
-        public async Task Deactivate (int Id)
+        public async Task Deactivate(int Id)
         {
             User u = await _context.Users.FindAsync(Id);
             u.Status = false;
             await _context.SaveChangesAsync();
-             
+
         }
-   
+
 
         // Search when Search String is not null
         public async Task<IEnumerable<User>> ReturnUsers(SearchPaging props)
         {
-            return await  SearchUser(props).OrderBy(x => x.Id)
-                                        .Skip((props.PageNumber-1) * props.PageSize)
+            return await SearchUser(props).OrderBy(x => x.Id)
+                                        .Skip((props.PageNumber - 1) * props.PageSize)
                                         .Take(props.PageSize)
                                         .ToListAsync();
         }
 
         private IQueryable<User> SearchUser(SearchPaging props)
         {
-            var u = _context.Users.Where(x => x.SearchString.Contains(props.SearchString.ToUpper()));
+            string role = props.Role;
+            var u = _context.Users.Include(x => x.Person).Where(x =>
+                            x.Status == props.Status
+                            &&
+                            (x.SearchString.Contains(props.SearchString.ToUpper())));
             return u;
         }
-        
+
         // Search when search string is null
         public async Task<IEnumerable<User>> ReturnAllUsers(SearchPaging props)
         {
-            return await _context.Users.OrderBy(x => x.Id)
+            return await _context.Users.Include(x => x.Person).Where(
+                                        (x) =>
+                                        x.Status.CompareTo(props.Status) == 0)
+                                        .OrderBy(x => x.Id)
                                         .Skip((props.PageNumber - 1) * props.PageSize)
                                         .Take(props.PageSize)
                                         .ToListAsync();
