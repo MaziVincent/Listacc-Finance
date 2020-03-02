@@ -128,14 +128,20 @@ namespace ListaccFinance.API.Controllers
                 
                 for (int i =0; i < returnList.Count; i++)
                 {
-                    returnList.ElementAt(i).Role = userList.ElementAt(i).GetType().Name;
+                        returnList.ElementAt(i).Role = userList.ElementAt(i).GetType().Name;
+
                 }
-                for (int i = 0; i < returnList.Count; i ++)
+
+                for (int j = 0; j < props.Role.Length; j++)
                 {
-                    if (returnList.ElementAt(i).Role.CompareTo(props.Role) == 0)
+                    for (int i = 0; i < returnList.Count; i++)
                     {
-                        finalReturn.Add(returnList.ElementAt(i));
+                        if (returnList.ElementAt(i).Role.CompareTo(props.Role[j]) == 0)
+                        {
+                            finalReturn.Add(returnList.ElementAt(i));
+                        }
                     }
+
                 }
                 return Ok(finalReturn);
             }
@@ -146,13 +152,19 @@ namespace ListaccFinance.API.Controllers
 
                 for (int i = 0; i < returnList.Count; i++)
                 {
-                    returnList.ElementAt(i).Role = userList.ElementAt(i).GetType().Name.ToString();
+                        returnList.ElementAt(i).Role = userList.ElementAt(i).GetType().Name.ToString();
+    
                 }
-                for (int i = 0; i < returnList.Count; i++)
+
+                for (int j = 0; j < props.Role.Length; j++)
                 {
-                    if (returnList.ElementAt(i).Role.CompareTo(props.Role) == 0)
+                    //
+                    for (int i = 0; i < returnList.Count; i++)
                     {
-                        finalReturn.Add(returnList.ElementAt(i));
+                        if (returnList.ElementAt(i).Role.CompareTo(props.Role[j]) == 0)
+                        {
+                            finalReturn.Add(returnList.ElementAt(i));
+                        }
                     }
                 }
                 return Ok(finalReturn);

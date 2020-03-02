@@ -308,7 +308,6 @@ namespace ListaccFinance.API.Services
 
         private IQueryable<User> SearchUser(SearchPaging props)
         {
-            string role = props.Role;
             var u = _context.Users.Include(x => x.Person).Where(x =>
                             x.Status == props.Status
                             &&
