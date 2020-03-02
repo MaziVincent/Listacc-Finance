@@ -22,7 +22,6 @@ namespace ListaccFinance.API.Controllers
         private readonly ITokenGenerator _tokGen;
 
         private readonly IDesktopService _dService;
-        //private readonly ISyncService<> _sservice;
 
         private readonly ISyncService _sservice;
         private readonly IMapper _mapper;

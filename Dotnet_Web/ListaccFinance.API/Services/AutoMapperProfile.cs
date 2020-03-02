@@ -46,5 +46,10 @@ public class AutoMapperProfile : Profile
     // Mapper for CurrentUser login
         CreateMap<User, CurrentUser>();
 
+    //Mapper for returning list of users
+        CreateMap<User, SearchProps>().ForMember(dest => dest.FirstName, opt => opt.MapFrom(x => x.Person.firstName))
+                                      .ForMember(dest => dest.LastName, opt => opt.MapFrom(x => x.Person.LastName))
+                                      .ForMember(dest => dest.Gender, opt => opt.MapFrom(x => x.Person.Gender));
+
     }
 }
