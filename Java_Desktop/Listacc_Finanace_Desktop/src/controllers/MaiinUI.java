@@ -1473,10 +1473,11 @@ public class MaiinUI implements Initializable {
     }
 
     private void editDepartment(){
+        departmentListTable.getSelectionModel().select(null);
         departmentCreateProp.set(false);
         dptTextName.setDisable(true);
         dptTextName.setText("");
-        departmentListTable.getSelectionModel().select(null);
+       
 
     }
 
