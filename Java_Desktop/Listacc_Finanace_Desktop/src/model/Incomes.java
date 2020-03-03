@@ -79,7 +79,7 @@ public class Incomes implements Serializable {
     @OneToMany(mappedBy = "income")
     private Collection<Incomes> incomesCollection;
     @JoinColumn(name = "IncomeId", referencedColumnName = "Id", insertable = false, updatable = false)
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Incomes income;
     @Column(name = "IncomeId")
     private Integer incomeId;

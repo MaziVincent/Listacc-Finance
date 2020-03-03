@@ -1323,7 +1323,7 @@ public class MaiinUI implements Initializable {
 
             double discount = 0 ;
                 try{
-                    if(incomeRadioPart.isSelected()){
+                    if(incomeRadioPart.isSelected() && incomeRadioNewIncome.isSelected()){
                     discount =  Double.parseDouble(incomeTxtDiscount.getText().trim());
                     income.setAmountReceivable(discount);
 
@@ -1338,7 +1338,7 @@ public class MaiinUI implements Initializable {
                     income.setParentIncomeId(parentIncomeId);
                 }catch(Exception exc)
                 {
-                    error("Enter");
+                    error("Enter a remaining balance!");
                     return;
                 }
 
@@ -1800,6 +1800,7 @@ public class MaiinUI implements Initializable {
     {
         //if(incomeRadioNewIncome.isSelected())
         { 
+        incomeRadioNewIncome.setSelected(true);
             incomeLabelAmountRecieved.setText("");
             disableIncomeClientForm(false);
                 disableIcomeForm(false);
@@ -1851,7 +1852,8 @@ public class MaiinUI implements Initializable {
                     incomeComboService.getSelectionModel().select(incomeComboService.getConverter().fromString(popIncome.getServiceName()));
                     incomeComboPType.getSelectionModel().select(popIncome.getDisplayPaymentType());
                     incomeTxtAmount.setText(popIncome.getAmountReceivable()+"");
-                    incomeRadioPart.setSelected(true);
+                    incomeRadioFull.setDisable(false);
+                    incomeRadioPart.setDisable(false);
                     Clients client = popIncome.getClient();
                     incomeTxtAdd.setText(client.getAddress());
                     incomeTxtUid.setText(client.getUId()); 
@@ -1863,7 +1865,7 @@ public class MaiinUI implements Initializable {
                     {
                         incomeTxtFName.setText(client.getBusinessName());
                     }
-                    incomeTxtDiscount.setPromptText("Remaining Balance");
+                    //incomeTxtDiscount.setPromptText("Remaining Balance");
                     incomeTxtPhone.setText(client.getPhone());
                     incomeTxtEmail.setText(client.getEmail());
                      Platform.runLater(() -> {
