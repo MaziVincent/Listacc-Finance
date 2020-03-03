@@ -27,6 +27,11 @@ public class UserService extends DataService {
         return em.createQuery("SELECT new model.display.DisplayUser(a.id, a.department.id, a.person.id, a.person.lastName, a.person.firstName, a.phoneNumber, a.email,a.discriminator, a.department.name) FROM Users a").getResultList();
     }
     
+//    public List<DisplayUser> getAllDisplayUsers()
+//    {
+//        return em.createQuery("SELECT new model.display.DisplayUser(a.id, a.phoneNumber, a.email,a.discriminator, a.person.lastName) FROM Users a").getResultList();
+//    }
+    
     public List<Users> getAllUsers()
     {
         return em.createQuery("SELECT a FROM Users a", Users.class).getResultList();

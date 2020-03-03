@@ -19,7 +19,7 @@ import services.data.ClientService;
 public class DisplayExpenditure {
     int costCatId,prjId,userId, clientId, id ;
 
-    public DisplayExpenditure(int id, double amount, String description, String lastName, String firstName, String phone, String email, String address, String gender, String date, String businessName, String projectName, String CostCategoryName) {
+    public DisplayExpenditure(int id, double amount, String description, String lastName, String firstName, String phone, String email, String address, String gender, Long date, String businessName, String projectName, String CostCategoryName) {
         this.id = id;
         this.amount = amount;
         this.description = description;
@@ -41,9 +41,9 @@ public class DisplayExpenditure {
 
     public String getDateString() {
        
-        long dateLong = Long.parseLong(date);
+        
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(dateLong);
+        calendar.setTimeInMillis(date);
         DateFormat df = new SimpleDateFormat("dd-EEE, MM, yyyy");
         return df.format(calendar.getTime());
     }
@@ -60,20 +60,20 @@ public class DisplayExpenditure {
         return client;
     }
 
-    public String getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 
     public void setClient(Clients client) {
         this.client = client;
     }
-    String description, lastName, firstName, phone, email, address, gender, date, businessName; 
+    String description, lastName, firstName, phone, email, address, gender, businessName; 
     String projectName, costCategoryName;
-
+    Long date;
     public String getBusinessName() {
         return businessName;
     }
@@ -107,7 +107,7 @@ public class DisplayExpenditure {
         this.description = description;
     }
 
-    public DisplayExpenditure(int costCatId, int prjId, int userId, String businessName, int clientId, double amount, String date) {
+    public DisplayExpenditure(int costCatId, int prjId, int userId, String businessName, int clientId, double amount, Long date) {
         this.costCatId = costCatId;
         this.prjId = prjId;
         this.userId = userId;
@@ -130,7 +130,7 @@ public class DisplayExpenditure {
        this.date = date;
     }
     
-    public DisplayExpenditure(int costCatId, int prjId, int userId, String businessName, String projectName,String costCategoryName, int clientId, double amount, String date) {
+    public DisplayExpenditure(int costCatId, int prjId, int userId, String businessName, String projectName,String costCategoryName, int clientId, double amount, Long date) {
         this.costCatId = costCatId;
         this.prjId = prjId;
         this.userId = userId;

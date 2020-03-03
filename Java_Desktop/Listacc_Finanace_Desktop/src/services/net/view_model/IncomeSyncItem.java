@@ -17,8 +17,8 @@ public class IncomeSyncItem extends Incomes implements SyncItem{
     private Integer changeId, changeUserOnlineEntryId, clientId, serviceId, userId;
     private Integer clientOnlineEntryId, incomeOnlineEntryId, serviceOnlineEntryId, userOnlineEntryId;
     
-    public IncomeSyncItem(Integer id, String type, String date, Integer unit, double amountReceived,
-            double discount, String paymentType, double amountReceivable, String dateDue, Integer onlineEntryId,
+    public IncomeSyncItem(Integer id, String type, Long date, Integer unit, double amountReceived,
+            double discount, String paymentType, double amountReceivable, Long dateDue, Integer onlineEntryId,
             Integer clientId, Integer clientOnlineEntryId, Integer incomeId, 
             Integer serviceId, Integer serviceOnlineEntryId, Integer userId, Integer userOnlineEntryId){
         setId(id);

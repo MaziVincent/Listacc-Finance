@@ -710,7 +710,7 @@ public class MaiinUI implements Initializable {
              FilteredList<DisplayIncome> filtered = new FilteredList(serviceData,(p -> true ));
              filtered.setPredicate(p -> {
                  try{
-                 long time = Long.parseLong(p.getDate().trim());
+                 long time = Long.parseLong(p.getDate()+"");
                    boolean valid = time >= calendar.getTimeInMillis() && time <= calendar2.getTimeInMillis();
                    if(valid)
                         totalIncome += p.getAmountReceived();
@@ -746,7 +746,7 @@ public class MaiinUI implements Initializable {
              FilteredList<DisplayExpenditure> filtered = new FilteredList(serviceData,(p -> true ));
              filtered.setPredicate(p -> {
                  try{
-                 long time = Long.parseLong(p.getDate().trim());
+                 long time = p.getDate();
                    boolean valid = time >= calendar.getTimeInMillis() && time <= calendar2.getTimeInMillis();
                    if(valid)
                         totalExpenditure += p.getAmount();
@@ -1274,7 +1274,7 @@ public class MaiinUI implements Initializable {
             dueCalendar.set(Calendar.DATE, localDueDate.getDayOfMonth());
             dueCalendar.set(Calendar.MONTH, localDueDate.getMonthValue()-1);
             dueCalendar.set(Calendar.YEAR, localDueDate.getYear());
-            String dueDate = dueCalendar.getTimeInMillis()+"";
+            
                   Persons incomePerson = new Persons();
 
                      String fname = incomeTxtFName.getText().trim(); 
@@ -1304,8 +1304,8 @@ public class MaiinUI implements Initializable {
                     income.setPerson(incomeRadioPerson.isSelected()? incomePerson : null);
                    income.setClient(incomeClient);
                    income.setAmountReceived(amountReceived);                   
-                   income.setDate(""+calendar.getTimeInMillis());
-                   income.setDateDue(dueDate);
+                   income.setDate(calendar.getTimeInMillis());
+                   income.setDateDue(dueCalendar.getTimeInMillis());
                    income.setType(incomeRadioNewIncome.isSelected() ?"New" :"Balance");
                    income.setPaymentType(incomeComboPType.getSelectionModel().getSelectedItem());
                    income.setUser(model.getUser());
@@ -1323,7 +1323,7 @@ public class MaiinUI implements Initializable {
 
             double discount = 0 ;
                 try{
-                    if(incomeRadioPart.isSelected()){
+                    if(incomeRadioPart.isSelected() && incomeRadioNewIncome.isSelected()){
                     discount =  Double.parseDouble(incomeTxtDiscount.getText().trim());
                     income.setAmountReceivable(discount);
 
@@ -1338,7 +1338,7 @@ public class MaiinUI implements Initializable {
                     income.setParentIncomeId(parentIncomeId);
                 }catch(Exception exc)
                 {
-                    error("Enter");
+                    error("Enter a remaining balance!");
                     return;
                 }
 
@@ -1618,7 +1618,7 @@ public class MaiinUI implements Initializable {
             calendar.set(Calendar.MONTH, localDate.getMonthValue()-1);
             calendar.set(Calendar.YEAR, localDate.getYear());
              DisplayExpenditure ds = new DisplayExpenditure(costCatId,prjId,userId,null  == expenditureClient?0:expenditureClient.getId() ,amount, description);
-             ds.setDate(calendar.getTimeInMillis()+"");
+             ds.setDate(calendar.getTimeInMillis());
              if(expRadioNew.isSelected())
              {
                  client = new Clients();
@@ -1752,7 +1752,7 @@ public class MaiinUI implements Initializable {
             Parent root;
             stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ClientPopupList.fxml"));
-            ClientListPopup popupController = new ClientListPopup(clientList);
+            ClientListPopup popupController = new ClientListPopup(clientList, true);
             loader.setController(popupController);
             root = loader.load();
 
@@ -1800,6 +1800,7 @@ public class MaiinUI implements Initializable {
     {
         //if(incomeRadioNewIncome.isSelected())
         { 
+        incomeRadioNewIncome.setSelected(true);
             incomeLabelAmountRecieved.setText("");
             disableIncomeClientForm(false);
                 disableIcomeForm(false);
@@ -1851,7 +1852,8 @@ public class MaiinUI implements Initializable {
                     incomeComboService.getSelectionModel().select(incomeComboService.getConverter().fromString(popIncome.getServiceName()));
                     incomeComboPType.getSelectionModel().select(popIncome.getDisplayPaymentType());
                     incomeTxtAmount.setText(popIncome.getAmountReceivable()+"");
-                    incomeRadioPart.setSelected(true);
+                    incomeRadioFull.setDisable(false);
+                    incomeRadioPart.setDisable(false);
                     Clients client = popIncome.getClient();
                     incomeTxtAdd.setText(client.getAddress());
                     incomeTxtUid.setText(client.getUId()); 
@@ -1863,7 +1865,7 @@ public class MaiinUI implements Initializable {
                     {
                         incomeTxtFName.setText(client.getBusinessName());
                     }
-                    incomeTxtDiscount.setPromptText("Remaining Balance");
+                    //incomeTxtDiscount.setPromptText("Remaining Balance");
                     incomeTxtPhone.setText(client.getPhone());
                     incomeTxtEmail.setText(client.getEmail());
                      Platform.runLater(() -> {
@@ -1904,7 +1906,7 @@ public class MaiinUI implements Initializable {
             Parent root;
             stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ClientPopupList.fxml"));
-            ClientListPopup popupController = new ClientListPopup(clientList);
+            ClientListPopup popupController = new ClientListPopup(clientList, false);
             loader.setController(popupController);
             root = loader.load();
 

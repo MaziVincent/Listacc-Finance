@@ -32,6 +32,7 @@ public class ClientListPopup implements Initializable {
     private final List<DisplayClient> clientList;
     private FilteredList<DisplayClient> clientsFiltered;
     DisplayClient client;
+    boolean income;
 
     public DisplayClient getClient() {
         return client;
@@ -54,15 +55,19 @@ public class ClientListPopup implements Initializable {
                             clientColEmail, clientColAddress, clientColId;
     @FXML 
     TableView <DisplayClient> clientListTable ;
-    public ClientListPopup(List<DisplayClient> clientList){
+    public ClientListPopup(List<DisplayClient> clientList, boolean income){
         this.clientList = clientList;
+        this.income = income;
     }
     
       @Override
         public void initialize(URL url, ResourceBundle rb) {
             ObservableList<DisplayClient> clientData
             = FXCollections.observableArrayList(clientList);
-                       clientsFiltered =  new FilteredList(clientData,(p -> true ));
+            if(income)
+            clientsFiltered =  new FilteredList<DisplayClient>(clientData,(p -> (null != p.getUId() || !p.getUId().isEmpty()) ));
+            else 
+                clientsFiltered =  new FilteredList<DisplayClient>(clientData,(p -> (null == p.getUId() || p.getUId().isEmpty()) ));
                   clientListTable.setItems(clientsFiltered);
             clientColSerial.setCellFactory(indexCellFactory());
             clientColId.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("id"));

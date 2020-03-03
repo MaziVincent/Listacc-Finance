@@ -127,15 +127,19 @@ public class IncomeService extends DataService {
             em.getTransaction().begin();
             income.setService(serv);
             income.setUser(display.getUser());
+            em.getTransaction().commit();
             
             if(display.getParentIncomeId() > 0) {
                 Incomes pIncome = (Incomes) em.createNamedQuery("Incomes.findById")
                    .setParameter("id", display.getParentIncomeId()).getSingleResult();
-                income.setIncome(pIncome);
+                income.setIncomeId(pIncome.getId());
                 pIncome.setAmountReceivable(pIncome.getAmountReceivable() - income.getAmountReceived());
+                em.getTransaction().begin();
                 em.persist(pIncome);
+                em.getTransaction().commit();
+               
             }
-           
+            em.getTransaction().begin();
             em.persist(income);
             em.getTransaction().commit();
             
