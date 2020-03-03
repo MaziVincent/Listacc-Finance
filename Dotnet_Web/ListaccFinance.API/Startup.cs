@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using AutoMapper;
 using ListaccFinance.Api.Data;
+using ListaccFinance.Api.Repo;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Interfaces;
 using ListaccFinance.API.Services;
@@ -42,6 +43,7 @@ namespace ListaccFinance.API
             services.AddScoped<IDesktopService, DesktopService>();
             services.AddScoped<ISyncService, SyncService>();
             services.AddScoped<IOtherServices, OtherServices>();
+            services.AddScoped<IUserRepo, UserRepo>();
 
             //services.AddScoped(typeof(ISyncService<>),typeof(SyncService<>));
             //DBContext
