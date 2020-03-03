@@ -73,7 +73,7 @@ namespace ListaccFinance.API.Services
             {
                 Subject = new ClaimsIdentity(tokenClaims),
                 SigningCredentials = credentials,
-                Expires = DateTime.Now.AddDays(3),
+                Expires = DateTime.Now.AddDays(7),
             };
             var tokenHandler = new JwtSecurityTokenHandler();
 
