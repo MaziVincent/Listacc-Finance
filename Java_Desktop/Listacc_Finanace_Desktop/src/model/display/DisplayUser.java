@@ -100,6 +100,16 @@ public class DisplayUser  {
         this.role = role;
         this.departmentName = departmentName;
     }
+
+    public DisplayUser(int id, String phone, String email, String role, String lastName) {
+        this.id = id;
+        this.phone = phone;
+        this.email = email;
+        this.role = role;
+        this.lastName = lastName;
+    }
+    
+    
     
  
     

@@ -53,7 +53,7 @@ public class Incomes implements Serializable {
     private String type;
     @Basic(optional = false)
     @Column(name = "Date")
-    private String date;
+    private Long date;
     @Basic(optional = false)
     @Column(name = "Unit")
     private int unit;
@@ -70,7 +70,7 @@ public class Incomes implements Serializable {
     private double amountReceivable;
     @Basic(optional = false)
     @Column(name = "DateDue")
-    private String dateDue;
+    private Long dateDue;
     @Column(name = "OnlineEntryId")
     private Integer onlineEntryId;
     @JoinColumn(name = "ClientId", referencedColumnName = "Id")
@@ -97,7 +97,7 @@ public class Incomes implements Serializable {
         this.id = id;
     }
 
-    public Incomes(Integer id, String date, int unit, double amountReceived, double discount, double amountReceivable, String dateDue) {
+    public Incomes(Integer id, Long date, int unit, double amountReceived, double discount, double amountReceivable, Long dateDue) {
         this.id = id;
         this.date = date;
         this.unit = unit;
@@ -123,11 +123,11 @@ public class Incomes implements Serializable {
         this.type = type;
     }
 
-    public String getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 
@@ -171,11 +171,11 @@ public class Incomes implements Serializable {
         this.amountReceivable = amountReceivable;
     }
 
-    public String getDateDue() {
+    public Long getDateDue() {
         return dateDue;
     }
 
-    public void setDateDue(String dateDue) {
+    public void setDateDue(Long dateDue) {
         this.dateDue = dateDue;
     }
 

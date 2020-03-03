@@ -16,7 +16,7 @@ public class ExpenditureSyncItem extends Expenditures implements SyncItem{
     private Integer changeId, changeUserOnlineEntryId, clientId, costCategoryId, projectId, issuerId;
     private Integer clientOnlineEntryId, costCategoryOnlineEntryId, projectOnlineEntryId, issuerOnlineEntryId;
     
-    public ExpenditureSyncItem(Integer id, String date, String description, double amount,
+    public ExpenditureSyncItem(Integer id, Long date, String description, double amount,
             Integer onlineEntryId, Integer clientId, Integer clientOnlineEntryId, Integer costCategoryId, 
             Integer costCategoryOnlineEntryId, Integer projectId, Integer projectOnlineEntryId,
             Integer issuerId, Integer issuerOnlineEntryId){

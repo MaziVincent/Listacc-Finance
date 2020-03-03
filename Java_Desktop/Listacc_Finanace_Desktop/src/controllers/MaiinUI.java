@@ -710,7 +710,7 @@ public class MaiinUI implements Initializable {
              FilteredList<DisplayIncome> filtered = new FilteredList(serviceData,(p -> true ));
              filtered.setPredicate(p -> {
                  try{
-                 long time = Long.parseLong(p.getDate().trim());
+                 long time = Long.parseLong(p.getDate()+"");
                    boolean valid = time >= calendar.getTimeInMillis() && time <= calendar2.getTimeInMillis();
                    if(valid)
                         totalIncome += p.getAmountReceived();
@@ -746,7 +746,7 @@ public class MaiinUI implements Initializable {
              FilteredList<DisplayExpenditure> filtered = new FilteredList(serviceData,(p -> true ));
              filtered.setPredicate(p -> {
                  try{
-                 long time = Long.parseLong(p.getDate().trim());
+                 long time = p.getDate();
                    boolean valid = time >= calendar.getTimeInMillis() && time <= calendar2.getTimeInMillis();
                    if(valid)
                         totalExpenditure += p.getAmount();
@@ -1274,7 +1274,7 @@ public class MaiinUI implements Initializable {
             dueCalendar.set(Calendar.DATE, localDueDate.getDayOfMonth());
             dueCalendar.set(Calendar.MONTH, localDueDate.getMonthValue()-1);
             dueCalendar.set(Calendar.YEAR, localDueDate.getYear());
-            String dueDate = dueCalendar.getTimeInMillis()+"";
+            
                   Persons incomePerson = new Persons();
 
                      String fname = incomeTxtFName.getText().trim(); 
@@ -1304,8 +1304,8 @@ public class MaiinUI implements Initializable {
                     income.setPerson(incomeRadioPerson.isSelected()? incomePerson : null);
                    income.setClient(incomeClient);
                    income.setAmountReceived(amountReceived);                   
-                   income.setDate(""+calendar.getTimeInMillis());
-                   income.setDateDue(dueDate);
+                   income.setDate(calendar.getTimeInMillis());
+                   income.setDateDue(dueCalendar.getTimeInMillis());
                    income.setType(incomeRadioNewIncome.isSelected() ?"New" :"Balance");
                    income.setPaymentType(incomeComboPType.getSelectionModel().getSelectedItem());
                    income.setUser(model.getUser());
@@ -1618,7 +1618,7 @@ public class MaiinUI implements Initializable {
             calendar.set(Calendar.MONTH, localDate.getMonthValue()-1);
             calendar.set(Calendar.YEAR, localDate.getYear());
              DisplayExpenditure ds = new DisplayExpenditure(costCatId,prjId,userId,null  == expenditureClient?0:expenditureClient.getId() ,amount, description);
-             ds.setDate(calendar.getTimeInMillis()+"");
+             ds.setDate(calendar.getTimeInMillis());
              if(expRadioNew.isSelected())
              {
                  client = new Clients();
