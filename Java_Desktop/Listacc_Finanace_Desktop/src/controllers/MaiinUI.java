@@ -1752,7 +1752,7 @@ public class MaiinUI implements Initializable {
             Parent root;
             stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ClientPopupList.fxml"));
-            ClientListPopup popupController = new ClientListPopup(clientList);
+            ClientListPopup popupController = new ClientListPopup(clientList, true);
             loader.setController(popupController);
             root = loader.load();
 
@@ -1906,7 +1906,7 @@ public class MaiinUI implements Initializable {
             Parent root;
             stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ClientPopupList.fxml"));
-            ClientListPopup popupController = new ClientListPopup(clientList);
+            ClientListPopup popupController = new ClientListPopup(clientList, false);
             loader.setController(popupController);
             root = loader.load();
 
