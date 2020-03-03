@@ -138,7 +138,7 @@ namespace ListaccFinance.API.Controllers
         }
 
 
-        [HttpGet("ReturnUsers")]
+        [HttpGet]
         public async Task<IActionResult> ReturnUsers ([FromQuery] SearchPaging props)
         {
             List<SearchProps> finalReturn = new List<SearchProps>();
