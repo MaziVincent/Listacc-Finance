@@ -81,11 +81,17 @@ namespace ListaccFinance.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("EditUser")]
-        public async Task<IActionResult> EditUser(int Id, RegisterModel ed)
+        public async Task<IActionResult> EditUser([FromQuery]int Id,[FromBody] RegisterModel reg)
         {
-            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            await _uService.EditUserAsync(Id, reg, int.Parse(this.User.Claims.First(i => i.Type == "UserID").Value));
+
             return Ok("done");
         }
+
         [Authorize(Roles = "Admin")]
         [HttpPost("CreateMember")]
 
@@ -115,18 +121,18 @@ namespace ListaccFinance.API.Controllers
         
         [Authorize(Roles = "Admin")]
         [HttpPost("DeactivateUser")]
-        public async Task<IActionResult> Deactivate (int Id)
+        public async Task<IActionResult> Deactivate ([FromQuery]int Id)
         {
-            int MyId = int.Parse(this.User.Claims.First(x => x.Type == "Id").Value);
+            int MyId = int.Parse(this.User.Claims.First(i => i.Type == "UserID").Value);
             await _uService.Deactivate(Id, MyId);
             return Ok();
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost("ActivateUser")]
-        public async Task<IActionResult> Activate(int Id)
+        public async Task<IActionResult> Activate([FromQuery]int Id)
         {
-            int MyId = int.Parse(this.User.Claims.First(x => x.Type == "Id").Value);
+            int MyId = int.Parse(this.User.Claims.First(x => x.Type == "UserID").Value);
             await _uService.Activate(Id, MyId);
             return Ok();
         }

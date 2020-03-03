@@ -215,11 +215,11 @@ namespace ListaccFinance.API.Services
             return true; */
         }
 
-        public async Task EditUserAsync(int Id, RegisterModel reg)
+        public async Task EditUserAsync(int Id, RegisterModel reg, int MyId)
         {
-            var u = await _context.Users.FindAsync(Id);
+            var u = await _context.Users.Include(x => x.Person).Where(x => x.Id == Id).FirstOrDefaultAsync();
             u.Address = reg.Address;
-            u.Department.Name = reg.Department;
+            u.DepartmentId = _context.Departments.Where(x => x.Name.CompareTo(reg.Department) ==0).FirstOrDefaultAsync().Id;
             u.Email = reg.EmailAddress;
             u.Person.firstName = reg.firstName;
             u.Person.DateOfBirth = reg.DateOfBirth;
@@ -228,6 +228,17 @@ namespace ListaccFinance.API.Services
             u.Person.Gender = reg.Gender;
             // Do password Change later
 
+            await _context.SaveChangesAsync();
+            var change = new Change
+            {
+                Table = u.GetType().Name,
+                EntryId = u.Id,
+                ChangeType = "Edit",
+                OfflineTimeStamp = DateTime.Now,
+                OnlineTimeStamp = DateTime.Now,
+                UserId = MyId
+            };
+            await _context.Changes.AddAsync(change);
             await _context.SaveChangesAsync();
 
         }
@@ -317,6 +328,7 @@ namespace ListaccFinance.API.Services
                 UserId = MyId
             };
             await _context.Changes.AddAsync(change);
+            await _context.SaveChangesAsync();
         }
 
         
@@ -334,8 +346,8 @@ namespace ListaccFinance.API.Services
                 UserId = MyId
             };
             await _context.Changes.AddAsync(change);
+            await _context.SaveChangesAsync();
         }
-
 
         // Search when Search String is not null
         public async Task<IEnumerable<User>> ReturnUsers(SearchPaging props)
