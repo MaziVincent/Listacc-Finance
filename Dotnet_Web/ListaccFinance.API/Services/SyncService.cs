@@ -58,7 +58,7 @@ namespace ListaccFinance.API.Services
                     {
                         Id = OffId,
                         Table = "Departments",
-                        OnlineEntryId = d.Id
+                        OnlineEntryId = d.Id,
                     };
                     return newSaved;
                 }
@@ -69,12 +69,12 @@ namespace ListaccFinance.API.Services
                 }
         }
         //If onlineEntryid is null
-        public async Task<SavedList> UploadOldDeptAsync(Department d, int OnlineId)
+        public async Task<int> UploadOldDeptAsync(Department d, int OnlineId)
         {
             var thisDept = await _context.Departments.Where(x => x.Id == OnlineId).FirstOrDefaultAsync();
             thisDept.Name = d.Name;
             await _context.SaveChangesAsync();
-            return null;
+            return thisDept.Id;
 
 
         }
@@ -99,14 +99,14 @@ namespace ListaccFinance.API.Services
                 throw e;
             }
         }
-        public async Task<SavedList> UploadOldPersonAsync(Person p, int OnlineId)
+        public async Task<int> UploadOldPersonAsync(Person p, int OnlineId)
         {
             var thisPerson = await _context.Persons.FindAsync(OnlineId);
             thisPerson.DateOfBirth = p.DateOfBirth;
             thisPerson.firstName = p.firstName;
             thisPerson.LastName = p.LastName;
             await _context.SaveChangesAsync();
-            return null;
+            return thisPerson.Id;
         }
         public async Task<SavedList> UploadUserAsync(RegisterModel u, int OffId)
         {
@@ -155,7 +155,7 @@ namespace ListaccFinance.API.Services
                 return new SavedList{
                     Id = OffId,
                     Table = "Clients",
-                    OnlineEntryId = c.Id,
+                    OnlineEntryId = newC.Id,
                 };
             }
             catch (System.Exception e)
@@ -164,7 +164,7 @@ namespace ListaccFinance.API.Services
                 throw e;
             }
         }
-        public async Task<SavedList> UploadOldClientAsync(Client c, int OnlineId)
+        public async Task<int> UploadOldClientAsync(Client c, int OnlineId)
         {
             var thisClient =await _context.Clients.Where(x => x.Id == OnlineId).Include(x => x.Person).FirstOrDefaultAsync();
             thisClient.Address = c.Address;
@@ -181,7 +181,7 @@ namespace ListaccFinance.API.Services
             thisClient.Person.firstName = c.Person.firstName;
             thisClient.Person.Gender = c.Person.Gender;
             await _context.SaveChangesAsync();
-            return null;
+            return thisClient.Id;
         }
 
         public async Task<SavedList> UploadProjectAsync(Project p, int OldId)
@@ -205,14 +205,14 @@ namespace ListaccFinance.API.Services
                 throw e;
             }
         }
-        public async Task<SavedList> UploadOldProjectAsync(Project p, int OnlineId)
+        public async Task<int> UploadOldProjectAsync(Project p, int OnlineId)
         {
             var thisProject = await _context.Projects.FindAsync(OnlineId);
             thisProject.DepartmentId = p.DepartmentId;
             thisProject.Description = p.Description;
             thisProject.Name = p.Name;
             await _context.SaveChangesAsync();
-            return null;
+            return thisProject.Id;
         }
 
         public async Task<SavedList> UploadCostAsync(CostCategory c, int OldId)
@@ -235,14 +235,14 @@ namespace ListaccFinance.API.Services
             }
         }
 
-        public async Task<SavedList> UploadOldCostAsync(CostCategory c, int OnlineId)
+        public async Task<int> UploadOldCostAsync(CostCategory c, int OnlineId)
         {
             var thisCost = await _context.CostCategories.FindAsync(OnlineId);
             thisCost.Description = c.Description;
             thisCost.Name = c.Name;
             thisCost.Type = c.Type;
             await _context.SaveChangesAsync();
-            return null;
+            return thisCost.Id;
         }
         public async Task<SavedList> UploadExpenditureAsync(Expenditure e, int OldId)
         {
@@ -263,7 +263,7 @@ namespace ListaccFinance.API.Services
                 throw exc;
             }
         }
-        public async Task<SavedList> UploadOldExpenditureAsync(Expenditure e, int OnlineId)
+        public async Task<int> UploadOldExpenditureAsync(Expenditure e, int OnlineId)
         {
             var thisExp  =await _context.Expenditures.FindAsync(OnlineId);
             thisExp.Amount = e.Amount;
@@ -274,7 +274,7 @@ namespace ListaccFinance.API.Services
             thisExp.Description = e.Description;
             thisExp.IssuerId = e.IssuerId;
             await _context.SaveChangesAsync();
-            return null;
+            return thisExp.Id;
         }
         public async Task<SavedList> UploadServiceAsync(Service s, int OldId)
         {
@@ -298,7 +298,7 @@ namespace ListaccFinance.API.Services
             }
         }
 
-        public async Task<SavedList> UploadOldServiceAsync(Service s, int OnlineId)
+        public async Task<int> UploadOldServiceAsync(Service s, int OnlineId)
         {
             var thisServ  = await _context.Services.FindAsync(OnlineId);
             thisServ.Amount = s.Amount;
@@ -307,7 +307,7 @@ namespace ListaccFinance.API.Services
             thisServ.Name = s.Name;
             thisServ.ProjectId = s.ProjectId;
             await _context.SaveChangesAsync();
-            return null;
+            return thisServ.Id;
         }
         public async Task<SavedList> UploadIncomeAsync(Income i, int OldId)
         {
@@ -328,7 +328,7 @@ namespace ListaccFinance.API.Services
                 throw e;
             }
         }
-        public async Task<SavedList> UploadOldIncomeAsync(Income i, int OnlineId)
+        public async Task<int> UploadOldIncomeAsync(Income i, int OnlineId)
         {
             var thisInc = await _context.Incomes.FindAsync(OnlineId);
             thisInc.AmountReceivable = i.AmountReceivable;
@@ -344,7 +344,7 @@ namespace ListaccFinance.API.Services
             thisInc.Unit = i.Unit;
             thisInc.UserId = i.UserId;
             await _context.SaveChangesAsync();
-            return null;
+            return thisInc.Id;
         }
 
 

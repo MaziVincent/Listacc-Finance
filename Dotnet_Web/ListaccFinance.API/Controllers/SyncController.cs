@@ -108,18 +108,37 @@ namespace ListaccFinance.API.Controllers
                             var dChange = _mapper.Map<Department>(sync.dept);
                             int dId = sync.dept.Id;
 
-                            save = sync.dept.OnlineEntryId is null ? await _sservice.UploadDeptAsync(dChange, dId) : await _sservice.UploadOldDeptAsync(dChange, sync.dept.OnlineEntryId.Value);
-                            if (save != null) mapList.Add(save);
-                            await SaveChangesAsync(sync.dept.ChangeTimeStamp, sync.dept.Change, sync.Table, dId, sync.dept.ChangeUserOnlineEntryId);
+                            if(sync.dept.OnlineEntryId is null)
+                            {
+                                save = await _sservice.UploadDeptAsync(dChange, dId);
+                                mapList.Add(save);
+                                await SaveChangesAsync(sync.dept.ChangeTimeStamp, sync.dept.Change, sync.Table, save.OnlineEntryId, sync.dept.ChangeUserOnlineEntryId);
+                            }
+                            else
+                            {
+                                int EntryId = await _sservice.UploadOldDeptAsync(dChange, sync.dept.OnlineEntryId.Value);
+                                await SaveChangesAsync(sync.dept.ChangeTimeStamp, sync.dept.Change, sync.Table, EntryId, sync.dept.ChangeUserOnlineEntryId);
+                            }
+                            
                             break;
 
 
                         case "Persons":
                             var pChange = _mapper.Map<Person>(sync.person);
                             int pId = sync.person.Id;
-                            save = sync.person.OnlineEntryId is null ? await _sservice.UploadPersonAsync(pChange, pId) : await _sservice.UploadOldPersonAsync(pChange, sync.person.OnlineEntryId.Value);
-                            if (save != null) mapList.Add(save);
-                            await SaveChangesAsync(sync.person.ChangeTimeStamp, sync.person.Change, sync.Table, pId, sync.dept.ChangeUserOnlineEntryId);
+                            if (sync.person.OnlineEntryId is null)
+                            {
+                                save = await _sservice.UploadPersonAsync(pChange, pId);
+                                mapList.Add(save);
+                                await SaveChangesAsync(sync.person.ChangeTimeStamp, sync.person.Change, sync.Table, save.OnlineEntryId, sync.dept.ChangeUserOnlineEntryId);
+
+                            }
+                            else
+                            {
+                               int EntryId =  await _sservice.UploadOldPersonAsync(pChange, sync.person.OnlineEntryId.Value);
+                                await SaveChangesAsync(sync.person.ChangeTimeStamp, sync.person.Change, sync.Table, EntryId, sync.dept.ChangeUserOnlineEntryId);
+                            }
+                           
                             break;
 
                         case "Users":
@@ -160,20 +179,17 @@ namespace ListaccFinance.API.Controllers
                         case "Clients":
                             var cChange = _mapper.Map<Client>(sync.client);
                             int cId = sync.client.Id;
-                            /*if (sync.client.PersonOnlineEntryId is null)
+                            if (sync.client.OnlineEntryId is null)
                             {
-                                foreach (var mapped in mapList)
-                                {
-                                    if (mapped.Id == sync.client.PersonId && mapped.Table.CompareTo("Clients") == 0)
-                                    {
-                                        cChange.PersonId = mapped.OnlineEntryId;
-                                        break;
-                                    }
-                                }
-                            }*/
-                            save = sync.client.OnlineEntryId is null ? await _sservice.UploadClientAsync(cChange, cId) : await _sservice.UploadOldClientAsync(cChange, sync.client.OnlineEntryId.Value);
-                            if (save != null) mapList.Add(save);
-                            await SaveChangesAsync(sync.client.ChangeTimeStamp, sync.client.Change, sync.Table, cId, sync.client.ChangeUserOnlineEntryId);
+                                save = await _sservice.UploadClientAsync(cChange, cId);
+                                mapList.Add(save);
+                                await SaveChangesAsync(sync.client.ChangeTimeStamp, sync.client.Change, sync.Table, save.OnlineEntryId, sync.client.ChangeUserOnlineEntryId);
+                            }
+                            else
+                            {
+                                int EntryId = await _sservice.UploadOldClientAsync(cChange, sync.client.OnlineEntryId.Value);
+                                await SaveChangesAsync(sync.client.ChangeTimeStamp, sync.client.Change, sync.Table, EntryId, sync.client.ChangeUserOnlineEntryId);
+                            }
                             break;
 
 
@@ -192,18 +208,34 @@ namespace ListaccFinance.API.Controllers
                                 }
                             }
 
-                            save = sync.project.OnlineEntryId is null ? await _sservice.UploadProjectAsync(prChange, prId) : await _sservice.UploadOldProjectAsync(prChange, sync.project.OnlineEntryId.Value);
-                            if (save != null) mapList.Add(save);
-                            await SaveChangesAsync(sync.project.ChangeTimeStamp, sync.project.Change, sync.Table, prId, sync.project.ChangeUserOnlineEntryId);
+                            if (sync.project.OnlineEntryId is null)
+                            {
+                                save = await _sservice.UploadProjectAsync(prChange, prId);
+                                mapList.Add(save);
+                                await SaveChangesAsync(sync.project.ChangeTimeStamp, sync.project.Change, sync.Table, save.OnlineEntryId, sync.project.ChangeUserOnlineEntryId);
+                            }
+                            else
+                            {
+                                int EntryId = await _sservice.UploadOldProjectAsync(prChange, sync.project.OnlineEntryId.Value);
+                                await SaveChangesAsync(sync.project.ChangeTimeStamp, sync.project.Change, sync.Table, prId, sync.project.ChangeUserOnlineEntryId);
+                            }
                             break;
 
                         case "CostCategories":
                             var ccChange = _mapper.Map<CostCategory>(sync.costCategory);
                             int ccId = sync.costCategory.Id;
-                            save = sync.costCategory.OnlineEntryId is null ? await _sservice.UploadCostAsync(ccChange, ccId) : await _sservice.UploadOldCostAsync(ccChange, sync.costCategory.OnlineEntryId.Value);
-                            if (save != null) mapList.Add(save);
-                            await SaveChangesAsync(sync.costCategory.ChangeTimeStamp, sync.costCategory.Change, sync.Table, ccId, sync.costCategory.ChangeUserOnlineEntryId);
-                            break;
+                            if (sync.costCategory.OnlineEntryId is null)
+                            {
+                                save = await _sservice.UploadCostAsync(ccChange, ccId);
+                                mapList.Add(save);
+                                await SaveChangesAsync(sync.costCategory.ChangeTimeStamp, sync.costCategory.Change, sync.Table, save.OnlineEntryId, sync.costCategory.ChangeUserOnlineEntryId);
+
+                            }
+                            else
+                            {
+                                int EntryId = await _sservice.UploadOldCostAsync(ccChange, sync.costCategory.OnlineEntryId.Value);
+                                await SaveChangesAsync(sync.costCategory.ChangeTimeStamp, sync.costCategory.Change, sync.Table, EntryId, sync.costCategory.ChangeUserOnlineEntryId);
+                            }break;
 
                         case "Expenditures":
                             var eChange = _mapper.Map<Expenditure>(sync.expenditure);
@@ -252,10 +284,19 @@ namespace ListaccFinance.API.Controllers
                                     }
                                 }
                             }
-                            save = sync.expenditure.OnlineEntryId is null ? await _sservice.UploadExpenditureAsync(eChange, eId) : await _sservice.UploadOldExpenditureAsync(eChange, sync.expenditure.OnlineEntryId.Value);
-                            if (save != null) mapList.Add(save);
-                            await SaveChangesAsync(sync.expenditure.ChangeTimeStamp, sync.expenditure.Change, sync.Table, eId, sync.expenditure.ChangeUserOnlineEntryId);
-                            
+                            if (sync.expenditure.OnlineEntryId is null)
+                            {
+                                save = await _sservice.UploadExpenditureAsync(eChange, eId);
+
+                                mapList.Add(save);
+                                await SaveChangesAsync(sync.expenditure.ChangeTimeStamp, sync.expenditure.Change, sync.Table, save.OnlineEntryId, sync.expenditure.ChangeUserOnlineEntryId);
+                            }
+                            else
+                            {
+                                int EntryId  = await _sservice.UploadOldExpenditureAsync(eChange, sync.expenditure.OnlineEntryId.Value);
+                                await SaveChangesAsync(sync.expenditure.ChangeTimeStamp, sync.expenditure.Change, sync.Table, EntryId, sync.expenditure.ChangeUserOnlineEntryId);
+
+                            }
                             break;
 
 
@@ -274,9 +315,19 @@ namespace ListaccFinance.API.Controllers
                                 }
                             }
                             sChange.FixedAmount = sync.service.FixedAmount == 1? true: false;
-                            save = sync.service.OnlineEntryId is null ? await _sservice.UploadServiceAsync(sChange, sId) : await _sservice.UploadOldServiceAsync(sChange, sync.service.OnlineEntryId.Value);
-                            if (save != null) mapList.Add(save);
-                            await SaveChangesAsync(sync.service.ChangeTimeStamp, sync.service.Change, sync.Table, sId, sync.service.ChangeUserOnlineEntryId);
+                            if (sync.service.OnlineEntryId is null)
+                            {
+                                save = await _sservice.UploadServiceAsync(sChange, sId);
+                                mapList.Add(save);
+                                await SaveChangesAsync(sync.service.ChangeTimeStamp, sync.service.Change, sync.Table, save.OnlineEntryId, sync.service.ChangeUserOnlineEntryId);
+
+                            }
+                            else
+                            {
+                                int EntryId = await _sservice.UploadOldServiceAsync(sChange, sync.service.OnlineEntryId.Value);
+                                await SaveChangesAsync(sync.service.ChangeTimeStamp, sync.service.Change, sync.Table, EntryId, sync.service.ChangeUserOnlineEntryId);
+
+                            }
                             break;
 
                         case "Incomes":
@@ -331,10 +382,18 @@ namespace ListaccFinance.API.Controllers
 
 
                             int iId = sync.income.Id;
-                            save = sync.income.OnlineEntryId is null ? await _sservice.UploadIncomeAsync(iChange, iId) : await _sservice.UploadOldIncomeAsync(iChange, sync.income.OnlineEntryId.Value);
-                            if (save != null) mapList.Add(save);
-                            await SaveChangesAsync(sync.income.ChangeTimeStamp, sync.income.Change, sync.Table, iId, sync.income.ChangeUserOnlineEntryId);
-                            break;
+                            if (sync.income.OnlineEntryId is null)
+                            {
+                                save = await _sservice.UploadIncomeAsync(iChange, iId);
+                                mapList.Add(save);
+                                await SaveChangesAsync(sync.income.ChangeTimeStamp, sync.income.Change, sync.Table, save.OnlineEntryId, sync.income.ChangeUserOnlineEntryId);
+                            }
+                            else
+                            {
+                                int EntryId = await _sservice.UploadOldIncomeAsync(iChange, sync.income.OnlineEntryId.Value);
+                                await SaveChangesAsync(sync.income.ChangeTimeStamp, sync.income.Change, sync.Table, EntryId, sync.income.ChangeUserOnlineEntryId);
+
+                            }break;
 
                             /*case "Changes" :
                                 int DesktopClientId = int.Parse(this.User.Claims.First(x =>x.Type == "Desktopid").Value);

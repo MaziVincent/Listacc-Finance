@@ -361,10 +361,7 @@ namespace ListaccFinance.API.Services
         public async Task<IEnumerable<User>> ReturnUsers(SearchPaging props)
         {
             var returned =  await SearchUser(props).OrderBy(x => x.Id)
-                                        .Skip((props.PageNumber - 1) * props.PageSize)
-                                        .Take(props.PageSize)
                                         .ToListAsync();
-            int i = returned.Count;
             return returned;
         }
 
@@ -374,24 +371,17 @@ namespace ListaccFinance.API.Services
                             x.Status == props.Status
                             &&
                             (x.SearchString.Contains(props.SearchString.ToUpper())));
-
-            int TotalPages = u.Count();
-            int PageCount = TotalPages / props._pageSize;
             return u;
         }
 
         // Search when search string is null
         public async Task<IEnumerable<User>> ReturnAllUsers(SearchPaging props)
         {
-            var returned = await _context.Users.Include(x => x.Person).Where(
+            return await _context.Users.Include(x => x.Person).Where(
                                         (x) =>
                                         x.Status.CompareTo(props.Status) == 0)
                                         .OrderBy(x => x.Id)
-                                        .Skip((props.PageNumber - 1) * props.PageSize)
-                                        .Take(props.PageSize)
                                         .ToListAsync();
-            int i = returned.Count;
-            return returned;
         }
 
         public async Task<RegisterModel> ReturnUser(int Id)
