@@ -51,5 +51,10 @@ public class AutoMapperProfile : Profile
                                       .ForMember(dest => dest.LastName, opt => opt.MapFrom(x => x.Person.LastName))
                                       .ForMember(dest => dest.Gender, opt => opt.MapFrom(x => x.Person.Gender));
 
+    // Mapper for Returning User
+        CreateMap<User, RegisterModel>().ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(s => s.Person.DateOfBirth))
+                                        .ForMember(dest => dest.firstName, opt => opt.MapFrom(s => s.Person.firstName))
+                                        .ForMember(dest => dest.LastName, opt => opt.MapFrom(s => s.Person.LastName))
+                                        .ForMember(dest => dest.Gender, opt => opt.MapFrom(s => s.Person.Gender));
     }
 }
