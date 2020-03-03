@@ -13,16 +13,16 @@ export class UserService {
     constructor(private httpClient: HttpClient) { }
 
     // Get list of users
-    getUserList(pageNumber?: number, itemsPerPage?: number, searchTerm?: string, roles?: string[], deactivated?: string)
+    getUserList(pageNumber?: number, itemsPerPage?: number, searchTerm?: string, role?: string[], deactivated?: string)
     : Observable<PaginatedResult<UserViewModel[]>> {
         const paginatedResult = new PaginatedResult<UserViewModel[]>();
         let params = new HttpParams();
-        if (roles.length === 0){
-            roles = ['Admin', 'Member'];
+        if (role.length === 0){
+            role = ['Admin', 'Member'];
         }
-        params = new HttpParams({ fromObject: {roles}});
+        params = new HttpParams({ fromObject: {role}});
         if (deactivated != null) {
-            params = params.append('deactivated', deactivated);
+            params = params.append('status', deactivated);
         }
         if (pageNumber != null) {
             params = params.append('pageNumber', '' + pageNumber);
@@ -31,7 +31,7 @@ export class UserService {
             params = params.append('pageSize', '' + itemsPerPage);
         }
         if (searchTerm != null) {
-            params = params.append('searchTerm', searchTerm);
+            params = params.append('searchString', searchTerm);
         }
 
         return this.httpClient.get<PaginatedResult<UserViewModel[]>>(this.usersBase, {params})
@@ -42,5 +42,25 @@ export class UserService {
                 return paginatedResult;
             })
         );
+    }
+
+    // Create User
+    createUser(user: UserViewModel): Observable<any> {
+        return this.httpClient.post(this.usersBase + '/create', user);
+    }
+
+    // Edit User
+    editUser(user: UserViewModel): Observable<any> {
+        return this.httpClient.put(this.usersBase + '/update', user);
+    }
+
+    // Deactivate user
+    deactivateUser(user: UserViewModel): Observable<any> {
+        return this.httpClient.put(this.usersBase + user.id + '/deactivate', null);
+    }
+
+    // Activate user
+    activateUser(user: UserViewModel): Observable<any> {
+        return this.httpClient.put(this.usersBase + user.id + '/activate', null);
     }
 }

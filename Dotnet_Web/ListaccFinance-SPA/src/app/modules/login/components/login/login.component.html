@@ -25,7 +25,7 @@
           </div>
           <div class="row m-t-10">
               <div class="col-md-12 no-p-lr">
-                  <form name="formCreate" #signInForm="ngForm" (ngSubmit)="signin()" class="form-horizontal" id="signIn">
+                  <form name="formCreate" #signInForm="ngForm" (ngSubmit)="signIn()" class="form-horizontal" id="signIn">
                       <div class="form-horizontal">
                           <div class="validation-summary-errors form-group" *ngIf="validationErrors.length > 0">
                               <ul>
@@ -34,10 +34,10 @@
                           </div>
   
                           <div class="form-group">
-                              <input type="email" id="Email" name="email" class="form-control" [(ngModel)]="User.username"
-                                  placeholder="Email address" [ngClass]="{'input-validation-error': fieldErrors.Username}"
+                              <input type="email" id="Email" name="email" class="form-control" [(ngModel)]="User.emailAddress"
+                                  placeholder="Email address" [ngClass]="{'input-validation-error': fieldErrors.EmailAddress}"
                                   required>
-                              <span *ngIf="fieldErrors.Username" class="field-validation-error ng-hide">{{fieldErrors.Username}}</span>
+                              <span *ngIf="fieldErrors.EmailAddress" class="field-validation-error ng-hide">{{fieldErrors.EmailAddress}}</span>
                           </div>
   
                           <div class="form-group">

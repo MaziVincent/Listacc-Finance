@@ -12,16 +12,16 @@ const routes: Routes = [
             .then(mod => mod.LoginModule)
     },
     {
-        path: '',
-        // canActivate: [AuthGuard],
-        loadChildren: () => import ('./modules/dashboard/dashboard.module')
-            .then(mod => mod.DashboardModule)
-    },
-    {
         path: 'users',
-        // canActivate: [AuthGuard],
+        canActivate: [AuthGuard],
         loadChildren: () => import ('./modules/users/users.module')
             .then(mod => mod.UsersModule)
+    },
+    {
+        path: '',
+        canActivate: [AuthGuard],
+        loadChildren: () => import ('./modules/dashboard/dashboard.module')
+            .then(mod => mod.DashboardModule)
     }
 ];
 

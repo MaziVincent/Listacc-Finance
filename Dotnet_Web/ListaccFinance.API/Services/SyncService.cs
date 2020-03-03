@@ -171,7 +171,6 @@ namespace ListaccFinance.API.Services
             thisClient.AmountReceivable = c.AmountReceivable;
             thisClient.BusinessName = c.BusinessName;
             thisClient.Email = c.Email;
-            thisClient.PersonId = c.PersonId;
             thisClient.Phone = c.Phone;
             thisClient.UId = c.UId;
             thisClient.UId2 = c.UId2;

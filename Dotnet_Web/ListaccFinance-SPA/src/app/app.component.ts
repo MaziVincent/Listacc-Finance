@@ -6,7 +6,7 @@ import { NavigationCancel, Router, NavigationStart, NavigationEnd } from '@angul
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements AfterViewInit{
+export class AppComponent implements AfterViewInit {
     title = 'Listacc Finance';
 
     loadingView: boolean;
