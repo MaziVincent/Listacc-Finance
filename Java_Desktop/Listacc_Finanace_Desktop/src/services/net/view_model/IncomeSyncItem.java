@@ -5,6 +5,8 @@
  */
 package services.net.view_model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import model.Incomes;
 import services.data.IncomeService;
 
@@ -13,14 +15,14 @@ import services.data.IncomeService;
  * @author E-book
  */
 public class IncomeSyncItem extends Incomes implements SyncItem{
-    private String change, changeTimestamp;
+    private String change, changeTimeStamp;
     private Integer changeId, changeUserOnlineEntryId, clientId, serviceId, userId;
     private Integer clientOnlineEntryId, incomeOnlineEntryId, serviceOnlineEntryId, userOnlineEntryId;
     
     public IncomeSyncItem(Integer id, String type, String date, Integer unit, double amountReceived,
             double discount, String paymentType, double amountReceivable, String dateDue, Integer onlineEntryId,
-            Integer clientId, Integer clientOnlineEntryId, Integer incomeId, 
-            Integer serviceId, Integer serviceOnlineEntryId, Integer userId, Integer userOnlineEntryId){
+            Integer clientId, Integer clientOnlineEntryId, Integer incomeId, Integer serviceId, 
+            Integer serviceOnlineEntryId, Integer userId, Integer userOnlineEntryId){
         setId(id);
         setType(type);
         setDate(date);
@@ -60,7 +62,9 @@ public class IncomeSyncItem extends Incomes implements SyncItem{
     
     @Override
     public void setChangeTimestamp(String timestamp){
-        this.changeTimestamp = timestamp;
+        Date d = new Date(Long.parseLong(timestamp));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        this.changeTimeStamp = sdf.format(d);
     }
     
     @Override
@@ -94,5 +98,19 @@ public class IncomeSyncItem extends Incomes implements SyncItem{
     
     public void setUserOnlineEntryId(Integer userOnlineEntryId){
         this.userOnlineEntryId = userOnlineEntryId;
+    }
+
+    @Override
+    public void setDate(String date) {
+        Date d = new Date(Long.parseLong(date));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        super.setDate(sdf.format(d));
+    }
+
+    @Override
+    public void setDateDue(String dateDue) {
+        Date d = new Date(Long.parseLong(dateDue));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        super.setDateDue(sdf.format(d));
     }
 }

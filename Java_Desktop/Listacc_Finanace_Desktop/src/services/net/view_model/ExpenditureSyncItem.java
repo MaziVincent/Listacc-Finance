@@ -5,6 +5,8 @@
  */
 package services.net.view_model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import model.Expenditures;
 
 /**
@@ -12,7 +14,7 @@ import model.Expenditures;
  * @author E-book
  */
 public class ExpenditureSyncItem extends Expenditures implements SyncItem{
-    private String change, changeTimestamp;
+    private String change, changeTimeStamp;
     private Integer changeId, changeUserOnlineEntryId, clientId, costCategoryId, projectId, issuerId;
     private Integer clientOnlineEntryId, costCategoryOnlineEntryId, projectOnlineEntryId, issuerOnlineEntryId;
     
@@ -47,7 +49,9 @@ public class ExpenditureSyncItem extends Expenditures implements SyncItem{
     
     @Override
     public void setChangeTimestamp(String timestamp){
-        this.changeTimestamp = timestamp;
+        Date d = new Date(Long.parseLong(timestamp));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        this.changeTimeStamp = sdf.format(d);
     }
     
     @Override
@@ -85,5 +89,12 @@ public class ExpenditureSyncItem extends Expenditures implements SyncItem{
     
     public void setIssuerOnlineEntryId(Integer issuerOnlineEntryId){
         this.issuerOnlineEntryId = issuerOnlineEntryId;
+    }
+
+    @Override
+    public void setDate(String date) {
+        Date d = new Date(Long.parseLong(date));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        super.setDate(sdf.format(d));
     }
 }
