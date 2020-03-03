@@ -105,6 +105,7 @@ namespace ListaccFinance.API.Services
 
             var per = new Person()
             {
+                
                 firstName = reg.firstName,
                 LastName = reg.LastName,
                 Gender = reg.Gender,
@@ -196,6 +197,8 @@ namespace ListaccFinance.API.Services
 
 
         }
+
+    
 
         public bool IsUserExist()
         {

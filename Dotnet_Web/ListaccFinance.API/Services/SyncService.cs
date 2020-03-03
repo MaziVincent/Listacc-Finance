@@ -131,9 +131,27 @@ namespace ListaccFinance.API.Services
         {
             try
             {
-                //int clId  = c.Id;
-                await _context.Clients.AddAsync(c);
+
+                var newC = new Client();
+                var per = new Person{
+                    firstName = c.Person.firstName,
+                    LastName = c.Person.LastName,
+                    Gender = c.Person.Gender,
+                    DateOfBirth = c.Person.DateOfBirth,
+                };
+                newC.Address = c.Address;
+                newC.AmountReceivable = c.AmountReceivable;
+                newC.BusinessName = c.BusinessName;
+                newC.Email = c.Email;
+                newC.PersonId = c.PersonId;
+                newC.Phone = c.Phone;
+                newC.UId = c.UId;
+                newC.UId2 = c.UId2;
+                newC.Person = per;
+
+                await _context.Clients.AddAsync(newC);
                 await _context.SaveChangesAsync();
+                
                 return new SavedList{
                     Id = OffId,
                     Table = "Clients",
@@ -142,13 +160,13 @@ namespace ListaccFinance.API.Services
             }
             catch (System.Exception e)
             {
-
+                
                 throw e;
             }
         }
         public async Task<SavedList> UploadOldClientAsync(Client c, int OnlineId)
         {
-            var thisClient = await _context.Clients.FindAsync(OnlineId);
+            var thisClient =await _context.Clients.Where(x => x.Id == OnlineId).Include(x => x.Person).FirstOrDefaultAsync();
             thisClient.Address = c.Address;
             thisClient.AmountReceivable = c.AmountReceivable;
             thisClient.BusinessName = c.BusinessName;
@@ -157,6 +175,11 @@ namespace ListaccFinance.API.Services
             thisClient.Phone = c.Phone;
             thisClient.UId = c.UId;
             thisClient.UId2 = c.UId2;
+            
+            thisClient.Person.DateOfBirth = c.Person.DateOfBirth;
+            thisClient.Person.LastName = c.Person.LastName;
+            thisClient.Person.firstName = c.Person.firstName;
+            thisClient.Person.Gender = c.Person.Gender;
             await _context.SaveChangesAsync();
             return null;
         }
@@ -165,6 +188,7 @@ namespace ListaccFinance.API.Services
         {
             try
             {
+
                 //int prId = p.Id;
                 await _context.Projects.AddAsync(p);
                 await _context.SaveChangesAsync();
