@@ -366,8 +366,13 @@ public class MaiinUI implements Initializable {
             Clients client = new Clients();
             String fname = clientTxtFirstName.getText();
             LocalDate localDobDate = clientTxtDob.getValue();
-
-            String dob = null == localDobDate ? null :localDobDate.toString();
+            
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.DATE, localDobDate.getDayOfMonth());
+            calendar.set(Calendar.MONTH, localDobDate.getMonthValue()-1);
+            calendar.set(Calendar.YEAR, localDobDate.getYear());
+            
+            String dob = null == localDobDate ? null :""+calendar.getTimeInMillis();
             if(clientRadioPerson.isSelected()){
                 String lname = clientTxtLastName.getText().trim();
                 incomePerson.setFirstName(fname);
@@ -933,12 +938,14 @@ public class MaiinUI implements Initializable {
             IncomeTxtLName.setDisable(false);
             incomeTxtFName.setPromptText("First Name");
             incomeRadioMale.setDisable(false);
+            incomeTxtDob.setDisable(false);
             incomeRadioFemale.setDisable(false);
         }
         else if(incomeRadioBusiness == rdb){
             IncomeTxtLName.setDisable(true);
             incomeTxtFName.setPromptText("Business Name");
             incomeRadioMale.setDisable(true);
+            incomeTxtDob.setDisable(true);
             incomeRadioFemale.setDisable(true);
         }
         else if(expRadioBusiness == rdb){
@@ -1252,9 +1259,22 @@ public class MaiinUI implements Initializable {
 
             LocalDate localDobDate = incomeTxtDob.getValue();
 
-        String dob = null == localDobDate ? null :localDobDate.toString();
+             String dob = null ;
+            if(null != localDobDate)
+            {
+                Calendar bdayCalendar = Calendar.getInstance();
+                bdayCalendar.set(Calendar.DATE, localDobDate.getDayOfMonth());
+                bdayCalendar.set(Calendar.MONTH, localDobDate.getMonthValue()-1);
+                bdayCalendar.set(Calendar.YEAR, localDobDate.getYear());
+                dob = bdayCalendar.getTimeInMillis()+"";
+            }
+       
          LocalDate localDueDate = IncomeTxtDueDate.getValue();
-        String dueDate = localDueDate.toString();
+         Calendar dueCalendar = Calendar.getInstance();
+            dueCalendar.set(Calendar.DATE, localDueDate.getDayOfMonth());
+            dueCalendar.set(Calendar.MONTH, localDueDate.getMonthValue()-1);
+            dueCalendar.set(Calendar.YEAR, localDueDate.getYear());
+            String dueDate = dueCalendar.getTimeInMillis()+"";
                   Persons incomePerson = new Persons();
 
                      String fname = incomeTxtFName.getText().trim(); 
@@ -1328,7 +1348,7 @@ public class MaiinUI implements Initializable {
         {
             info("Income entered successfully");
             incomeClient = null;
-
+               newIncomeRecord(event);
             Platform.runLater(() -> {
                 refreshIncomeView(false);
                 refreshClientView();
@@ -1778,7 +1798,7 @@ public class MaiinUI implements Initializable {
     @FXML
     private void newIncomeRecord(ActionEvent evt)
     {
-        if(incomeRadioNewIncome.isSelected())
+        //if(incomeRadioNewIncome.isSelected())
         { 
             incomeLabelAmountRecieved.setText("");
             disableIncomeClientForm(false);

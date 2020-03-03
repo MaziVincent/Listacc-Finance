@@ -42,8 +42,10 @@ public class IncomeService extends DataService {
            
             @SuppressWarnings("unchecked")
             List<Object[]> list = q.getResultList();
-        
+            
+            if(null != list.get(0)[2] )
             return map(DisplayIncome.class, list);
+            else return new LinkedList<>() ;
         }
         catch(Exception xc){
             xc.printStackTrace();
