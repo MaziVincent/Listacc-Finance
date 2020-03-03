@@ -19,5 +19,6 @@ namespace ListaccFinance.API.Interfaces
         Task Activate(int Id, int MyId);
         Task<IEnumerable<User>>  ReturnUsers (SearchPaging props);
         Task<IEnumerable<User>> ReturnAllUsers(SearchPaging props);
+        Task<RegisterModel> ReturnUser(int Id);
     }
 }

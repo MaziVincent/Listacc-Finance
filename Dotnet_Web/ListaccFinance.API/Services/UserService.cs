@@ -8,6 +8,7 @@ using ListaccFinance.API.Data.ViewModel;
 using ListaccFinance.API.Interfaces;
 using ListaccFinance.API.SendModel;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace ListaccFinance.API.Services
 
@@ -16,12 +17,16 @@ namespace ListaccFinance.API.Services
     {
         private readonly DataContext _context;
         private readonly IOtherServices _oService;
+        private readonly IMapper _mapper;
+        private readonly IUserRepo _urepo;
 
-        public UserService(DataContext context, IOtherServices oService)
+        public UserService(DataContext context, IOtherServices oService, IMapper mapper, IUserRepo uRepo)
         {
             _oService = oService;
             _context = context;
-               }
+            _mapper = mapper;
+            _urepo = uRepo;
+        }
 
 
         //First User Creation
@@ -352,10 +357,12 @@ namespace ListaccFinance.API.Services
         // Search when Search String is not null
         public async Task<IEnumerable<User>> ReturnUsers(SearchPaging props)
         {
-            return await SearchUser(props).OrderBy(x => x.Id)
+            var returned =  await SearchUser(props).OrderBy(x => x.Id)
                                         .Skip((props.PageNumber - 1) * props.PageSize)
                                         .Take(props.PageSize)
                                         .ToListAsync();
+            int i = returned.Count;
+            return returned;
         }
 
         private IQueryable<User> SearchUser(SearchPaging props)
@@ -364,20 +371,32 @@ namespace ListaccFinance.API.Services
                             x.Status == props.Status
                             &&
                             (x.SearchString.Contains(props.SearchString.ToUpper())));
+
+            int TotalPages = u.Count();
+            int PageCount = TotalPages / props._pageSize;
             return u;
         }
 
         // Search when search string is null
         public async Task<IEnumerable<User>> ReturnAllUsers(SearchPaging props)
         {
-            return await _context.Users.Include(x => x.Person).Where(
+            var returned = await _context.Users.Include(x => x.Person).Where(
                                         (x) =>
                                         x.Status.CompareTo(props.Status) == 0)
                                         .OrderBy(x => x.Id)
                                         .Skip((props.PageNumber - 1) * props.PageSize)
                                         .Take(props.PageSize)
                                         .ToListAsync();
+            int i = returned.Count;
+            return returned;
         }
+
+        public async Task<RegisterModel> ReturnUser(int Id)
+        {
+            User u = await _urepo.GertUserById(Id);
+            var User = _mapper.Map<RegisterModel>(u);
+            return User;
     }
 
+}
 }

@@ -137,7 +137,7 @@ namespace ListaccFinance.API.Controllers
             return Ok();
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> ReturnUsers ([FromQuery] SearchPaging props)
         {
@@ -192,7 +192,18 @@ namespace ListaccFinance.API.Controllers
                 return Ok(finalReturn);
             }
 
+        }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> ReturnUser([FromQuery] int Id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Bad model");
+            }
+            var u = await _uService.ReturnUser(Id);
+            return Ok(u);
         }
     }
 }
