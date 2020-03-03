@@ -13,12 +13,15 @@ import model.Expenditures;
  *
  * @author E-book
  */
-public class ExpenditureSyncItem extends Expenditures implements SyncItem{
+public class ExpenditureSyncItem implements SyncItem{
+    private Integer id, onlineEntryId;
+    private String date, description;
+    private double amount;
     private String change, changeTimeStamp;
     private Integer changeId, changeUserOnlineEntryId, clientId, costCategoryId, projectId, issuerId;
     private Integer clientOnlineEntryId, costCategoryOnlineEntryId, projectOnlineEntryId, issuerOnlineEntryId;
     
-    public ExpenditureSyncItem(Integer id, String date, String description, double amount,
+    public ExpenditureSyncItem(Integer id, Long date, String description, double amount,
             Integer onlineEntryId, Integer clientId, Integer clientOnlineEntryId, Integer costCategoryId, 
             Integer costCategoryOnlineEntryId, Integer projectId, Integer projectOnlineEntryId,
             Integer issuerId, Integer issuerOnlineEntryId){
@@ -91,10 +94,25 @@ public class ExpenditureSyncItem extends Expenditures implements SyncItem{
         this.issuerOnlineEntryId = issuerOnlineEntryId;
     }
 
-    @Override
-    public void setDate(String date) {
-        Date d = new Date(Long.parseLong(date));
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setDate(Long date) {
+        Date d = new Date(date);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-        super.setDate(sdf.format(d));
+        this.date = sdf.format(d);
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setOnlineEntryId(Integer onlineEntryId) {
+        this.onlineEntryId = onlineEntryId;
     }
 }

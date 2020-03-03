@@ -111,9 +111,9 @@ public class SynchronizationUploadService extends AsyncTask<Void, String, Void> 
                         obj.setDepartment(dService.getDepartmentByChange(ch));
                         dService.close();
                         break;
-                    /*case "Persons":
-                        obj.person = await _sservice.DownloadPersonAsync(ch);
-                        break;*/
+                    // case "Persons":
+                        // obj.person = await _sservice.DownloadPersonAsync(ch);
+                        // break;
                     case "Clients":
                         ClientService cService = new ClientService();
                         obj.setClient(cService.getClientByChange(ch));

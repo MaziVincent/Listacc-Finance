@@ -5,6 +5,8 @@
  */
 package services.net.view_model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import model.Departments;
 
 /**
@@ -12,8 +14,8 @@ import model.Departments;
  * @author E-book
  */
 public class DepartmentSyncItem extends Departments implements SyncItem{
-    private String change, changeTimestamp;
-    private Integer changeId, changeUserOnlineEntryId;
+    private String change, changeTimeStamp;
+    private int changeId, changeUserOnlineEntryId;
     
     public DepartmentSyncItem(Integer Id, Integer OnlineEntryId, String Name){
         setId(Id);
@@ -38,7 +40,9 @@ public class DepartmentSyncItem extends Departments implements SyncItem{
     
     @Override
     public void setChangeTimestamp(String timestamp){
-        this.changeTimestamp = timestamp;
+        Date d = new Date(Long.parseLong(timestamp));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        this.changeTimeStamp = sdf.format(d);
     }
     
     @Override

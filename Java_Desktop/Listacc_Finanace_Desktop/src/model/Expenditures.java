@@ -43,7 +43,7 @@ public class Expenditures implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @Column(name = "Date")
-    private String date;
+    private Long date;
     @Column(name = "Description")
     private String description;
     @Basic(optional = false)
@@ -71,7 +71,7 @@ public class Expenditures implements Serializable {
         this.id = id;
     }
 
-    public Expenditures(Integer id, String date, double amount) {
+    public Expenditures(Integer id, Long date, double amount) {
         this.id = id;
         this.date = date;
         this.amount = amount;
@@ -85,11 +85,11 @@ public class Expenditures implements Serializable {
         this.id = id;
     }
 
-    public String getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 

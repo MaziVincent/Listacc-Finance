@@ -5,6 +5,8 @@
  */
 package services.net.view_model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import model.Clients;
 import model.Persons;
 
@@ -13,8 +15,8 @@ import model.Persons;
  * @author E-book
  */
 public class ClientSyncItem extends Clients implements SyncItem{
-    private Integer personId, changeId, changeUserOnlineEntryId;
-    private String change, changeTimestamp;
+    private Integer personId, personOnlineEntryId, changeId, changeUserOnlineEntryId;
+    private String change, changeTimeStamp;
 
     public ClientSyncItem(Integer Id, String BusinessName, String Phone, String Email,
             String Address, String UId, String UId2, Double AmountReceivable, Integer OnlineEntryId, 
@@ -75,7 +77,9 @@ public class ClientSyncItem extends Clients implements SyncItem{
     
     @Override
     public void setChangeTimestamp(String timestamp){
-        this.changeTimestamp = timestamp;
+        Date d = new Date(Long.parseLong(timestamp));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        this.changeTimeStamp = sdf.format(d);
     }
     
     @Override

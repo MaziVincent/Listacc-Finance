@@ -29,7 +29,7 @@ public class ChangeService extends DataService {
         CREATE, EDIT, DELETE
     };
     
-    private final static int NUMBER_OF_ITEMS_TO_PUSH = 10;
+    private final static int NUMBER_OF_ITEMS_TO_PUSH = 2;
     
     // Create Operations
     public boolean insertCreateChange(Clients client){

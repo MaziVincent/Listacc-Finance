@@ -56,7 +56,7 @@ public class IncomeService extends DataService {
     public IncomeSyncItem getIncomeById(int id)
     {
         try{
-            Query q = em.createQuery("SELECT new services.net.view_model.IncomeSyncItem(c.id, c.type, c.date, c.unit, c.amountReceived, c.discount, c.paymentType, c.amountReceivable, c.dateDue, c.onlineEntryId, c.client.id, c.incomeId, c.client.onlineEntryId, c.service.id, c.service.onlineEntryId, c.user.id, c.user.onlineEntryId) "
+            Query q = em.createQuery("SELECT new services.net.view_model.IncomeSyncItem(c.id, c.type, c.date, c.unit, c.amountReceived, c.discount, c.paymentType, c.amountReceivable, c.dateDue, c.onlineEntryId, c.client.id, c.client.onlineEntryId, c.incomeId, c.service.id, c.service.onlineEntryId, c.user.id, c.user.onlineEntryId) "
                     + "FROM Incomes c  WHERE c.id = :id");
             q.setParameter("id", id);
             IncomeSyncItem a = (IncomeSyncItem)q.getSingleResult();
@@ -127,15 +127,19 @@ public class IncomeService extends DataService {
             em.getTransaction().begin();
             income.setService(serv);
             income.setUser(display.getUser());
+            em.getTransaction().commit();
             
             if(display.getParentIncomeId() > 0) {
                 Incomes pIncome = (Incomes) em.createNamedQuery("Incomes.findById")
                    .setParameter("id", display.getParentIncomeId()).getSingleResult();
-                income.setIncome(pIncome);
+                income.setIncomeId(pIncome.getId());
                 pIncome.setAmountReceivable(pIncome.getAmountReceivable() - income.getAmountReceived());
+                em.getTransaction().begin();
                 em.persist(pIncome);
+                em.getTransaction().commit();
+               
             }
-           
+            em.getTransaction().begin();
             em.persist(income);
             em.getTransaction().commit();
             

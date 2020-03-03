@@ -44,8 +44,8 @@ public class DisplayIncome extends Incomes{
         this.paymentCounts = paymentCounts;
     }
     public String getDateString() {
-        String date =   getDate();
-        long dateLong = Long.parseLong(date);
+        Long date =   getDate();
+        long dateLong = date;
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dateLong);
         DateFormat df = new SimpleDateFormat("dd-EEE, MM, yyyy");
@@ -55,8 +55,8 @@ public class DisplayIncome extends Incomes{
    
     
     public String getDateStringWithTime() {
-        String date =   getDate();
-        long dateLong = Long.parseLong(date);
+        Long date =   getDate();
+        long dateLong = date;
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dateLong);
         DateFormat df = new SimpleDateFormat("HH:MM - dd-EEE, MM, yyyy");
@@ -148,7 +148,7 @@ public class DisplayIncome extends Incomes{
     public void setClientNumId(int clientNumId) {
         this.clientNumId = clientNumId;
     }
-    public DisplayIncome(String serviceName, String clientName, int clientId,   Integer id, String date,int unit, double amountReceived, double discount, String paymentType, double amountReceivable, String dateDue) {
+    public DisplayIncome(String serviceName, String clientName, int clientId,   Integer id, Long date,int unit, double amountReceived, double discount, String paymentType, double amountReceivable, Long dateDue) {
         super(id, date,unit, amountReceived, discount, amountReceivable, dateDue);
         this.serviceName = serviceName;
         this.displayPaymentType = paymentType;
@@ -167,7 +167,7 @@ public class DisplayIncome extends Incomes{
             
     }
     
-    public DisplayIncome(String serviceName, String clientName, Integer clientId,   Integer id, String date,Integer unit, Double amountReceived, Double discount, String paymentType, Double amountReceivable, String dateDue, Integer count) {
+    public DisplayIncome(String serviceName, String clientName, Integer clientId,   Integer id, Long date,Integer unit, Double amountReceived, Double discount, String paymentType, Double amountReceivable, Long dateDue, Integer count) {
         super(id, date,unit, amountReceived, discount, amountReceivable, dateDue);
         this.serviceName = serviceName;
         this.paymentCounts = count + 1;

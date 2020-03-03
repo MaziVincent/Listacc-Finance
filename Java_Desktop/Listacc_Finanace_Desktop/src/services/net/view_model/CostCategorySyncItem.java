@@ -5,6 +5,8 @@
  */
 package services.net.view_model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import model.CostCategories;
 
 /**
@@ -12,7 +14,7 @@ import model.CostCategories;
  * @author E-book
  */
 public class CostCategorySyncItem extends CostCategories implements SyncItem{
-    private String change, changeTimestamp;
+    private String change, changeTimeStamp;
     private Integer changeId, changeUserOnlineEntryId;
     
     public CostCategorySyncItem(Integer id, String name, String type, String description, Integer onlineEntryId){
@@ -35,7 +37,9 @@ public class CostCategorySyncItem extends CostCategories implements SyncItem{
     
     @Override
     public void setChangeTimestamp(String timestamp){
-        this.changeTimestamp = timestamp;
+        Date d = new Date(Long.parseLong(timestamp));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        this.changeTimeStamp = sdf.format(d);
     }
     
     @Override

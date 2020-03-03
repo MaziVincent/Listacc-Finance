@@ -13,14 +13,29 @@ import model.Users;
  *
  * @author E-book
  */
-public class UserSyncItem extends Users{
-    private Integer departmentId;
-    private Integer personId;
-    private String change;
-    private Integer changeId;
+public class UserSyncItem extends Users implements SyncItem{
+    private Integer departmentId, departmentOnlineEntryId, personId;
+    private String change, changeTimeStamp;
+    private Integer changeId, changeUserOnlineEntryId;
     
+    @Override
     public Integer getChangeId(){
         return changeId;
+    }
+    
+    @Override
+    public void setChange(String change){
+        this.change = change;
+    }
+    
+    @Override
+    public void setChangeTimestamp(String timestamp){
+        this.changeTimeStamp = timestamp;
+    }
+    
+    @Override
+    public void setChangeUserOnlineEntryId(Integer userId){
+        this.changeUserOnlineEntryId = userId;
     }
     
     public Integer getDepartmentId(){
