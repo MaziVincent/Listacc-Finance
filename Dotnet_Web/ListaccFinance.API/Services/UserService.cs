@@ -32,7 +32,7 @@ namespace ListaccFinance.API.Services
         //First User Creation
         public async Task<string> CreateUserAsync(RegisterModel reg)
         {
-            var newUser = new Member();
+            var newUser = new Admin();
 
             var dept = new Department()
             {
@@ -67,9 +67,9 @@ namespace ListaccFinance.API.Services
 
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
-            newUser.SearchString = (newUser.Id + " " + newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " Member").ToUpper();
+            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " Admin").ToUpper();
             await _context.SaveChangesAsync();
-            var thisUser = _context.Members.
+            var thisUser = _context.Admins.
                 Where(x => x.Email.CompareTo(reg.EmailAddress) == 0 &&
                  x.PasswordHash.CompareTo(hash) == 0).FirstOrDefault();
 
@@ -98,10 +98,10 @@ namespace ListaccFinance.API.Services
 
             var newUser = new Member();
 
-            var dept = new Department()
-            {
-                Name = reg.Department
-            };
+            // var dept = new Department()
+            // {
+            //     Name = reg.Department
+            // };
 
             var per = new Person()
             {
@@ -116,6 +116,7 @@ namespace ListaccFinance.API.Services
             newUser.Address = reg.Address;
             newUser.Phone = reg.Phone;
             newUser.Status = true;
+            newUser.DepartmentId = _context.Departments.Where(x => x.Name.CompareTo(reg.Department) == 0).FirstOrDefaultAsync().Id;
 
 
             // Password Hash
@@ -127,7 +128,7 @@ namespace ListaccFinance.API.Services
 
 
             newUser.Person = per;
-            newUser.Department = dept;
+            //newUser.Department = dept;
 
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
