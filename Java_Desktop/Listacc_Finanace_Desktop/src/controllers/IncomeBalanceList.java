@@ -71,7 +71,7 @@ public class IncomeBalanceList implements Initializable{
         public void initialize(URL url, ResourceBundle rb) {
             ObservableList<DisplayIncome> clientData
             = FXCollections.observableArrayList(incomeList);
-                       incomesFiltered =  new FilteredList(clientData,(p -> true ));
+                         incomesFiltered =  new FilteredList(clientData,(p -> true ));
                   incomeTablePop.setItems(incomesFiltered);
             incomeColSerial.setCellFactory(indexCellFactory());
             incomeColId.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("id"));
