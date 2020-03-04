@@ -56,7 +56,7 @@ public class IncomeService extends DataService {
     public IncomeSyncItem getIncomeById(int id)
     {
         try{
-            Query q = em.createQuery("SELECT new services.net.view_model.IncomeSyncItem(c.id, c.type, c.date, c.unit, c.amountReceived, c.discount, c.paymentType, c.amountReceivable, c.dateDue, c.onlineEntryId, c.client.id, c.incomeId, c.client.onlineEntryId, c.service.id, c.service.onlineEntryId, c.user.id, c.user.onlineEntryId) "
+            Query q = em.createQuery("SELECT new services.net.view_model.IncomeSyncItem(c.id, c.type, c.date, c.unit, c.amountReceived, c.discount, c.paymentType, c.amountReceivable, c.dateDue, c.onlineEntryId, c.client.id, c.client.onlineEntryId, c.incomeId, c.service.id, c.service.onlineEntryId, c.user.id, c.user.onlineEntryId) "
                     + "FROM Incomes c  WHERE c.id = :id");
             q.setParameter("id", id);
             IncomeSyncItem a = (IncomeSyncItem)q.getSingleResult();
@@ -72,7 +72,7 @@ public class IncomeService extends DataService {
     public IncomeSyncItem getIncomeByChange(Changes ch)
     {
         try{
-            Query q = em.createQuery("SELECT new services.net.view_model.IncomeSyncItem(c.id, c.type, c.date, c.unit, c.amountReceived, c.discount, c.paymentType, c.amountReceivable, c.dateDue, c.onlineEntryId, c.client.id, c.incomeId, c.client.onlineEntryId, c.service.id, c.service.onlineEntryId, c.user.id, c.user.onlineEntryId) "
+            Query q = em.createQuery("SELECT new services.net.view_model.IncomeSyncItem(c.id, c.type, c.date, c.unit, c.amountReceived, c.discount, c.paymentType, c.amountReceivable, c.dateDue, c.onlineEntryId, c.client.id, c.client.onlineEntryId, c.incomeId, c.service.id, c.service.onlineEntryId, c.user.id, c.user.onlineEntryId) "
                     + "FROM Incomes c  WHERE c.id = :id");
             q.setParameter("id", ch.getEntryId());
             IncomeSyncItem a = (IncomeSyncItem)q.getSingleResult();

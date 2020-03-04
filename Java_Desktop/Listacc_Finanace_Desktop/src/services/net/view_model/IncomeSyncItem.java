@@ -5,6 +5,8 @@
  */
 package services.net.view_model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import model.Incomes;
 import services.data.IncomeService;
 
@@ -12,15 +14,18 @@ import services.data.IncomeService;
  *
  * @author E-book
  */
-public class IncomeSyncItem extends Incomes implements SyncItem{
-    private String change, changeTimestamp;
+public class IncomeSyncItem implements SyncItem{
+    private Integer id, unit, onlineEntryId, incomeId;
+    private String type, date, paymentType, dateDue;
+    private double amountReceived, discount, amountReceivable;
+    private String change, changeTimeStamp;
     private Integer changeId, changeUserOnlineEntryId, clientId, serviceId, userId;
     private Integer clientOnlineEntryId, incomeOnlineEntryId, serviceOnlineEntryId, userOnlineEntryId;
     
     public IncomeSyncItem(Integer id, String type, Long date, Integer unit, double amountReceived,
             double discount, String paymentType, double amountReceivable, Long dateDue, Integer onlineEntryId,
-            Integer clientId, Integer clientOnlineEntryId, Integer incomeId, 
-            Integer serviceId, Integer serviceOnlineEntryId, Integer userId, Integer userOnlineEntryId){
+            Integer clientId, Integer clientOnlineEntryId, Integer incomeId, Integer serviceId, 
+            Integer serviceOnlineEntryId, Integer userId, Integer userOnlineEntryId){
         setId(id);
         setType(type);
         setDate(date);
@@ -60,7 +65,9 @@ public class IncomeSyncItem extends Incomes implements SyncItem{
     
     @Override
     public void setChangeTimestamp(String timestamp){
-        this.changeTimestamp = timestamp;
+        Date d = new Date(Long.parseLong(timestamp));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        this.changeTimeStamp = sdf.format(d);
     }
     
     @Override
@@ -94,5 +101,57 @@ public class IncomeSyncItem extends Incomes implements SyncItem{
     
     public void setUserOnlineEntryId(Integer userOnlineEntryId){
         this.userOnlineEntryId = userOnlineEntryId;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setDate(Long date) {
+        Date d = new Date(date);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        this.date = sdf.format(d);
+    }
+    
+    public void setUnit(int unit) {
+        this.unit = unit;
+    }
+
+    public void setAmountReceived(double amountReceived) {
+        this.amountReceived = amountReceived;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
+
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
+    }
+
+    public void setAmountReceivable(double amountReceivable) {
+        this.amountReceivable = amountReceivable;
+    }
+
+    public void setDateDue(Long dateDue) {
+        Date d = new Date(dateDue);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        this.dateDue = sdf.format(d);
+    }
+
+    public Integer getOnlineEntryId() {
+        return this.onlineEntryId;
+    }
+
+    public void setOnlineEntryId(Integer onlineEntryId) {
+        this.onlineEntryId = onlineEntryId;
+    }
+
+    public void setIncomeId(Integer incomeId) {
+        this.incomeId = incomeId;
     }
 }

@@ -1,8 +1,8 @@
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 export class TokenUser {
-    token: string;
-    user: { lastName: string, firstName: string, email: string, phone: string};
+    tokenString: string;
+    currentUser: { person: { lastName: string, firstName: string, email: string }, phone: string };
 }
 
 export class LoginUser {
@@ -20,16 +20,16 @@ export class MyUser {
 
     constructor(userAndToken: TokenUser) {
         if (userAndToken != null) {
-            const decodedToken =  new JwtHelperService().decodeToken(userAndToken.token);
-            this.id = decodedToken.nameid;
-            this.email = decodedToken.unique_name;
+            const decodedToken =  new JwtHelperService().decodeToken(userAndToken.tokenString);
+            this.id = decodedToken.UserID;
+            this.email = decodedToken.Email;
             this.role = decodedToken.role;
-            this.fullName = userAndToken.user.firstName + ' ' + userAndToken.user.lastName;
+            this.fullName = userAndToken.currentUser.person.firstName + ' ' + userAndToken.currentUser.person.lastName;
         }
     }
 }
 
-export class UserViewModel{
+export class UserViewModel {
     id: number;
     firstName: string;
     lastName: string;
@@ -40,4 +40,11 @@ export class UserViewModel{
     role: string;
     address: string;
     deactivated: boolean | string;
+    status: boolean | string;
+}
+
+export class StatusOption {
+    name: string;
+    value: string;
+    iconClass: string;
 }

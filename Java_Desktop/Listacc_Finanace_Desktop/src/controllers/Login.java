@@ -86,21 +86,21 @@ public class Login implements Initializable  {
         
         String username = txtUsername.getText().trim();
         String password = txtPassword.getText().trim();
-        UserService userService = new UserService();
-        Users user = userService.getUserById(8);
-//        if(username.length() > 4 && password.length() > 4)
-//        {
-//            AuthenticationService authService = new AuthenticationService(username, password, this);
-//            authService.execute();
-//        }      
-//        else
-//        {
-//            signinStatuSP.set("Invalid username or password");
-//            lblLoginStatus.setTextFill(Color.RED);
-//            enableComponents();
-//        }
+        // UserService userService = new UserService();
+        // Users user = userService.getUserById(8);
+        if(username.length() > 4 && password.length() > 4)
+        {
+            AuthenticationService authService = new AuthenticationService(username, password, this);
+            authService.execute();
+        }      
+        else
+        {
+            signinStatuSP.set("Invalid username or password");
+            lblLoginStatus.setTextFill(Color.RED);
+            enableComponents();
+        }
 
-        loadMainUI(user);
+        // loadMainUI(user);
     }
     
     

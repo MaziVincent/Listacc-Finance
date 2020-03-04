@@ -172,7 +172,7 @@ public class MaiinUI implements Initializable {
                 SynchronizationDownloadService conn = new SynchronizationDownloadService(); //activitySp
                 conn.execute();
             });
-        }, 0, 5, TimeUnit.MINUTES);
+        }, 0, 3, TimeUnit.MINUTES);
 
         // run synchronization upload operation
         ScheduledExecutorService synUpExec = Executors.newSingleThreadScheduledExecutor();
@@ -181,7 +181,7 @@ public class MaiinUI implements Initializable {
                 SynchronizationUploadService conn = new SynchronizationUploadService(null); //activitySp
                 conn.execute();
             });
-        }, 0, 5, TimeUnit.MINUTES);
+        }, 0, 3, TimeUnit.MINUTES);
     }
 
     private void initializeButtonEnableProp()

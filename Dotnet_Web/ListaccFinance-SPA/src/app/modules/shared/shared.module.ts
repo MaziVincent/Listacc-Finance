@@ -7,7 +7,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { Ng2TelInputModule } from 'ng2-tel-input';
 import { Ng7BootstrapBreadcrumbModule } from 'ng7-bootstrap-breadcrumb';
-import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCollapseModule, NgbPaginationModule, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { LayoutComponent } from './components/layout/layout.component';
+import { BsDropdownModule } from 'ngx-bootstrap';
+import { MyPaginationComponent } from './components/my-pagination/my-pagination.component';
+import { ConfirmExitComponent } from './components/confirm-exit/confirm-exit.component';
+import { ConfirmDeleteComponent } from './components/confirm-delete/confirm-delete.component';
+import { NgSelectizeModule } from 'ng-selectize';
+import { InterceptorProviders } from 'src/app/interceptors/interceptor-providers';
 
 @NgModule({
   imports: [
@@ -25,17 +32,33 @@ import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
     }),
     Ng7BootstrapBreadcrumbModule,
     Ng2TelInputModule,
-    NgbCollapseModule
+    NgbCollapseModule,
+    NgbPaginationModule,
+    NgbModalModule,
+    NgSelectizeModule,
+    BsDropdownModule.forRoot()
   ],
   exports: [
     CommonModule,
     FormsModule,
     Ng7BootstrapBreadcrumbModule,
     Ng2TelInputModule,
-    NgbCollapseModule
+    NgbCollapseModule,
+    NgbPaginationModule,
+    NgbModalModule,
+    NgSelectizeModule,
+    BsDropdownModule,
+    MyPaginationComponent
   ],
   declarations: [
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    LayoutComponent,
+    MyPaginationComponent,
+    ConfirmExitComponent,
+    ConfirmDeleteComponent
+  ],
+  providers: [
+    InterceptorProviders
   ]
 })
 export class SharedModule { }

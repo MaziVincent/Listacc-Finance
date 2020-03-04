@@ -5,6 +5,9 @@
  */
 package services.net.view_model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  *
  * @author E-book
@@ -40,6 +43,12 @@ public class SyncDownloadEntryViewModel {
     // Client
     public void setClient(ClientSyncItem client){
         this.client = client;
+        if(client.getPerson().getDateOfBirth() != null && !client.getPerson().getDateOfBirth().isEmpty())
+        {
+            Date d = new Date(Long.parseLong(client.getPerson().getDateOfBirth()));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            client.getPerson().setDateOfBirth(sdf.format(d));
+        }
     }
     
     public ClientSyncItem getClient(){

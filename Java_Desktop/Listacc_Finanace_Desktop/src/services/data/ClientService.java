@@ -202,6 +202,7 @@ public class ClientService extends DataService {
             em.close();
 
             // insert chage
+            client.setId(id);
             new ChangeService().insertUpdateChange(client);
             
             return true;
