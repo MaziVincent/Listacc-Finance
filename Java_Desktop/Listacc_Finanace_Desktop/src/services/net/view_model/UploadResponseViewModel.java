@@ -10,12 +10,12 @@ package services.net.view_model;
  * @author E-book
  */
 public class UploadResponseViewModel {
-    private int entryId;
+    private int id;
     private int onlineEntryId;
     private String table;
     
     public int getId() {
-        return entryId;
+        return id;
     }
 
     public int getOnlineEntryId() {

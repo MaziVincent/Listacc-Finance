@@ -19,6 +19,10 @@ export class AuthService {
         localStorage.setItem('user', tokenString);
     }
 
+    getToken(): string {
+        return this.getUserAndToken() ? this.getUserAndToken().tokenString : '';
+    }
+
 
     // User
     getUser(): MyUser {
@@ -34,11 +38,13 @@ export class AuthService {
     }
 
     isUserLoggedIn() {
-        const token = this.getUserAndToken() ? (this.getUserAndToken().token ? this.getUserAndToken().token : null) : null;
+        const token = this.getUserAndToken() ? (this.getUserAndToken().tokenString ? this.getUserAndToken().tokenString : null) : null;
         if (token) {
             if (!this.jwtHelper.isTokenExpired(token)) {
                 const decodedToken = this.jwtHelper.decodeToken(token);
-                if (decodedToken != null) return true;
+                if (decodedToken != null) {
+                    return true;
+                }
                 return false;
             }
         }
@@ -52,5 +58,6 @@ export class AuthService {
     logout() {
         // remove user from local storage to log user out
         localStorage.removeItem('user');
+        this.clearCurrentUser();
     }
 }

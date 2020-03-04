@@ -12,8 +12,8 @@ namespace ListaccFinance.API.Data.ViewModel
     public class UploadSyncViewModel
     {
         public DepartmentUpViewModel dept { get; set; }
-        public PersonUpViewModel person { get; set; }
-        public UserUpViewModel user { get; set; }
+        /*public PersonUpViewModel person { get; set; }
+        public UserUpViewModel user { get; set; }*/
         public ClientUpViewModel client { get; set; }
         public ProjectUpViewModel project { get; set; }
         public CostCategoryUpViewModel costCategory { get; set; }

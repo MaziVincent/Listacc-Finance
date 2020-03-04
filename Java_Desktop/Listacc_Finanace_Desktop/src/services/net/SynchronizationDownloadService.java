@@ -108,10 +108,10 @@ public class SynchronizationDownloadService extends AsyncTask<Void, String, Void
                                     new DepartmentService().addDownloadedEntry(entry.getDepartment());
                                     syncInfo.setLastChangeId(entry.getDepartment().getChangeId());
                                     break;
-                                /*case "Persons":
-                                    new PersonService().addDownloadedEntry(entry.getPerson());
-                                    syncInfo.setLastChangeId(entry.getPerson().getChangeId());
-                                    break;*/
+                                // case "Persons":
+                                    // new PersonService().addDownloadedEntry(entry.getPerson());
+                                    // syncInfo.setLastChangeId(entry.getPerson().getChangeId());
+                                    // break;
                                 case "Users":
                                     new UserService().addDownloadedEntry(entry.getUser());
                                     syncInfo.setLastChangeId(entry.getUser().getChangeId());

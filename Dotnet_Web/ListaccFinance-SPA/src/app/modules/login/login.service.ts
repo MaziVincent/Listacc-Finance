@@ -8,7 +8,7 @@ import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class LoginService {
-    private authBase = environment.Url + '/auth';
+    private authBase = environment.Url + 'auth';
 
     constructor(private http: HttpClient,
                 private authService: AuthService) { }

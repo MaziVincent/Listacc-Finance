@@ -17,6 +17,8 @@ export class ValidationErrorService {
         this.allErrors.validationErrors = [];
         this.allErrors.fieldErrors = {};
 
+        errors = errors.hasOwnProperty('error') && errors.error.hasOwnProperty('errors') ? errors.error.errors : errors;
+
         if (errors) {
             let count = 0;
             for (let key in errors) {

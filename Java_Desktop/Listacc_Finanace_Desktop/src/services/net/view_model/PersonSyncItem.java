@@ -11,9 +11,9 @@ import model.Persons;
  *
  * @author E-book
  */
-public class PersonSyncItem extends Persons{
-    private String change;
-    private Integer changeId;
+public class PersonSyncItem extends Persons implements SyncItem{
+    private String change, changeTimeStamp;
+    private Integer changeId, changeUserOnlineEntryId;
     
     public PersonSyncItem(){}
     
@@ -25,8 +25,24 @@ public class PersonSyncItem extends Persons{
         setDateOfBirth(dateOfBirth);
     }
     
+    @Override
     public Integer getChangeId(){
         return changeId;
+    }
+    
+    @Override
+    public void setChange(String change){
+        this.change = change;
+    }
+    
+    @Override
+    public void setChangeTimestamp(String timestamp){
+        this.changeTimeStamp = timestamp;
+    }
+    
+    @Override
+    public void setChangeUserOnlineEntryId(Integer userId){
+        this.changeUserOnlineEntryId = userId;
     }
 
     public static Persons map(PersonSyncItem entry){

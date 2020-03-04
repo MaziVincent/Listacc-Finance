@@ -140,7 +140,7 @@ namespace ListaccFinance.API.Controllers
                             break;
 
 
-                        case "Persons":
+                        /*case "Persons":
                             var pChange = _mapper.Map<Person>(sync.person);
                             int pId = sync.person.Id;
                             if (sync.person.OnlineEntryId is null)
@@ -190,7 +190,7 @@ namespace ListaccFinance.API.Controllers
                             int uId = sync.user.Id;
                             await _sservice.UploadUserAsync(regUser, sync.user.Id);
                             await SaveChangesAsync(sync.user.ChangeTimeStamp, sync.user.Change, sync.Table, uId, sync.user.ChangeUserOnlineEntryId);
-                            break;
+                            break;*/
 
 
                         case "Clients":
@@ -265,7 +265,7 @@ namespace ListaccFinance.API.Controllers
                             else
                             {
                                 int EntryId = await _sservice.UploadOldProjectAsync(prChange, sync.project.OnlineEntryId.Value);
-                                await SaveChangesAsync(sync.project.ChangeTimeStamp, sync.project.Change, sync.Table, prId, sync.project.ChangeUserOnlineEntryId);
+                                await SaveChangesAsync(sync.project.ChangeTimeStamp, sync.project.Change, sync.Table, EntryId, sync.project.ChangeUserOnlineEntryId);
                             }
                             break;
 
@@ -430,7 +430,7 @@ namespace ListaccFinance.API.Controllers
                             {
                                 foreach (var saved in mapList)
                                 {
-                                    if (saved.Id == sync.income.ServiceId && saved.Table.CompareTo("Clients") == 0)
+                                    if (saved.Id == sync.income.ClientId && saved.Table.CompareTo("Clients") == 0)
                                     {
                                         iChange.ClientId = saved.OnlineEntryId;
                                         break;
@@ -450,7 +450,7 @@ namespace ListaccFinance.API.Controllers
                                 }
                             }
 
-                            if (sync.income.IncomeOnlineEntryId == null)
+                            if (sync.income.IncomeOnlineEntryId == null && sync.income.IncomeId != 0)
                             {
                                 foreach (var saved in mapList)
                                 {

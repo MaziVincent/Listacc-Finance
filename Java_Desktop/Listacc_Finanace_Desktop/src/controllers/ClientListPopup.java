@@ -65,7 +65,7 @@ public class ClientListPopup implements Initializable {
             ObservableList<DisplayClient> clientData
             = FXCollections.observableArrayList(clientList);
             if(income)
-            clientsFiltered =  new FilteredList<DisplayClient>(clientData,(p -> (null != p.getUId() || !p.getUId().isEmpty()) ));
+            clientsFiltered =  new FilteredList<DisplayClient>(clientData,(p -> (null != p.getUId() && !p.getUId().trim().isEmpty()) ));
             else 
                 clientsFiltered =  new FilteredList<DisplayClient>(clientData,(p -> (null == p.getUId() || p.getUId().isEmpty()) ));
                   clientListTable.setItems(clientsFiltered);

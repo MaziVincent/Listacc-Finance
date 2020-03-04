@@ -5,14 +5,19 @@
  */
 package services.net.view_model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import model.Expenditures;
 
 /**
  *
  * @author E-book
  */
-public class ExpenditureSyncItem extends Expenditures implements SyncItem{
-    private String change, changeTimestamp;
+public class ExpenditureSyncItem implements SyncItem{
+    private Integer id, onlineEntryId;
+    private String date, description;
+    private double amount;
+    private String change, changeTimeStamp;
     private Integer changeId, changeUserOnlineEntryId, clientId, costCategoryId, projectId, issuerId;
     private Integer clientOnlineEntryId, costCategoryOnlineEntryId, projectOnlineEntryId, issuerOnlineEntryId;
     
@@ -47,7 +52,9 @@ public class ExpenditureSyncItem extends Expenditures implements SyncItem{
     
     @Override
     public void setChangeTimestamp(String timestamp){
-        this.changeTimestamp = timestamp;
+        Date d = new Date(Long.parseLong(timestamp));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        this.changeTimeStamp = sdf.format(d);
     }
     
     @Override
@@ -85,5 +92,27 @@ public class ExpenditureSyncItem extends Expenditures implements SyncItem{
     
     public void setIssuerOnlineEntryId(Integer issuerOnlineEntryId){
         this.issuerOnlineEntryId = issuerOnlineEntryId;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setDate(Long date) {
+        Date d = new Date(date);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        this.date = sdf.format(d);
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setOnlineEntryId(Integer onlineEntryId) {
+        this.onlineEntryId = onlineEntryId;
     }
 }
