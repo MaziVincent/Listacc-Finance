@@ -1397,6 +1397,8 @@ public class MaiinUI implements Initializable {
          incomeTxtFName.setDisable(disable);
          incomeTxtDob.setDisable(disable);
          incomeTxtAdd.setDisable(disable);
+         incomeRadioMale.setDisable(disable);
+         incomeRadioFemale.setDisable(disable);
         // incomeRadioNew.setDisable(disable);
          //existingClientRadio.setDisable(disable);
          incomeRadioBusiness.setDisable(disable);
@@ -1725,7 +1727,7 @@ public class MaiinUI implements Initializable {
 
     private void disableIcomeForm(boolean disable){
         incomeComboService.setDisable(disable);
-        incomeComboPType.setDisable(disable);
+        //incomeComboPType.setDisable(disable);
         IncomeTxtDueDate.setDisable(disable);
         incomeTxtUnit.setDisable(disable);
         incomeTxtAmount.setDisable(disable);
@@ -1747,7 +1749,7 @@ public class MaiinUI implements Initializable {
     private void showClientListPopup(ActionEvent Evt){
         if(existingClientRadio.isSelected()){ 
             try{
-                disableIncomeClientForm(true);
+            disableIncomeClientForm(true);
             Stage stage;
             Parent root;
             stage = new Stage();
@@ -1775,8 +1777,9 @@ public class MaiinUI implements Initializable {
                         incomeClient = new ClientService().getClientById(client.getId());
                         if(null == incomeClient.getPerson())
                              incomeRadioBusiness.setSelected(true);
+                             validateIncomeForm();
                      });
-                     validateIncomeForm();
+                     
                 }
                 else 
                 {
@@ -1822,8 +1825,9 @@ public class MaiinUI implements Initializable {
                 incomeTxtAdd.setText("");
                 incomeTxtDob.setValue(null);
                 incomeRadioFull.setSelected(true);
+                incomeRadioNew.setSelected(true);
                 incomeLabelAmountRecieved.setText("");
-
+                incomeRadioPerson.setSelected(true);
 
         }
     }
@@ -2037,8 +2041,8 @@ public class MaiinUI implements Initializable {
               try{
 
                 String discountString = incomeTxtDiscount.getText().trim();
-                String lname = IncomeTxtLName.getText().trim();
-                String fname = incomeTxtFName.getText().trim();
+                String lname = incomeRadioPerson.isSelected()? IncomeTxtLName.getText().trim():"";
+                String fname =  incomeTxtFName.getText().trim();
                 String email = incomeTxtEmail.getText().trim();
                 String phone = incomeTxtPhone.getText().trim();
                 String uid = incomeTxtUid.getText().trim();
@@ -2055,12 +2059,12 @@ public class MaiinUI implements Initializable {
                                             phone.length() < 1)
                                         || uid.length() < 1 );
                         incomeSaveBtnDisableProp.set(disable);
-                        Clients incomeClient = new Clients();
+                       // Clients incomeClient = new Clients();
                         if(incomeRadioBusiness.isSelected())
                                 {
-                                    boolean temp =  fname.length() < 1;
-                                    incomeSaveBtnDisableProp.set(disable || temp );
-                                    incomeClient.setBusinessName(fname);
+                                    boolean temp =  fname.length() < 1 || (email.length() < 1 && phone.length() < 1 ) || uid.length() < 1 ;
+                                    incomeSaveBtnDisableProp.set( temp );
+                                   // incomeClient.setBusinessName(fname);
 
                                 }
 
