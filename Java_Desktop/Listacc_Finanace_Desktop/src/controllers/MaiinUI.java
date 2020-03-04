@@ -2062,7 +2062,9 @@ public class MaiinUI implements Initializable {
                        // Clients incomeClient = new Clients();
                         if(incomeRadioBusiness.isSelected())
                                 {
-                                    boolean temp =  fname.length() < 1 || (email.length() < 1 && phone.length() < 1 ) || uid.length() < 1 ;
+                                    boolean temp =  fname.length() < 1 || (email.length() < 1 && phone.length() < 1 )
+                                            || uid.length() < 1 || (incomeRadioFull.isSelected() && discount > amountReceived/2) 
+                                            || amountReceived < 1;
                                     incomeSaveBtnDisableProp.set( temp );
                                    // incomeClient.setBusinessName(fname);
 
