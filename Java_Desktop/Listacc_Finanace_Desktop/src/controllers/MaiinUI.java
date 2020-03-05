@@ -1222,15 +1222,12 @@ public class MaiinUI implements Initializable {
     }
 
     private void setIncomeAmount(){
-
-
         double discount = 0;
         double amount  = 0;
         int unit = 1;
          NumberFormat formatter = new DecimalFormat("#,###.00"); 
         try{
             amount  = Double.parseDouble(incomeTxtAmount.getText().trim());
-
         }catch(Exception e){}
         try{
              unit = Integer.parseInt(incomeTxtUnit.getText().trim());
@@ -1248,9 +1245,7 @@ public class MaiinUI implements Initializable {
     private void saveIncome(ActionEvent event){
         DisplayIncome income = new DisplayIncome();
               try{
-
-        LocalDate localDate = incomeTxtDate.getValue();
-
+           LocalDate localDate = incomeTxtDate.getValue();
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.DATE, localDate.getDayOfMonth());
             calendar.set(Calendar.MONTH, localDate.getMonthValue()-1);
@@ -1876,8 +1871,9 @@ public class MaiinUI implements Initializable {
                         incomeClient = new ClientService().getClientById(client.getId());
                         if(null == incomeClient.getPerson())
                              incomeRadioBusiness.setSelected(true);
+                         setIncomeAmount();
                      });
-                     setIncomeAmount();
+                    
                 }
                 else 
                 {

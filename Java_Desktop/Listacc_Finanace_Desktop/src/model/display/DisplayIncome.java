@@ -17,7 +17,7 @@ import services.data.ClientService;
  *
  * @author Agozie
  */
-public class DisplayIncome extends Incomes{
+public final class DisplayIncome extends Incomes{
     String serviceName;
     String clientName;
     String clientFirstName;
@@ -152,18 +152,20 @@ public class DisplayIncome extends Incomes{
         super(id, date,unit, amountReceived, discount, amountReceivable, dateDue);
         this.serviceName = serviceName;
         this.displayPaymentType = paymentType;
+        Clients clien = new ClientService().getClientById(clientId);
+                this.client = clien;
         if (null == clientName || clientName.isEmpty())
         {
-            Clients clien = new ClientService().getClientById(clientId);
-                this.client = clien;
+            
             if(null != clien.getPerson())
              this.clientName = clien.getPerson().getLastName() + " " + clien.getPerson().getFirstName();
             else 
                 this.clientName = clien.getBusinessName();
            this.clientNumId = clien.getId();
         }
-        else 
+        else {
             this.clientName = clientName;
+        }
             
     }
     
@@ -172,12 +174,12 @@ public class DisplayIncome extends Incomes{
         this.serviceName = serviceName;
         this.paymentCounts = count + 1;
         
-        
+        Clients clien = new ClientService().getClientById(clientId);
+            setClient(clien);
         this.displayPaymentType = paymentType;
         if (null == clientName || clientName.isEmpty())
         { 
-            Clients clien = new ClientService().getClientById(clientId);
-            this.setClient(clien);
+            
             if(null != clien.getPerson())
              this.clientName = clien.getPerson().getLastName() + " " + clien.getPerson().getFirstName();
             else 

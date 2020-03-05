@@ -17,6 +17,7 @@
             <source-roots>
                 <root id="src.jars.dir"/>
                 <root id="src.resources.dir"/>
+                <root id="src.db.dir"/>
                 <root id="src.dir"/>
             </source-roots>
             <test-roots>
