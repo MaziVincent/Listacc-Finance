@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ListaccFinance.API.Controllers
 {
     [ApiController]
-    [Authorize]
+    // [Authorize]
     [Route("api/[controller]")]
     public class UserController: ControllerBase
     {
@@ -35,7 +35,8 @@ namespace ListaccFinance.API.Controllers
 
 
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [HttpPost("FirstCreateUser")]
         public async Task<IActionResult> FirstCreateUser(RegisterModel me)
         {
