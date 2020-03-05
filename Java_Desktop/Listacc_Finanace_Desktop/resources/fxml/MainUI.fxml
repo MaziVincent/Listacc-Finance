@@ -83,6 +83,11 @@
                   <Font name="System Bold" size="12.0" />
                </font>
             </Label>
+            <Label fx:id="syncStatus" layoutX="1219.0" layoutY="33.0" text="Sync in progress..." textFill="FAFC74">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </top>

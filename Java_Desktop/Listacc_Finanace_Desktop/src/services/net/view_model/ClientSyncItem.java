@@ -15,7 +15,7 @@ import model.Persons;
  * @author E-book
  */
 public class ClientSyncItem extends Clients implements SyncItem{
-    private Integer personId, personOnlineEntryId, changeId, changeUserOnlineEntryId;
+    private Integer personOnlineEntryId, changeId, changeUserOnlineEntryId;
     private String change, changeTimeStamp;
 
     public ClientSyncItem(Integer Id, String BusinessName, String Phone, String Email,
@@ -63,6 +63,21 @@ public class ClientSyncItem extends Clients implements SyncItem{
         p.setDateOfBirth(DateOfBirth);
         p.setOnlineEntryId(PersonOnlineEntryId);
         setPerson(p);
+    }
+    
+    public ClientSyncItem(Integer Id, String BusinessName, String Phone, String Email,
+            String Address, String UId, String UId2, Double AmountReceivable, Integer OnlineEntryId, 
+            Integer PersonId){
+        setId(Id);
+        setOnlineEntryId(OnlineEntryId);
+        setBusinessName(BusinessName);
+        setPhone(Phone);
+        setEmail(Email);
+        setAddress(Address);
+        setUId(UId);
+        setUId2(UId2);
+        setAmountReceivable(AmountReceivable);
+        setPersonId(PersonId);
     }
     
     @Override

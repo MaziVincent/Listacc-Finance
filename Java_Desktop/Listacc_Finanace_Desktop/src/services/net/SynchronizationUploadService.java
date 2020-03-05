@@ -12,6 +12,7 @@ import com.victorlaerte.asynctask.AsyncTask;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import model.Changes;
 import services.data.ChangeService;
@@ -32,11 +33,12 @@ import services.net.view_model.UploadResponseViewModel;
  */
 public class SynchronizationUploadService extends AsyncTask<Void, String, Void>  { // Params, Progress, Result
     
-    private final StringProperty activitySp;
+    private BooleanProperty connectionDisplayPro, syncDisplayPro;
     private ChangeService changeService;
     
-    public SynchronizationUploadService(StringProperty activitySp){
-        this.activitySp = activitySp;
+    public SynchronizationUploadService(BooleanProperty connectionDisplayPro, BooleanProperty syncDisplayPro){
+        this.connectionDisplayPro = connectionDisplayPro;
+        this.syncDisplayPro = syncDisplayPro;
     }
     
     @Override
@@ -46,6 +48,7 @@ public class SynchronizationUploadService extends AsyncTask<Void, String, Void> 
         
         //activitySp.set("Syncing is in process...");
         // connectionStatus.setTextFill(Color.GREEN);
+        // toggleLabel(true);
     }
     
     @Override
@@ -76,17 +79,27 @@ public class SynchronizationUploadService extends AsyncTask<Void, String, Void> 
     @Override
     public void onPostExecute(Void result) {
         // update UI thread after success/failure
-        if(!Network.isSyncingDown) 
-            updateStatusLabel(""); // clear label if download is not on the way
+        if(!Network.isSyncingDown && !Network.isSyncingUp) 
+            toggleLabel(false);
+            //updateStatusLabel(""); // clear label if download is not on the way
     }
     
     @Override
     public void progressCallback(String... params) {
         //This method update your UI Thread during the execution of background thread
-       updateStatusLabel(params[0]);
+       // updateStatusLabel(params[0]);
+       toggleLabel(true);
     }
     
-    private void updateStatusLabel(String content){
+    private void toggleLabel(boolean show){
+        if (show){
+            connectionDisplayPro.set(false);
+            syncDisplayPro.set(true);
+        }
+        else{
+            connectionDisplayPro.set(true);
+            syncDisplayPro.set(false);
+        }
         // activitySp.set(content);
     }
     

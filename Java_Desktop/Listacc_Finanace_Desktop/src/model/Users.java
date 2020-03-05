@@ -105,6 +105,9 @@ public class Users implements Serializable {
     @Basic(optional = false)
     @Column(name = "Discriminator")
     private String discriminator;
+    @Basic(optional = false)
+    @Column(name = "Status")
+    private Integer status;
     @ManyToMany(mappedBy = "usersCollection")
     private Collection<AspNetRoles> aspNetRolesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
@@ -293,6 +296,14 @@ public class Users implements Serializable {
 
     public void setDiscriminator(String discriminator) {
         this.discriminator = discriminator;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     @XmlTransient

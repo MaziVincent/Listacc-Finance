@@ -131,7 +131,7 @@ namespace ListaccFinance.API.Services
 
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
-            newUser.SearchString = (newUser.Id + " " + newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Member").ToUpper();
+            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Member").ToUpper();
             await _context.SaveChangesAsync();
 
             var thisUser = _context.Members.

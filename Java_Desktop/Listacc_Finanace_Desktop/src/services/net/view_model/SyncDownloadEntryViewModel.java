@@ -43,7 +43,8 @@ public class SyncDownloadEntryViewModel {
     // Client
     public void setClient(ClientSyncItem client){
         this.client = client;
-        if(client.getPerson().getDateOfBirth() != null && !client.getPerson().getDateOfBirth().isEmpty())
+        if(client.getPerson() != null && client.getPerson().getDateOfBirth() != null && 
+            !client.getPerson().getDateOfBirth().isEmpty())
         {
             Date d = new Date(Long.parseLong(client.getPerson().getDateOfBirth()));
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");

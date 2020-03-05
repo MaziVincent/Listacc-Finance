@@ -126,7 +126,11 @@ public class MaiinUI implements Initializable {
     
     public MaiinUI(AppModel model){
         this.connectionSp =  new SimpleStringProperty();
+        
         this.connectionColorProperty = new SimpleObjectProperty<>();
+        
+        this.connectionDisplayPro = new SimpleBooleanProperty();
+        this.syncDisplayPro = new SimpleBooleanProperty();
         this.model = model;
     }
         
@@ -134,14 +138,18 @@ public class MaiinUI implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         loginUser = this.model.getUser();
         adminDisplayProp.set(true);
+        connectionDisplayPro.set(true);
+        syncDisplayPro.set(false);
         adminPane.visibleProperty().bind(adminDisplayProp);
         incomePane.visibleProperty().bind(incomeDisplayProp);
         expenditurePane.visibleProperty().bind(expenditureDisplayProp);
         settingsPane.visibleProperty().bind(settingsDisplayProp);
         totalLabel.textProperty().bind(incomeTotalProp);
         totalLabel1.textProperty().bind(expendtureTotalProp);
+        syncStatus.visibleProperty().bind(syncDisplayPro);
         connectionStatus.textProperty().bind(connectionSp);
         connectionStatus.textFillProperty().bind(connectionColorProperty);
+        connectionStatus.visibleProperty().bind(connectionDisplayPro);
         initializeAdminComponents();
         initializeButtonEnableProp();
         populateTables();
@@ -169,7 +177,8 @@ public class MaiinUI implements Initializable {
         ScheduledExecutorService synDownExec = Executors.newSingleThreadScheduledExecutor();
         synDownExec.scheduleAtFixedRate(() -> {
             Platform.runLater(() -> {
-                SynchronizationDownloadService conn = new SynchronizationDownloadService(); //activitySp
+                SynchronizationDownloadService conn = 
+                    new SynchronizationDownloadService(connectionDisplayPro, syncDisplayPro); //activitySp
                 conn.execute();
             });
         }, 0, 3, TimeUnit.MINUTES);
@@ -178,7 +187,8 @@ public class MaiinUI implements Initializable {
         ScheduledExecutorService synUpExec = Executors.newSingleThreadScheduledExecutor();
         synUpExec.scheduleAtFixedRate(() -> {
             Platform.runLater(() -> {
-                SynchronizationUploadService conn = new SynchronizationUploadService(null); //activitySp
+                SynchronizationUploadService conn = 
+                        new SynchronizationUploadService(connectionDisplayPro, syncDisplayPro); //activitySp
                 conn.execute();
             });
         }, 0, 3, TimeUnit.MINUTES);
@@ -2260,7 +2270,7 @@ public class MaiinUI implements Initializable {
             userCreateLabel,businessCreateLabel, businessEditLabel, businessInfoLabel,
             incomeLabelAmountRecieved;
     @FXML
-    Label incomeLabel, expenditureLabel, settingsLabel, totalLabel, totalLabel1, connectionStatus;
+    Label incomeLabel, expenditureLabel, settingsLabel, totalLabel, totalLabel1, connectionStatus, syncStatus;
         
     @FXML
     Line departmentCreateLine, departmentEditLine, projectCreateLine, projectEditLine,serviceCreateLine, serviceEditLine, costCategoryCreateLine, 
@@ -2280,6 +2290,7 @@ public class MaiinUI implements Initializable {
           
     SimpleStringProperty connectionSp;
     SimpleObjectProperty connectionColorProperty;
+    BooleanProperty connectionDisplayPro, syncDisplayPro;
     private final BooleanProperty adminDisplayProp = new SimpleBooleanProperty();
     private final BooleanProperty incomeDisplayProp = new SimpleBooleanProperty();
     private final BooleanProperty expenditureDisplayProp = new SimpleBooleanProperty();
