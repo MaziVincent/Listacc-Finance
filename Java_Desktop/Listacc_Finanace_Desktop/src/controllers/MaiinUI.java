@@ -1745,6 +1745,7 @@ public class MaiinUI implements Initializable {
         if(existingClientRadio.isSelected()){ 
             try{
             disableIncomeClientForm(true);
+           
             Stage stage;
             Parent root;
             stage = new Stage();
@@ -1780,12 +1781,14 @@ public class MaiinUI implements Initializable {
                 {
                     incomeRadioNew.setSelected(true);
                     disableIncomeClientForm(false);
+                    
                 }
 
                 stage.close();
             }catch(Exception exc){
             incomeRadioNew.setSelected(true);
             disableIncomeClientForm(false);
+           
                }
             validateIncomeForm();
         }
@@ -1833,6 +1836,8 @@ public class MaiinUI implements Initializable {
             try{
                 disableIncomeClientForm(true);
                 disableIcomeForm(true);
+                incomeRadioNew.setDisable(true);
+                    existingClientRadio.setDisable(true);
             Stage stage;
             Parent root;
             stage = new Stage();
@@ -1885,6 +1890,8 @@ public class MaiinUI implements Initializable {
                     incomeRadioNewIncome.setSelected(true);
                     incomeTxtDiscount.setPromptText("Discount");
                     incomeLabelAmountRecieved.setText("");
+                    incomeRadioNew.setDisable(false);
+                    existingClientRadio.setDisable(false);
                 }
 
                 stage.close();
@@ -1892,6 +1899,8 @@ public class MaiinUI implements Initializable {
             incomeRadioNew.setSelected(true);
             exc.printStackTrace();
             disableIncomeClientForm(false);
+            incomeRadioNew.setDisable(false);
+                    existingClientRadio.setDisable(false);
                }
             validateIncomeForm();
         }
