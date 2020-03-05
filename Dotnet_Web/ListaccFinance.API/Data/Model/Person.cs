@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using Microsoft.EntityFrameworkCore;
 namespace ListaccFinance.API.Data.Model
 {
     public class Person
