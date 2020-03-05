@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Data.ViewModel;
 using ListaccFinance.API.SendModel;
+using ListaccFinance.API.Services;
 
 namespace ListaccFinance.API.Interfaces
 {
@@ -17,8 +18,8 @@ namespace ListaccFinance.API.Interfaces
         Task CreateAdmin(RegisterModel reg, int userId);
         Task Deactivate(int Id, int MyId);
         Task Activate(int Id, int MyId);
-        Task<IEnumerable<User>>  ReturnUsers (SearchPaging props);
-        Task<IEnumerable<User>> ReturnAllUsers(SearchPaging props);
+        Task<PagedList<User>>  ReturnUsers (SearchPaging props);
+        Task<PagedList<User>> ReturnAllUsers(SearchPaging props);
         Task<RegisterModel> ReturnUser(int Id);
     }
 }

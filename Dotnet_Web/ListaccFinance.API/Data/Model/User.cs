@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Threading;
 using ListaccFinance.API.Data.Model;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ListaccFinance.API.Data.Model
 {
@@ -27,5 +29,6 @@ namespace ListaccFinance.API.Data.Model
         public string salt {get; set;}
         public bool Status{get; set;}
         public string SearchString {get; set;}
+
     }
 }

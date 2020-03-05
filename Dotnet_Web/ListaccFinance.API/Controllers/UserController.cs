@@ -9,6 +9,7 @@ using ListaccFinance.API.Interfaces;
 using ListaccFinance.API.SendModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ListaccFinance.API.Controllers
 {
@@ -138,11 +139,11 @@ namespace ListaccFinance.API.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> ReturnUsers ([FromQuery] SearchPaging props)
         {
-            List<SearchProps> finalReturn = new List<SearchProps>();
+            //List<SearchProps> finalReturn = new List<SearchProps>();
             
             if (!string.IsNullOrEmpty(props.SearchString))
             {
@@ -155,18 +156,30 @@ namespace ListaccFinance.API.Controllers
 
                 }
 
-                for (int j = 0; j < props.Role.Length; j++)
-                {
-                    for (int i = 0; i < returnList.Count; i++)
-                    {
-                        if (returnList.ElementAt(i).Role.CompareTo(props.Role[j]) == 0)
-                        {
-                            finalReturn.Add(returnList.ElementAt(i));
-                        }
-                    }
+                // for (int j = 0; j < props.Role.Length; j++)
+                // {
+                //     for (int i = 0; i < returnList.Count; i++)
+                //     {
+                //         if (returnList.ElementAt(i).Role.CompareTo(props.Role[j]) == 0)
+                //         {
+                //             finalReturn.Add(returnList.ElementAt(i));
+                //         }
+                //     }
 
-                }
-                return Ok(finalReturn);
+                // }
+                var data =  new{
+                    userList.TotalCount,
+                    userList.PageSize,
+                    userList.CurrentPage,
+                    userList.TotalPages,
+                    userList.HasNext,
+                    userList.HasPrevious
+                };
+                var users = new {
+                    returnList,
+                    data,
+                };
+                return Ok(users);
             }
             else
             {
@@ -179,24 +192,38 @@ namespace ListaccFinance.API.Controllers
     
                 }
 
-                for (int j = 0; j < props.Role.Length; j++)
+                // for (int j = 0; j < props.Role.Length; j++)
+                // {
+                //     //
+                //     for (int i = 0; i < returnList.Count; i++)
+                //     {
+                //         if (returnList.ElementAt(i).Role.CompareTo(props.Role[j]) == 0)
+                //         {
+                //             finalReturn.Add(returnList.ElementAt(i));
+                //         }
+                //     }
+                // }
+                var data = new
                 {
-                    //
-                    for (int i = 0; i < returnList.Count; i++)
-                    {
-                        if (returnList.ElementAt(i).Role.CompareTo(props.Role[j]) == 0)
-                        {
-                            finalReturn.Add(returnList.ElementAt(i));
-                        }
-                    }
-                }
-                return Ok(finalReturn);
+                    userList.TotalCount,
+                    userList.PageSize,
+                    userList.CurrentPage,
+                    userList.TotalPages,
+                    userList.HasNext,
+                    userList.HasPrevious
+                };
+                var users = new
+                {
+                    returnList,
+                    data,
+                };
+                return Ok(users);
             }
 
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpGet]
+        [HttpGet("user")]
         public async Task<IActionResult> ReturnUser([FromQuery] int Id)
         {
             if (!ModelState.IsValid)

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ListaccFinance.Api.Data;
@@ -359,30 +358,89 @@ namespace ListaccFinance.API.Services
         }
 
         // Search when Search String is not null
-        public async Task<IEnumerable<User>> ReturnUsers(SearchPaging props)
+        public async Task<PagedList<User>> ReturnUsers(SearchPaging props)
         {
-            var returned =  await SearchUser(props).OrderBy(x => x.Id)
-                                        .ToListAsync();
-            return returned;
+            var returned = SearchUser(props).OrderBy(x => x.Id)
+                                        .ToList();
+            var retList = PagedList<User>.ToPagedList(returned, props.PageNumber, props.PageSize);
+            return retList;
         }
 
         private IQueryable<User> SearchUser(SearchPaging props)
         {
-            var u = _context.Users.Include(x => x.Person).Where(x =>
-                            x.Status == props.Status
-                            &&
-                            (x.SearchString.Contains(props.SearchString.ToUpper())));
-            return u;
+            IQueryable<User> users =  Enumerable.Empty<User>().AsQueryable();
+            
+            
+           for (int i = 0; i < props.Role.Length; i++)
+           {
+                switch (props.Role[i])
+                {
+                    case "Admin":
+                        var a = _context.Admins.Include(x => x.Person).Where(x =>
+                                                    x.Status == props.Status
+                                                    &&
+                                                    (x.SearchString.Contains(props.SearchString.ToUpper())));
+                        users = users.Concat(a);
+                        break;
+
+                    case "Member":
+                        var m = _context.Members.Include(x => x.Person).Where(x =>
+                                            x.Status == props.Status
+                                            &&
+                                            (x.SearchString.Contains(props.SearchString.ToUpper())));
+                        users = users.Concat(m);
+                        break;
+
+                    default:
+                        var u = _context.Users.Include(x => x.Person).Where(x =>
+                                    x.Status == props.Status
+                                    &&
+                                    (x.SearchString.Contains(props.SearchString.ToUpper())));
+                        users =users.Concat(u);
+                        break;
+                }
+           }
+           return users;
+
+           
         }
 
         // Search when search string is null
-        public async Task<IEnumerable<User>> ReturnAllUsers(SearchPaging props)
+        public async Task<PagedList<User>> ReturnAllUsers(SearchPaging props)
         {
-            return await _context.Users.Include(x => x.Person).Where(
+            IQueryable<User> usersQ =  Enumerable.Empty<User>().AsQueryable();
+            for (int i = 0; i < props.Role.Length; i++)
+            {
+                switch (props.Role[i])
+                {
+                    case "Admin":
+                        var admins = _context.Admins.Include(x => x.Person).Where(
                                         (x) =>
                                         x.Status.CompareTo(props.Status) == 0)
-                                        .OrderBy(x => x.Id)
-                                        .ToListAsync();
+                                        .OrderBy(x => x.Id);
+                        usersQ =usersQ.Concat(admins);
+                        break;
+                    
+                    case "Member":
+                        var members = _context.Members.Include(x => x.Person).Where(
+                                        (x) =>
+                                        x.Status.CompareTo(props.Status) == 0)
+                                        .OrderBy(x => x.Id);
+                        usersQ = usersQ.Concat(members);
+                        break;
+                    default:
+                        var users = _context.Users.Include(x => x.Person).Where(
+                                        (x) =>
+                                        x.Status.CompareTo(props.Status) == 0)
+                                        .OrderBy(x => x.Id);
+                        usersQ = usersQ.Concat(users);
+                        break;
+                }
+            }
+
+            var returned =  usersQ.ToList();
+            var retList = PagedList<User>.ToPagedList(returned, props.PageNumber, props.PageSize);
+            return retList;
         }
 
         public async Task<RegisterModel> ReturnUser(int Id)
