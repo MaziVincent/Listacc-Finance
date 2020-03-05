@@ -60,7 +60,7 @@ public class ExpenditureService extends DataService {
             }
             else {
                 client = (Clients) em.createNamedQuery("Clients.findById")
-                    .setParameter("id", ds.getClient()).getSingleResult();
+                    .setParameter("id", ds.getClient().getId()).getSingleResult();
             }
             exp.setClient(client);
             exp.setIssuer(user);
