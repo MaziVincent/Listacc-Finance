@@ -97,6 +97,7 @@ namespace ListaccFinance.API.Data.ViewModel
         public Person person {get; set;}
         public int PersonId { get; set; }
         public string salt { get; set; }
+        public bool Status {get; set;}
 
         public int OnlineEntryId { get; set; }
         public int ChangeId { get; set; }
