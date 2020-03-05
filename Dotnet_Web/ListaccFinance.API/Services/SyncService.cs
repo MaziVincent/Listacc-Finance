@@ -131,6 +131,28 @@ namespace ListaccFinance.API.Services
         {
             try
             {
+                if (string.IsNullOrEmpty(c.BusinessName))
+                {
+                    var biz = new Client();
+                    biz.Address = c.Address;
+                    biz.AmountReceivable = c.AmountReceivable;
+                    biz.BusinessName = c.BusinessName;
+                    biz.Email = c.Email;
+                    biz.Phone = c.Phone;
+                    biz.UId = c.UId;
+                    biz.UId2 = c.UId2;
+
+                    await _context.Clients.AddAsync(biz);
+                    await _context.SaveChangesAsync();
+
+                    return new SavedList
+                    {
+                        Id = OffId,
+                        Table = "Clients",
+                        OnlineEntryId = biz.Id,
+                    };
+
+                }
 
                 var newC = new Client();
                 var per = new Person{
