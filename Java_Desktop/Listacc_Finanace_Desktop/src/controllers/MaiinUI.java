@@ -622,6 +622,9 @@ public class MaiinUI implements Initializable {
                     expTxtDate.setValue(LOCAL_DATE(strDate));
                    expTxtAmount.setText("");
                     expTxtDescription.setText("");
+                    expComboCost.getSelectionModel().select(null);
+                    expComboProject.getSelectionModel().select(null);
+                    expComboIssuer.getSelectionModel().select(null);
                     expRadioNew.setSelected(true);
                     expRadioPerson.setSelected(true);
                     newExpenditureClient();
@@ -1131,9 +1134,10 @@ public class MaiinUI implements Initializable {
                        Platform.runLater(() -> {projectListTable.getSelectionModel().select(null);
                        projectListTable.refresh();
                        refreshProjectView();
+                       editProject();
                        });
                       
-                      editProject();
+                      
                    }else {
                    error("There wsa a problem updating project");
               
@@ -1362,7 +1366,7 @@ public class MaiinUI implements Initializable {
          IncomeTxtLName.setText("");
          incomeTxtFName.setText("");
          incomeTxtDob.setValue(null);
-
+         incomeRadioPerson.setSelected(true);
         disableIncomeClientForm(false);
 
     }
@@ -1381,6 +1385,7 @@ public class MaiinUI implements Initializable {
                     expTxtPhone.setText("");
                     expTxtEmail.setText("");
                     expenditureClient = null;
+                    validateExpenditureForm();
     }
 
     private void disableIncomeClientForm(boolean disable){
@@ -1481,7 +1486,9 @@ public class MaiinUI implements Initializable {
                    ||(!projectCreateProp.get() && prj.getName()
                            .compareTo(prjTextName.getText().trim()) == 0 
                                 && prj.getDepartment().getId() == comboDept.getId()
-                                && prj.getDescription().trim().compareTo(prjTextDescription.getText().trim())==0);
+                                && ( ((null == prj.getDescription() || prj.getDescription().trim().length()<1) 
+                                        && (null == prjTextDescription.getText() || prjTextDescription.getText().trim().length()<1)) 
+                                     || prj.getDescription().trim().compareTo(prjTextDescription.getText().trim())==0));
 
          prjSaveBtnDisableProp.set(disable);
         }catch(Exception exc){
@@ -1562,7 +1569,11 @@ public class MaiinUI implements Initializable {
     {
         String amountStr = expTxtAmount.getText().trim();    
         String description = expTxtDescription.getText().trim();
-        String lastName = expTxtLastName.getText().trim();
+        String lastName = "";
+        if(expRadioPerson.isSelected())
+        {
+            lastName =  expTxtLastName.getText().trim();
+        }
         String firstName = expFirstName.getText().trim();
         boolean invalid = true;
         try{
@@ -1571,7 +1582,7 @@ public class MaiinUI implements Initializable {
                             expComboProject.getSelectionModel().isEmpty() ||
                             expComboIssuer.getSelectionModel().isEmpty() ||
                             amount < 1 ||  description.length() < 2 || 
-                            (expRadioNew.isSelected() && (lastName.length() <  1 ||
+                            (expRadioNew.isSelected() && expRadioPerson.isSelected() && (lastName.length() <  1 ||
                                  firstName.length() < 1 )) ||
                         (expRadioBusiness.isSelected() && ( firstName.length() < 1));
                 expenditureSaveBtnDisableProp.set(invalid);
@@ -1597,7 +1608,7 @@ public class MaiinUI implements Initializable {
             String phone =  expTxtPhone.getText().trim();
             String email = expTxtEmail.getText().trim();
             String firstName = expFirstName.getText().trim();
-            String lastName = expTxtLastName.getText().trim();
+            
             if(phone.length() != 11 && phone.length() > 0)
             {
                 error("Phone number should be 11 digits");
@@ -1628,6 +1639,7 @@ public class MaiinUI implements Initializable {
                  client.setBusinessName(firstName);
                     if(expRadioPerson.isSelected())
                     {
+                        String lastName = expTxtLastName.getText().trim();
                         person.setFirstName(firstName);
                         person.setLastName(lastName);
                         person.setGender(expRadioMale.isSelected()?"Male":"Female" );
@@ -1636,14 +1648,23 @@ public class MaiinUI implements Initializable {
                  ds.setClient(client);
 
              }
+             else {
+                    ds.setClient(expenditureClient);
+                    
+             }
+             if(expService.createExpenditure(ds))
+                    {
+                        Platform.runLater(() -> {
+                            refreshExpenditureView(false);
+                        }
+                        );
 
-            if(expService.createExpenditure(ds))
-            {
-                refreshExpenditureView(false);
-                info("Expenditure saved successfully");
-            }
-                else
-                    error("There was a problem entering the expenditure");
+
+                        info("Expenditure saved successfully");
+                    }
+                        else
+                            error("There was a problem entering the expenditure");
+                    expenditureClient = null;
         }catch(Exception ec)
         {
             error("There was a problem saving the expenditure");
@@ -1935,8 +1956,9 @@ public class MaiinUI implements Initializable {
                                 ?client.getBusinessName() : client.getFirstName() );
                      Platform.runLater(() -> {
                         expenditureClient = new ClientService().getClientById(client.getId());
-                        if(null == expenditureClient.getPerson())
-                             expRadioBusiness.setSelected(true);
+                        if(null == expenditureClient.getPerson()){
+                             expRadioBusiness.setSelected(true);}
+                         validateExpenditureForm();    
                      });
 
                 }
@@ -1969,9 +1991,14 @@ public class MaiinUI implements Initializable {
 
     private void validateCctgForm()
     {
-        String tblName = costCategoryListTable.getSelectionModel().getSelectedItem().getName();
-        String tblDesc = costCategoryListTable.getSelectionModel().getSelectedItem().getDescription();
-        String tblType = costCategoryListTable.getSelectionModel().getSelectedItem().getType();
+        String tblName = "";
+        String tblDesc = "";
+        String tblType = "";
+        if(!costCategoryCreateProp.get()){
+         tblName = costCategoryListTable.getSelectionModel().getSelectedItem().getName();
+         tblDesc = costCategoryListTable.getSelectionModel().getSelectedItem().getDescription();
+         tblType = costCategoryListTable.getSelectionModel().getSelectedItem().getType();      
+        }
         String type = cctgComboType.getSelectionModel().getSelectedItem().trim();
         String name = cctgTextName.getText().trim();
         String desc =  cctgTextDescription.getText().trim();
