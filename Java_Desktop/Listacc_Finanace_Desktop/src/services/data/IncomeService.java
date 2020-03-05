@@ -36,11 +36,11 @@ public class IncomeService extends DataService {
         try{
              
             Query q =  em.createNativeQuery("SELECT s.name,c.businessName,c.id,a.id, a.date,a.unit,a.amountReceived, a.discount, a.paymentType, a.amountReceivable, a.dateDue,\n" +
-"                                    Count(e.id) FROM Incomes a LEFT JOIN Incomes e ON a.id = e.incomeId\n" +
-"                                    LEFT JOIN Clients c ON a.ClientId = c.id\n" +
-"                                    LEFT JOIN Services s ON a.ServiceId = s.id\n" +
-"                                    Where a.amountReceivable > 0\n" +
-"                                    Group by a.Id");
+                                    "Count(e.id) FROM Incomes a LEFT JOIN Incomes e ON a.id = e.incomeId\n" +
+                                    "LEFT JOIN Clients c ON a.ClientId = c.id\n" +
+                                    "LEFT JOIN Services s ON a.ServiceId = s.id\n" +
+                                    "Where a.amountReceivable > 0\n" +
+                                    "Group by a.Id");
            
             @SuppressWarnings("unchecked")
             List<Object[]> list = q.getResultList();
