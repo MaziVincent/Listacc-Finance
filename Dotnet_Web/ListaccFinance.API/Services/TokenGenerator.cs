@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -83,5 +84,13 @@ namespace ListaccFinance.API.Services
             
             return tokenString;
         }
+
+        // public async Task<string> GenerateRefresh(string RefreshToken)
+        // {
+        //     var HitRefresh  = _context.RefreshTokens.SingleOrDefault(x => x.RToken.CompareTo(RefreshToken) == 0);
+        //     var tClaims = new List<Claim>{
+        //         new Claim(ClaimTypes.Name, reader )
+        //     };
+        // }
     }    
 }

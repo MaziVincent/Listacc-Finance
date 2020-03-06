@@ -138,7 +138,7 @@ namespace ListaccFinance.API.Controllers
             return Ok();
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> ReturnUsers ([FromQuery] SearchPaging props)
         {
