@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.StringProperty;
 import model.Changes;
 import services.data.ChangeService;
 import services.data.ClientService;
@@ -180,7 +179,9 @@ public class SynchronizationUploadService extends AsyncTask<Void, String, Void> 
                     // mark change as pushed
                     changeService.updateChangesAsPushed(changes);
                 }
-
+                else {
+                    continueUpload = false;
+                }
             }
         }
         while(continueUpload);
