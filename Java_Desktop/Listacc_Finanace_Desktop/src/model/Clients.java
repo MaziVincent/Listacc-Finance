@@ -71,6 +71,8 @@ public class Clients implements Serializable {
     @JoinColumn(name = "PersonId", referencedColumnName = "Id")
     @ManyToOne
     private Persons person;
+    @Column(name = "PersonId", insertable = false, updatable = false)
+    private Integer personId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "client")
     private Collection<Expenditures> expendituresCollection;
 
@@ -173,6 +175,14 @@ public class Clients implements Serializable {
 
     public void setPerson(Persons person) {
         this.person = person;
+    }
+
+    public Integer getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(Integer personId) {
+        this.personId = personId;
     }
 
     @XmlTransient

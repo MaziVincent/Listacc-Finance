@@ -62,9 +62,13 @@ public class AuthenticationService extends AsyncTask<Void, String, Authenticatio
         Users user = userService.getUserByEmail(username.toLowerCase());
         userService.close();
         if(user != null){
-            // check if passwords match
-            if(PasswordHasher.validate(password, user.getSalt(), user.getPasswordHash()))
-                return AuthenticationStatus.Offline_Success;
+            if(user.getStatus() == 1){
+                // check if passwords match
+                if(PasswordHasher.validate(password, user.getSalt(), user.getPasswordHash()))
+                    return AuthenticationStatus.Offline_Success;
+                else
+                    return AuthenticationStatus.Offline_Failure;
+            }
             else
                 return AuthenticationStatus.Offline_Failure;
         }

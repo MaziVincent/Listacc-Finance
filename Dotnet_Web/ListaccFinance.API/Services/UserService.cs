@@ -132,7 +132,7 @@ namespace ListaccFinance.API.Services
 
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
-            newUser.SearchString = (newUser.Id + " " + newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Member"  +" " + "Active").ToUpper();
+            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Member"  +" " + "Active").ToUpper();
             await _context.SaveChangesAsync();
 
             var thisUser = _context.Members.
@@ -191,7 +191,7 @@ namespace ListaccFinance.API.Services
 
             await _context.Members.AddAsync(newUser);
             await _context.SaveChangesAsync();
-            newUser.SearchString = (newUser.Id + " " + newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Member" + " " + "Active").ToUpper();
+            newUser.SearchString = ( newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Member" + " " + "Active").ToUpper();
             await _context.SaveChangesAsync();
 
             return newUser;
@@ -299,7 +299,7 @@ namespace ListaccFinance.API.Services
 
             await _context.Admins.AddAsync(newUser);
             await _context.SaveChangesAsync();
-            newUser.SearchString = (newUser.Id + " " + newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Administrator" + " " + "Active").ToUpper();
+            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Administrator" + " " + "Active").ToUpper();
             await _context.SaveChangesAsync();
 
             var thisUser = _context.Admins.
@@ -326,7 +326,7 @@ namespace ListaccFinance.API.Services
         {
             User u = await _context.Users.Include(x => x.Person).SingleOrDefaultAsync(x => x.Id == Id);
             u.Status = false;
-            u.SearchString = (u.Id + " " + u.Person.LastName + " " + u.Person.firstName + " " + u.Person.Gender + " " + u.Email + " " + u.Phone + " " + u.Status + " Administrator" + " " + "Inactive").ToUpper();
+            u.SearchString = (u.Person.LastName + " " + u.Person.firstName + " " + u.Person.Gender + " " + u.Email + " " + u.Phone + " " + u.Status + " Administrator" + " " + "Inactive").ToUpper();
             await _context.SaveChangesAsync();
             var change = new Change
             {
@@ -346,7 +346,7 @@ namespace ListaccFinance.API.Services
         {
             User u = await _context.Users.Include(x => x.Person).SingleOrDefaultAsync(x => x.Id == Id);
             u.Status = true;
-            u.SearchString = (u.Id + " " + u.Person.LastName + " " + u.Person.firstName + " " + u.Person.Gender + " " + u.Email + " " + u.Phone + " " + u.Status + " Administrator" + " " + "Active").ToUpper();
+            u.SearchString = (u.Person.LastName + " " + u.Person.firstName + " " + u.Person.Gender + " " + u.Email + " " + u.Phone + " " + u.Status + " Administrator" + " " + "Active").ToUpper();
 
             await _context.SaveChangesAsync();
             var change = new Change{

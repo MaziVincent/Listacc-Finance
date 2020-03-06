@@ -74,6 +74,7 @@ public class UserSyncItem extends Users implements SyncItem{
         result.setOnlineEntryId(onlineEntryId);
         result.setDepartment(department);
         result.setPerson(person);
+        result.setStatus(entry.getStatus());
         return result;
     }
     
