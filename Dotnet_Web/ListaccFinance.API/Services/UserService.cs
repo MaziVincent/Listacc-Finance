@@ -235,6 +235,8 @@ namespace ListaccFinance.API.Services
             u.Person.DateOfBirth = reg.DateOfBirth;
             u.Person.LastName = reg.LastName;
             u.Person.Gender = reg.Gender;
+            u.SearchString = (reg.LastName + " " + reg.firstName + " " + reg.Gender + " " + reg.EmailAddress + " " + reg.Phone + " " +"Member" + " " + "Active").ToUpper();
+
             // Do password Change later
 
             await _context.SaveChangesAsync();
