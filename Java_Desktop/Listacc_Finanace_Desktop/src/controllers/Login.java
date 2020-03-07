@@ -30,7 +30,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import model.AppModel;
 import model.Users;
-import services.data.UserService;
 import services.net.AuthenticationService;
 import services.net.ConnectionService;
 
@@ -54,6 +53,7 @@ public class Login implements Initializable  {
     SimpleObjectProperty colorConnectionProperty = new SimpleObjectProperty<>();
     public StringProperty signinStatuSP = new SimpleStringProperty();
     final AppModel model;
+    String password;
        
     public Login(AppModel model)
     {
@@ -85,7 +85,7 @@ public class Login implements Initializable  {
         disableComponents();
         
         String username = txtUsername.getText().trim();
-        String password = txtPassword.getText().trim();
+        password = txtPassword.getText().trim();
         // UserService userService = new UserService();
         // Users user = userService.getUserById(8);
         if(username.length() > 4 && password.length() > 4)
@@ -124,6 +124,7 @@ public class Login implements Initializable  {
                 FXMLLoader firstLoader = new FXMLLoader(getClass().getResource("/fxml/MainUI.fxml"));
                 
                 Stage primaryStage = model.getStage();
+                user.setPassword(password);
                 MaiinUI mainUI = new MaiinUI(new AppModel(primaryStage, user));
                 firstLoader.setController(mainUI);
                 root = firstLoader.load();

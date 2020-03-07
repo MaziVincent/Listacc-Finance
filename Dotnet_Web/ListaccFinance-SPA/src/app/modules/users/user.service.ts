@@ -22,7 +22,7 @@ export class UserService {
         }
         params = new HttpParams({ fromObject: {role}});
         if (deactivated != null) {
-            params = params.append('status', deactivated);
+            params = params.append('status', deactivated === 'false' ? 'true' : 'false');
         }
         if (pageNumber != null) {
             params = params.append('pageNumber', '' + pageNumber);
@@ -37,8 +37,8 @@ export class UserService {
         return this.httpClient.get<PaginatedResult<UserViewModel[]>>(this.usersBase, {params})
         .pipe(
             map((response: any) => {
-                paginatedResult.pagination = response.pagination;
-                paginatedResult.result = response.users;
+                paginatedResult.pagination = response.data;
+                paginatedResult.result = response.returnList;
                 return paginatedResult;
             })
         );

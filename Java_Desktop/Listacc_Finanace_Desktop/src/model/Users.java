@@ -21,6 +21,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -76,6 +77,8 @@ public class Users implements Serializable {
     private int emailConfirmed;
     @Column(name = "PasswordHash")
     private String passwordHash;
+    @Transient
+    private String password;
     @Column(name = "SecurityStamp")
     private String securityStamp;
     @Column(name = "ConcurrencyStamp")
@@ -200,6 +203,14 @@ public class Users implements Serializable {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getSecurityStamp() {
