@@ -116,7 +116,15 @@ namespace ListaccFinance.API.Services
             newUser.Address = reg.Address;
             newUser.Phone = reg.Phone;
             newUser.Status = true;
-            newUser.DepartmentId = reg.DepartmentId.Value; //_context.Departments.Where(x => x.Name.ToUpper().CompareTo(reg.Department.ToUpper()) == 0).FirstOrDefaultAsync().Id;
+
+            // var DeptCheck = _context.Departments.Where(x => x.Id == reg.DepartmentId).FirstOrDefaultAsync();
+            // string errMessage = "Department does not exist";
+            // if (DeptCheck == null)
+            // {
+            //     throw new Exception(errMessage);
+            // }
+            newUser.DepartmentId = reg.DepartmentId.Value; 
+
 
 
             // Password Hash
@@ -293,6 +301,14 @@ namespace ListaccFinance.API.Services
 
 
             newUser.Person = per;
+
+            // var DeptCheck = await _context.Departments.Where(x => x.Id == reg.DepartmentId).FirstOrDefaultAsync();
+            // string errMessage = "Department does not exist";
+            // if (DeptCheck == null)
+            // {
+            //     throw new Exception(errMessage);
+                
+            // }
             newUser.DepartmentId = reg.DepartmentId.Value;//_context.Departments.SingleOrDefaultAsync(x => x.Name.ToUpper().CompareTo(reg.Department.ToUpper()) == 0).Id;
 
             await _context.Admins.AddAsync(newUser);

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using ListaccFinance.Api.Data;
@@ -38,7 +40,7 @@ namespace ListaccFinance.API.Controllers
 
 
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [AllowAnonymous]
         [HttpPost("FirstCreateUser")]
         public async Task<IActionResult> FirstCreateUser(RegisterModel me)
@@ -68,6 +70,13 @@ namespace ListaccFinance.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var DeptCheck = await _context.Departments.Where(x => x.Id == reg.DepartmentId).FirstOrDefaultAsync();
+            string errors = $" ";
+            if (DeptCheck == null)
+            {
+               
+                return BadRequest(errors = "\"errors\": \n\t\"{\"departmentId\": \n\t\t[\"Name is required\"\n\t]\n}");
+            }
 
             if (!await _uService.IsThisUserExist(reg.EmailAddress))
             {
@@ -91,6 +100,13 @@ namespace ListaccFinance.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var DeptCheck = await _context.Departments.Where(x => x.Id == reg.DepartmentId).FirstOrDefaultAsync();
+            string errors = $" ";
+            if (DeptCheck == null)
+            {
+
+                return BadRequest(errors = "\"errors\": \n\t\"{\"departmentId\": \n\t\t[\"Name is required\"\n\t]\n}");
+            }
             await _uService.EditUserAsync(Id, reg, int.Parse(this.User.Claims.First(i => i.Type == "UserID").Value));
 
             return Ok("done");
@@ -105,6 +121,13 @@ namespace ListaccFinance.API.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+            var DeptCheck = await _context.Departments.Where(x => x.Id == me.DepartmentId).FirstOrDefaultAsync();
+            string errors = $" ";
+            if (DeptCheck == null)
+            {
+
+                return BadRequest(errors = "\"errors\": \n\t\"{\"departmentId\": \n\t\t[\"Name is required\"\n\t]\n}");
             }
 
             if (!await _uService.IsThisUserExist(me.EmailAddress))
@@ -233,6 +256,7 @@ namespace ListaccFinance.API.Controllers
                 return BadRequest("Bad model");
             }
             var u = await _uService.ReturnUser(Id);
+            u.Department = _oService.Strip(u.Department);
             return Ok(u);
         }
     

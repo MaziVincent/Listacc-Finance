@@ -31,16 +31,18 @@ namespace ListaccFinance.API.SendModel
 
     public class RegisterModel
     {
+        [Required()]
         public string firstName { get; set; }
+        [Required]
         public string LastName { get; set; }
         public string Gender { get; set; }
         public DateTime? DateOfBirth { get; set; }
-
-
+        [Required]            
         public string Phone { get; set; }
         public string Address { get; set; }
-
+        [Required]
         public string EmailAddress {get; set;}
+        [Required]
         public string Password { get; set; }
         public string Department {get; set;}
         public Nullable<int> DepartmentId {get; set;}
