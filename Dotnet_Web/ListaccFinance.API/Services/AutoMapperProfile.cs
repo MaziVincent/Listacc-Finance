@@ -61,5 +61,9 @@ public class AutoMapperProfile : Profile
                                         .ForPath(dest => dest.firstName, opt => opt.MapFrom(s => s.Person.firstName))
                                         .ForPath(dest => dest.LastName, opt => opt.MapFrom(s => s.Person.LastName))
                                         .ForPath(dest => dest.Gender, opt => opt.MapFrom(s => s.Person.Gender));
+
+
+    // mapper for returming list of departments
+         CreateMap<Department, DeptView>();
     }
 }

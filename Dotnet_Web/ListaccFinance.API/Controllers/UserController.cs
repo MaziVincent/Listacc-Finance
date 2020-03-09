@@ -23,13 +23,15 @@ namespace ListaccFinance.API.Controllers
         private readonly DataContext _context;
         private readonly ITokenGenerator _generator;
         private readonly IMapper _mapper;
+        private readonly IOtherServices _oService;
 
-        public UserController(IUserService uservice, DataContext context, ITokenGenerator generator, IMapper mapper )
+        public UserController(IUserService uservice, DataContext context, ITokenGenerator generator, IMapper mapper, IOtherServices oService )
         {
             _uService =uservice;
             _context = context;
             _generator = generator;
             _mapper = mapper;
+            _oService = oService;
         }
 
 
@@ -233,5 +235,8 @@ namespace ListaccFinance.API.Controllers
             var u = await _uService.ReturnUser(Id);
             return Ok(u);
         }
+    
+        [HttpGet("Departments")]
+        public async Task<IActionResult> ReturnDepartments() => Ok(_oService.ReturnDepts());
     }
 }
