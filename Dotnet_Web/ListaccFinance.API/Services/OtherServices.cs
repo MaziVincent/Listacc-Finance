@@ -6,7 +6,7 @@ using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Data.ViewModel;
 using ListaccFinance.API.Interfaces;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace ListaccFinance.API.Services
 {
@@ -27,7 +27,7 @@ namespace ListaccFinance.API.Services
 
         public async Task<List<DeptView>> ReturnDepts()
         {
-            var x = _context.Set<Department>().ToList();
+            var x = await _context.Set<Department>().ToListAsync();
             var depts = _mapper.Map<List<DeptView>>(x);
             return  depts;
         }

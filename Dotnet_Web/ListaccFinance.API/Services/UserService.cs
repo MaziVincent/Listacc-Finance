@@ -116,7 +116,7 @@ namespace ListaccFinance.API.Services
             newUser.Address = reg.Address;
             newUser.Phone = reg.Phone;
             newUser.Status = true;
-            newUser.DepartmentId = _context.Departments.Where(x => x.Name.ToUpper().CompareTo(reg.Department.ToUpper()) == 0).FirstOrDefaultAsync().Id;
+            newUser.DepartmentId = reg.DepartmentId.Value; //_context.Departments.Where(x => x.Name.ToUpper().CompareTo(reg.Department.ToUpper()) == 0).FirstOrDefaultAsync().Id;
 
 
             // Password Hash
@@ -293,7 +293,7 @@ namespace ListaccFinance.API.Services
 
 
             newUser.Person = per;
-            newUser.DepartmentId = _context.Departments.SingleOrDefaultAsync(x => x.Name.ToUpper().CompareTo(reg.Department.ToUpper()) == 0).Id;
+            newUser.DepartmentId = reg.DepartmentId.Value;//_context.Departments.SingleOrDefaultAsync(x => x.Name.ToUpper().CompareTo(reg.Department.ToUpper()) == 0).Id;
 
             await _context.Admins.AddAsync(newUser);
             await _context.SaveChangesAsync();
