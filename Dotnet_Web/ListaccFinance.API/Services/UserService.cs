@@ -255,7 +255,7 @@ namespace ListaccFinance.API.Services
         }
         public async Task<bool> IsThisUserExist(string UserEmail)
         {
-            var thisU = await _context.Users.Where(x => x.Email.CompareTo(UserEmail) == 0).FirstOrDefaultAsync();
+            var thisU = await _context.Users.Where(x => x.Email.ToUpper().CompareTo(UserEmail.ToUpper()) == 0).FirstOrDefaultAsync();
 
             if (thisU is null)
             {
