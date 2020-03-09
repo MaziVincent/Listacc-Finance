@@ -236,7 +236,6 @@ namespace ListaccFinance.API.Controllers
             return Ok(u);
         }
     
-        [HttpGet("Departments")]
-        public async Task<IActionResult> ReturnDepartments() => Ok(_oService.ReturnDepts());
+        
     }
 }
