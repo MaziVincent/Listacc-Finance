@@ -12,6 +12,8 @@ using ListaccFinance.API.SendModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ListaccFinance.API.Controllers
 {
@@ -71,10 +73,17 @@ namespace ListaccFinance.API.Controllers
                 return BadRequest(ModelState);
             }
             var DeptCheck = await _context.Departments.Where(x => x.Id == reg.DepartmentId).FirstOrDefaultAsync();
-            string errors = $" ";
+            //string errors = $" ";
+           
+
             if (DeptCheck == null)
             {
-                return BadRequest(errors = "\"errors\": \n\t{\"departmentId\": \n\t\t[\"departmentId is required\"\n\t]\n}");
+                var error = new
+                {
+                    errors = new { departmentId = "[department selected does not exist]",}, };
+
+                string result = JsonSerializer.Serialize(error);
+                return BadRequest(result);
             }
 
             if (!await _uService.IsThisUserExist(reg.EmailAddress))
@@ -92,7 +101,7 @@ namespace ListaccFinance.API.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("EditUser")]
+        [HttpPut("EditUser")]
         public async Task<IActionResult> EditUser([FromQuery]int Id,[FromBody] RegisterModel reg)
         {
             if (!ModelState.IsValid)
@@ -100,12 +109,17 @@ namespace ListaccFinance.API.Controllers
                 return BadRequest(ModelState);
             }
             var DeptCheck = await _context.Departments.Where(x => x.Id == reg.DepartmentId).FirstOrDefaultAsync();
-            string errors = $" ";
             if (DeptCheck == null)
             {
+                var error = new
+                {
+                    errors = new { departmentId = "[department selected does not exist]", },
+                };
 
-                return BadRequest(errors = "\"errors\": \n\t{\"departmentId\": \n\t\t[\"departmentId is required\"\n\t]\n}");
+                string result = JsonSerializer.Serialize(error);
+                return BadRequest(result);
             }
+
             await _uService.EditUserAsync(Id, reg, int.Parse(this.User.Claims.First(i => i.Type == "UserID").Value));
 
             return Ok("done");
@@ -122,12 +136,18 @@ namespace ListaccFinance.API.Controllers
                 return BadRequest(ModelState);
             }
             var DeptCheck = await _context.Departments.Where(x => x.Id == me.DepartmentId).FirstOrDefaultAsync();
-            string errors = $" ";
             if (DeptCheck == null)
             {
+                var error = new
+                {
+                    errors = new { departmentId = "[department selected does not exist]", },
+                };
 
-                return BadRequest(errors = "\"errors\": \n\t{\"departmentId\": \n\t\t[\"departmentId is required\"\n\t]\n}");
+                string result = JsonSerializer.Serialize(error);
+                return BadRequest(result);
             }
+
+
 
             if (!await _uService.IsThisUserExist(me.EmailAddress))
             {
@@ -246,7 +266,7 @@ namespace ListaccFinance.API.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet("user")]
         public async Task<IActionResult> ReturnUser([FromQuery] int Id)
         {
