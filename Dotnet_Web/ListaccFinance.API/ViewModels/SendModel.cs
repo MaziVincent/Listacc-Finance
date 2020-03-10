@@ -42,7 +42,6 @@ namespace ListaccFinance.API.SendModel
         public string Address { get; set; }
         [Required]
         public string EmailAddress {get; set;}
-        [Required]
         public string Password { get; set; }
         public string Department {get; set;}
         public Nullable<int> DepartmentId {get; set;}

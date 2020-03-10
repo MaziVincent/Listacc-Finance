@@ -32,7 +32,6 @@ namespace ListaccFinance.API.Interfaces
         Task<int> UploadOldDeptAsync(Department d, int OnlineId);
         Task<SavedList> UploadPersonAsync(Person p, int OffId);
         Task<int> UploadOldPersonAsync(Person p, int OnlineId);
-        Task<SavedList> UploadUserAsync(RegisterModel u, int OffId);
         Task<SavedList> UploadClientAsync(Client c, int OldId);
         Task<int> UploadOldClientAsync(Client c, int OnlineId);
         Task<SavedList> UploadProjectAsync(Project p, int OldId);

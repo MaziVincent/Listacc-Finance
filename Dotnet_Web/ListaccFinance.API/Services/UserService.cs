@@ -53,7 +53,8 @@ namespace ListaccFinance.API.Services
             newUser.Status = true;
 
             // Password Hash
-            var message = reg.Password;
+           // var message = reg.Password;
+           var message = reg.LastName;
             var salt = Salt.Create();
             var hash = Hash.Create(message, salt);
             newUser.PasswordHash = hash;
@@ -123,12 +124,13 @@ namespace ListaccFinance.API.Services
             // {
             //     throw new Exception(errMessage);
             // }
-            newUser.DepartmentId = reg.DepartmentId.Value; 
+            newUser.DepartmentId = reg.DepartmentId.Value;
 
 
 
             // Password Hash
-            var message = reg.Password;
+            //var message = reg.Password;
+            var message = reg.LastName;
             var salt = Salt.Create();
             var hash = Hash.Create(message, salt);
             newUser.PasswordHash = hash;
@@ -167,45 +169,7 @@ namespace ListaccFinance.API.Services
 
         }
 
-        //Create User for uploads
-        public async Task<User> CreateUserUploadAsync(RegisterModel reg)
-        {
-            var newUser = new Member();
 
-
-            var per = new Person()
-            {
-                firstName = reg.firstName,
-                LastName = reg.LastName,
-                Gender = reg.Gender,
-                DateOfBirth = reg.DateOfBirth,
-            };
-
-            newUser.Email = reg.EmailAddress;
-            newUser.Address = reg.Address;
-            newUser.Phone = reg.Phone;
-            newUser.DepartmentId = reg.DepartmentId.Value;
-            newUser.Status = true;
-
-            // Password Hash
-            var message = reg.Password;
-            var salt = Salt.Create();
-            var hash = Hash.Create(message, salt);
-            newUser.PasswordHash = hash;
-            newUser.salt = salt;
-
-
-            newUser.Person = per;
-
-            await _context.Members.AddAsync(newUser);
-            await _context.SaveChangesAsync();
-            newUser.SearchString = ( newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Member" + " " + "Active").ToUpper();
-            await _context.SaveChangesAsync();
-
-            return newUser;
-
-
-        }
 
     
 
@@ -292,7 +256,8 @@ namespace ListaccFinance.API.Services
 
 
             // Password Hash
-            var message = reg.Password;
+            //var message = reg.Password;
+            var message = reg.LastName;
             var salt = Salt.Create();
             var hash = Hash.Create(message, salt);
             newUser.PasswordHash = hash;

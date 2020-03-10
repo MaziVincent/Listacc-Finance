@@ -62,7 +62,7 @@ namespace ListaccFinance.API.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("CreateAdmin")]
         public async Task<IActionResult> CreateAdmin(RegisterModel reg)
         {
@@ -74,8 +74,7 @@ namespace ListaccFinance.API.Controllers
             string errors = $" ";
             if (DeptCheck == null)
             {
-               
-                return BadRequest(errors = "\"errors\": \n\t\"{\"departmentId\": \n\t\t[\"Name is required\"\n\t]\n}");
+                return BadRequest(errors = "\"errors\": \n\t{\"departmentId\": \n\t\t[\"departmentId is required\"\n\t]\n}");
             }
 
             if (!await _uService.IsThisUserExist(reg.EmailAddress))
@@ -105,7 +104,7 @@ namespace ListaccFinance.API.Controllers
             if (DeptCheck == null)
             {
 
-                return BadRequest(errors = "\"errors\": \n\t\"{\"departmentId\": \n\t\t[\"Name is required\"\n\t]\n}");
+                return BadRequest(errors = "\"errors\": \n\t{\"departmentId\": \n\t\t[\"departmentId is required\"\n\t]\n}");
             }
             await _uService.EditUserAsync(Id, reg, int.Parse(this.User.Claims.First(i => i.Type == "UserID").Value));
 
@@ -127,7 +126,7 @@ namespace ListaccFinance.API.Controllers
             if (DeptCheck == null)
             {
 
-                return BadRequest(errors = "\"errors\": \n\t\"{\"departmentId\": \n\t\t[\"Name is required\"\n\t]\n}");
+                return BadRequest(errors = "\"errors\": \n\t{\"departmentId\": \n\t\t[\"departmentId is required\"\n\t]\n}");
             }
 
             if (!await _uService.IsThisUserExist(me.EmailAddress))

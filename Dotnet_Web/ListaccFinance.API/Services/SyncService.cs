@@ -108,25 +108,7 @@ namespace ListaccFinance.API.Services
             await _context.SaveChangesAsync();
             return thisPerson.Id;
         }
-        public async Task<SavedList> UploadUserAsync(RegisterModel u, int OffId)
-        {
-            try
-            {
-                var currUser = await _uService.CreateUserUploadAsync(u);
-                await _context.SaveChangesAsync();
-                return new SavedList{
-                    Table = "Users",
-                    Id = OffId,
-                    OnlineEntryId = currUser.Id
-                };
-            }
-            catch (System.Exception e)
-            {
-
-                throw e;
-            }
-        }
-
+       
         public async Task<SavedList> UploadClientAsync(Client c, int OffId)
         {
             try
