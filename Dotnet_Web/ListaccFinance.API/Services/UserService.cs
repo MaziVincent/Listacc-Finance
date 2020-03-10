@@ -54,7 +54,7 @@ namespace ListaccFinance.API.Services
 
             // Password Hash
            // var message = reg.Password;
-           var message = reg.LastName;
+           var message = reg.LastName.ToLower();
             var salt = Salt.Create();
             var hash = Hash.Create(message, salt);
             newUser.PasswordHash = hash;
@@ -130,7 +130,7 @@ namespace ListaccFinance.API.Services
 
             // Password Hash
             //var message = reg.Password;
-            var message = reg.LastName;
+            var message = reg.LastName.ToLower();
             var salt = Salt.Create();
             var hash = Hash.Create(message, salt);
             newUser.PasswordHash = hash;
@@ -257,7 +257,7 @@ namespace ListaccFinance.API.Services
 
             // Password Hash
             //var message = reg.Password;
-            var message = reg.LastName;
+            var message = reg.LastName.ToLower();
             var salt = Salt.Create();
             var hash = Hash.Create(message, salt);
             newUser.PasswordHash = hash;
