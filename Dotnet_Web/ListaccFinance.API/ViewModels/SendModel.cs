@@ -44,7 +44,10 @@ namespace ListaccFinance.API.SendModel
         public string EmailAddress {get; set;}
         public string Password { get; set; }
         public string Department {get; set;}
-        public Nullable<int> DepartmentId {get; set;}
+        public int? DepartmentId {get; set;}
+
+        public string Role {get; set;}
+        public string Status {get; set;}
         
     }
 
