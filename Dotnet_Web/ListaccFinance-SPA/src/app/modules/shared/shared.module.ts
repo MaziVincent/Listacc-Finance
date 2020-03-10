@@ -57,6 +57,10 @@ import { InterceptorProviders } from 'src/app/interceptors/interceptor-providers
     ConfirmExitComponent,
     ConfirmDeleteComponent
   ],
+  entryComponents: [
+    ConfirmExitComponent,
+    ConfirmDeleteComponent
+  ],
   providers: [
     InterceptorProviders
   ]

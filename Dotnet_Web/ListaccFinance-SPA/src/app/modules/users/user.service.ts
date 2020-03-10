@@ -5,24 +5,29 @@ import { Observable } from 'rxjs';
 import { PaginatedResult } from 'src/app/models/pagination';
 import { UserViewModel } from 'src/app/models/user';
 import { map } from 'rxjs/operators';
+import { DepartmentViewModel } from 'src/app/models/department';
 
 @Injectable()
 export class UserService {
     private usersBase = environment.Url + 'user';
+    private departmentsBase = environment.Url + 'dept';
+
+    DepartmentsList: DepartmentViewModel[];
 
     constructor(private httpClient: HttpClient) { }
 
+    // USER
     // Get list of users
-    getUserList(pageNumber?: number, itemsPerPage?: number, searchTerm?: string, role?: string[], deactivated?: string)
+    getUserList(pageNumber?: number, itemsPerPage?: number, searchTerm?: string, role?: string[], status?: string)
     : Observable<PaginatedResult<UserViewModel[]>> {
         const paginatedResult = new PaginatedResult<UserViewModel[]>();
         let params = new HttpParams();
-        if (role.length === 0){
+        if (role.length === 0) {
             role = ['Admin', 'Member'];
         }
         params = new HttpParams({ fromObject: {role}});
-        if (deactivated != null) {
-            params = params.append('status', deactivated === 'false' ? 'true' : 'false');
+        if (status != null) {
+            params = params.append('status', status);
         }
         if (pageNumber != null) {
             params = params.append('pageNumber', '' + pageNumber);
@@ -44,9 +49,18 @@ export class UserService {
         );
     }
 
+    // Get single user
+    getUser(user: UserViewModel): Observable<UserViewModel> {
+        return this.httpClient.get<UserViewModel>(this.usersBase + '/' + user.id);
+    }
+
     // Create User
     createUser(user: UserViewModel): Observable<any> {
-        return this.httpClient.post(this.usersBase + '/create', user);
+        if (user.role === 'Admin') {
+            return this.httpClient.post(this.usersBase + '/createadmin', user);
+        } else {
+            return this.httpClient.post(this.usersBase + '/createmember', user);
+        }
     }
 
     // Edit User
@@ -62,5 +76,12 @@ export class UserService {
     // Activate user
     activateUser(user: UserViewModel): Observable<any> {
         return this.httpClient.put(this.usersBase + user.id + '/activate', null);
+    }
+
+
+    // DEPARTMENT
+    // Get list of departments
+    getDepartments(): Observable<DepartmentViewModel[]> {
+        return this.httpClient.get<DepartmentViewModel[]>(this.departmentsBase);
     }
 }

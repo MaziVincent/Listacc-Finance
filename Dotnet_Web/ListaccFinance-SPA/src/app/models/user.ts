@@ -1,4 +1,5 @@
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { DepartmentViewModel } from './department';
 
 export class TokenUser {
     tokenString: string;
@@ -35,12 +36,13 @@ export class UserViewModel {
     lastName: string;
     gender: string;
     userName: string;
-    email: string;
-    phoneNumber: string;
+    emailAddress: string;
+    phone: string;
     role: string;
     address: string;
-    deactivated: boolean | string;
     status: boolean | string;
+    department: DepartmentViewModel;
+    departmentId: string;
 }
 
 export class StatusOption {

@@ -247,8 +247,8 @@ namespace ListaccFinance.API.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("user")]
-        public async Task<IActionResult> ReturnUser([FromQuery] int Id)
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> ReturnUser(int Id)
         {
             if (!ModelState.IsValid)
             {

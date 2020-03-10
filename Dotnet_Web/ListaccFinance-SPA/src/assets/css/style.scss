@@ -240,7 +240,10 @@ tr.sortable th.no-pointer{
 
 /*===== MARGIN =====*/
 .m-t-0 {
-    margin-top: 0px;
+    margin-top: 0;
+}
+.m-t-1 {
+    margin-top: 1px;
 }
 .m-t-3{
     margin-top: 3px !important;
@@ -1777,6 +1780,12 @@ form.form-horizontal .control-label {
 form textarea.form-control{
     height: 150px;
 }
+form textarea.form-control{
+    height: 150px;
+}
+form textarea.form-control.small-textarea{
+    height: 100px;
+}
 [type=checkbox]:checked, [type=checkbox]:not(:checked) {
     position: absolute;
     left: -9999px;
@@ -2413,6 +2422,10 @@ MODAL
 
             &.label-group-two{
                 min-width: 60px;
+            }
+
+            &.label-group-three{
+                min-width: 100px;
             }
 
             &.label-group-value{

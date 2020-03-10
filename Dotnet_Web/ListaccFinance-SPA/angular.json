@@ -32,6 +32,7 @@
               "node_modules/font-awesome/css/font-awesome.min.css",
               "node_modules/ngx-toastr/toastr.css",
               "node_modules/intl-tel-input/build/css/intlTelInput.css",
+              "node_modules/selectize/dist/css/selectize.css",
               "src/styles.scss"
             ],
             "scripts": [
@@ -43,6 +44,7 @@
               "src/assets/scripts/sticky-kit.min.js",
               "node_modules/intl-tel-input/build/js/intlTelInput.min.js",
               "node_modules/intl-tel-input/build/js/utils.js",
+              "node_modules/ng-selectize/selectize/selectize.standalone.js",
               "src/assets/scripts/custom.js"
             ]
           },
