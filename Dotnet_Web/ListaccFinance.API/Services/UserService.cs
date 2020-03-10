@@ -430,6 +430,8 @@ namespace ListaccFinance.API.Services
         {
             User u = await _urepo.GertUserById(Id);
             var User = _mapper.Map<RegisterModel>(u);
+            User.Role = u.GetType().Name;
+            User.Status =  _context.Users.FirstOrDefault(x => x.Id == Id).Status? "Active": "Inactive";
             return User;
     }
 
