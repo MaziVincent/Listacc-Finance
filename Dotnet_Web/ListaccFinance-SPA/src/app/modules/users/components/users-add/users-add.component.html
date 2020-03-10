@@ -85,8 +85,9 @@
                                     <label class="control-label font-weight-300 m-b-5 label-group-two">Email</label>
                                     <div class="flex-grow-100">
                                         <input type="email" name='emailAddress' class="form-control big-input" [(ngModel)]="User.emailAddress"
-                                        required [ngClass]="{'input-validation-error': fieldErrors.EmailAddress, 'edit-mode': editMode}" />
+                                        required [ngClass]="{'input-validation-error': fieldErrors.EmailAddress || fieldErrors.emailAddress, 'edit-mode': editMode}" />
                                         <span *ngIf="fieldErrors.EmailAddress" class="field-validation-error white-space-pre">{{fieldErrors.EmailAddress}}</span>
+                                        <span *ngIf="fieldErrors.emailAddress" class="field-validation-error white-space-pre">{{fieldErrors.emailAddress}}</span>
                                     </div>
                                 </div>
 
@@ -116,9 +117,8 @@
                                     <div class="flex-grow-100">
                                         <ng-selectize [config]="selectizeConfig" [options]="Departments" (onFocus)="selectizeFocus($event)" name="department" [(ngModel)]="User.departmentId"
                                             [ngClass]="{'input-validation-error': fieldErrors.Department, 'edit-mode': editMode}"
-                                            [errorClass]="input-validation-error"></ng-selectize>
-                                            <span *ngIf="fieldErrors.Department" class="field-validation-error white-space-pre">{{fieldErrors.Department}}</span>
-                                        <span *ngIf="fieldErrors.Department" class="field-validation-error white-space-pre">{{fieldErrors.Department}}</span>
+                                            [errorClass]="input-validation-error" required></ng-selectize>
+                                        <span *ngIf="fieldErrors.Department" class="field-validation-error white-space-pre m-t-0">{{fieldErrors.Department}}</span>
                                     </div>
                                 </div>
 

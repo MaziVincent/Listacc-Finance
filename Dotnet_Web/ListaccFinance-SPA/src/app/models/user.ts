@@ -42,7 +42,7 @@ export class UserViewModel {
     address: string;
     status: boolean | string;
     department: DepartmentViewModel;
-    departmentId: string;
+    departmentId: string | number;
 }
 
 export class StatusOption {

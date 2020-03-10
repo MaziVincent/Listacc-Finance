@@ -120,8 +120,6 @@ export class UsersAddComponent implements OnInit {
             // clone original object so that changes do not reflect on the list
             this.User = JSON.parse(JSON.stringify(this.initialState.User));
 
-            // set deactivated status
-            this.User.status = this.User.status ? 'true' : 'false';
             this.TempPhone = this.User.phone;
 
             // get more info from server
@@ -133,8 +131,8 @@ export class UsersAddComponent implements OnInit {
             this.User.status = 'true';
             this.User.gender = 'female';
             this.User.role = 'Admin';
+            this.OriginalUser = JSON.stringify(this.User);
         }
-        this.OriginalUser = JSON.stringify(this.User);
     }
 
     close() {
@@ -183,7 +181,7 @@ export class UsersAddComponent implements OnInit {
 
         // Get department
         if (this.editMode && this.editUserReady && this.User.department) {
-            this.User.departmentId = this.User.department.id.toString();
+            this.User.departmentId = this.User.departmentId.toString();
 
             // get copy of user to determine if change has been made
             this.OriginalUser = JSON.stringify(this.User);
@@ -222,10 +220,14 @@ export class UsersAddComponent implements OnInit {
             .subscribe(
                 // success
                 response => {
-                    this.User = response;
+                    // this.User = response;
 
                     // make modifications
                     this.User.gender = this.User.gender === 'Female' ? 'female' : 'male';
+                    this.User.emailAddress = response.emailAddress;
+                    this.User.departmentId = response.departmentId + '';
+                    this.User.address = response.address;
+                    this.User.status = response.status === 'Active' ? 'true' : 'false';
 
                     // Get copy of user to determine if change has been made
                     this.OriginalUser = JSON.stringify(this.User);
@@ -248,15 +250,19 @@ export class UsersAddComponent implements OnInit {
         // create new object to contain staff information
         const userObj: UserViewModel = JSON.parse(JSON.stringify(this.User));
 
+        // configure department id
+        userObj.departmentId = userObj.departmentId && (userObj.departmentId + '').length > 0 ?
+            parseInt(userObj.departmentId + '', 10) : null;
+
         // configure deactivation status
-        if (userObj.status === 'false') {
+        /*if (userObj.status === 'false') {
             userObj.status = false;
         } else {
             userObj.status = true;
-        }
+        }*/
 
         if (!this.editMode) {
-            userObj.status = true;
+            userObj.status = 'true';
             this.createNewUser(userObj);
         } else {
             this.editUser(userObj);
@@ -276,7 +282,6 @@ export class UsersAddComponent implements OnInit {
 
             // error
             error => {
-                debugger;
                 const allErrors: MyValidationErrors = this.validationErrorService.showValidationErrors(error);
                 this.fieldErrors = allErrors.fieldErrors;
                 if (this.fieldErrors.DuplicateUserName) {
@@ -382,7 +387,6 @@ export class UsersAddComponent implements OnInit {
         /*if (!this.editMode) {
             return false;
         }*/
-
         const staffInfoChanged = this.OriginalUser !== JSON.stringify(this.User);
         return staffInfoChanged;
     }

@@ -240,7 +240,7 @@ tr.sortable th.no-pointer{
 
 /*===== MARGIN =====*/
 .m-t-0 {
-    margin-top: 0;
+    margin-top: 0 !important;
 }
 .m-t-1 {
     margin-top: 1px;
