@@ -27,8 +27,8 @@ export class UsersListComponent implements OnInit {
     lastSearchTerm: string = null;
     private searchTerms = new Subject<string>();
 
-    Filter: {role: string[], deactivated: string} = { role : [], deactivated: 'false'};
-    SelectedFilter: {role: string[], deactivated: string} = { role : [], deactivated: 'false'};
+    Filter: {role: string[], status: string} = { role : [], status: 'true'};
+    SelectedFilter: {role: string[], status: string} = { role : [], status: 'true'};
     filtered: boolean;
     FilteredElements: any[] = [];
     RoleFullNames: any;
@@ -85,7 +85,7 @@ export class UsersListComponent implements OnInit {
 
             // switch to new search observable each time the term changes
             switchMap((term: string) => this.userService.getUserList(1, this.pagination.itemsPerPage, term,
-                this.Filter.role, this.Filter.deactivated))
+                this.Filter.role, this.Filter.status))
         ).subscribe(response => {
             this.pagination.currentPage = response.pagination.currentPage;
             this.pagination.totalCount = response.pagination.totalCount;
@@ -150,7 +150,7 @@ export class UsersListComponent implements OnInit {
         pageNumber = pageNumber || this.pagination.currentPage;
         // ensure this uses search and filter
         this.userService.getUserList(pageNumber, this.pagination.itemsPerPage, this.lastSearchTerm,
-            this.Filter.role, this.Filter.deactivated)
+            this.Filter.role, this.Filter.status)
             .subscribe(
                 // success
                 response => {
@@ -158,7 +158,7 @@ export class UsersListComponent implements OnInit {
                     this.pagination.totalCount = response.pagination.totalCount;
 
                     this.Users = response.result;
-                    this.SelectedFilter.deactivated = this.Filter.deactivated;
+                    this.SelectedFilter.status = this.Filter.status;
                     this.SelectedFilter.role = [];
                     this.Filter.role.forEach((value: string) => {
                         this.SelectedFilter.role.push(value);
@@ -181,8 +181,8 @@ export class UsersListComponent implements OnInit {
                                 }
                             } else if (value !== null) {
                                 this.filtered = true;
-                                this.FilteredElements.push({key: key === 'deactivated' ? 'Status' : key,
-                                    value: (key === 'deactivated' ? (value === 'true' ? 'Inactive' : 'Active') : value)});
+                                this.FilteredElements.push({key: key === 'status' ? 'Status' : key,
+                                    value: (key === 'status' ? (value === 'true' ? 'Active' : 'Inactive') : value)});
                             }
                         }
                     }
@@ -228,12 +228,12 @@ export class UsersListComponent implements OnInit {
     // Filter Opeations
     clearFilterForReload() {
         this.Filter.role = [];
-        // this.Filter.deactivated = 'false';
+        // this.Filter.status = 'true';
     }
 
     clearFilter() {
         this.Filter.role = [];
-        this.Filter.deactivated = 'false';
+        this.Filter.status = 'true';
         if (this.filtered) {
             this.loadUsers(1);
         }
@@ -241,7 +241,7 @@ export class UsersListComponent implements OnInit {
 
     handleFilterOpen() {
         // return to previous settings
-        this.Filter.deactivated = this.SelectedFilter.deactivated;
+        this.Filter.status = this.SelectedFilter.status;
         this.Filter.role = [];
         this.SelectedFilter.role.forEach((value: string) => {
             this.Filter.role.push(value);

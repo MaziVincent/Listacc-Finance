@@ -35,6 +35,7 @@
     "ngx-tinymce": "^7.0.0",
     "ngx-toastr": "^10.0.4",
     "rxjs": "~6.4.0",
+    "selectize": "^0.12.6",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },

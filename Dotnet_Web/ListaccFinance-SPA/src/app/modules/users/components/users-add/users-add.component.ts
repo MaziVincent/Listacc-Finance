@@ -9,6 +9,8 @@ import { SharedService } from 'src/app/services/shared.service';
 import { ConfirmExitComponent } from 'src/app/modules/shared/components/confirm-exit/confirm-exit.component';
 import { MyValidationErrors } from 'src/app/models/my-validation-errors';
 import { ConfirmDeleteComponent } from 'src/app/modules/shared/components/confirm-delete/confirm-delete.component';
+import { DepartmentViewModel } from 'src/app/models/department';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-users-add',
@@ -32,14 +34,18 @@ export class UsersAddComponent implements OnInit {
 
     title: string;
 
-    User: UserViewModel;
-    OriginalUser: string;
-    TempPhone: string;
-    States: string[];
-    fieldErrors: any = {};
     processing: boolean;
     deleting: boolean;
     editMode: boolean;
+
+    departmentsReady = false;
+    Departments: DepartmentViewModel[];
+
+    editUserReady = true;
+    User: UserViewModel;
+    OriginalUser: string;
+    TempPhone: string;
+    fieldErrors: any = {};
 
     profilePictureConfig: any;
 
@@ -75,43 +81,58 @@ export class UsersAddComponent implements OnInit {
         // items: [] -> initial selected values
     };
 
+    selectizeConfig = {
+        labelField: 'name',
+        valueField: 'id',
+        searchField: 'name',
+        maxItems: 1,
+        highlight: true,
+        create: false,
+        closeAfterSelect: true,
+        render: {
+            item(item, escape) {
+                return '<div><span class="font-14">' + escape(item.name) + '</span></div>';
+            },
+            option(item, escape) {
+                return '<div><span class="font-14">' + escape(item.name) + '</span></div>';
+            }
+        }
+    };
+
     constructor(private activeModal: NgbActiveModal,
                 private modalService: NgbModal,
                 shared: SharedService,
                 private userService: UserService,
-                private validationErrorService: ValidationErrorService) {
+                private validationErrorService: ValidationErrorService,
+                private notify: NotificationService) {
         this.User = new UserViewModel();
 
         this.StatusOptions = shared.StatusOptions;
     }
 
     ngOnInit() {
+        // load departments
+        this.loadDepartments();
+
         // if in edit mode
         if (this.initialState.User !== undefined) {
 
             // clone original object so that changes do not reflect on the list
             this.User = JSON.parse(JSON.stringify(this.initialState.User));
 
-            // set deactivated status
-            this.User.deactivated = this.User.status ? 'true' : 'false';
-            /*if (this.User.addresses.length === 0) {
-                this.User.addresses = [{ id: 0, street: '', city: '', state: '', country: 'Nigeria'}];
-            }*/
+            this.TempPhone = this.User.phone;
+
+            // get more info from server
+            this.getUserForEdit();
+
             this.editMode = true;
-            this.TempPhone = this.User.phoneNumber;
         } else {
             // set default values
-            this.User.deactivated = 'false';
+            this.User.status = 'true';
             this.User.gender = 'female';
             this.User.role = 'Admin';
+            this.OriginalUser = JSON.stringify(this.User);
         }
-        this.OriginalUser = JSON.stringify(this.User);
-
-        // set parameters for profile picture component
-        /*this.profilePictureConfig = {
-            cssClass: 'centered',
-            photoUrl: this.editMode && this.Staff.photoUrl && this.Staff.photoUrl !== '' ? this.Staff.photoUrl : null
-        };*/
     }
 
     close() {
@@ -129,6 +150,46 @@ export class UsersAddComponent implements OnInit {
         }
     }
 
+
+
+    // Department
+    loadDepartments() {
+        this.departmentsReady = false;
+
+        if (!this.userService.DepartmentsList) {
+            this.userService.getDepartments()
+                .subscribe(
+                    // success
+                    response => {
+                        this.completeLoad(response);
+                    },
+
+                    // error
+                    error => {
+                        this.notify.error('Problem loading departments, please reload the page.');
+                    }
+                );
+        } else {
+            this.completeLoad(this.userService.DepartmentsList);
+        }
+    }
+
+    completeLoad(list: DepartmentViewModel[]) {
+        this.Departments = list;
+        this.userService.DepartmentsList = this.Departments;
+        this.departmentsReady = true;
+
+        // Get department
+        if (this.editMode && this.editUserReady && this.User.department) {
+            this.User.departmentId = this.User.departmentId.toString();
+
+            // get copy of user to determine if change has been made
+            this.OriginalUser = JSON.stringify(this.User);
+        }
+    }
+
+
+
     // Phone operations
     checkPhoneError() {
         if (this.TempPhone !== '') {
@@ -143,37 +204,45 @@ export class UsersAddComponent implements OnInit {
     }
 
     getNumber(obj: string) {
-        this.User.phoneNumber = obj;
+        this.User.phone = obj;
         if (this.telInputDirectiveRef.isInputValid()) {
             this.fieldErrors.Phone = null;
         }
     }
 
 
-    // Address Methods
-    /*addNewAddress() {
-        this.User.addresses.push({ id: 0, street: '', city: '', state: '', country: 'Nigeria'});
+
+    // User (Retrieve, Create, Edit & Delete)
+    getUserForEdit() {
+        this.editUserReady = false;
+
+        this.userService.getUser(this.User)
+            .subscribe(
+                // success
+                response => {
+                    // this.User = response;
+
+                    // make modifications
+                    this.User.gender = this.User.gender === 'Female' ? 'female' : 'male';
+                    this.User.emailAddress = response.emailAddress;
+                    this.User.departmentId = response.departmentId + '';
+                    this.User.address = response.address;
+                    this.User.status = response.status === 'Active' ? 'true' : 'false';
+
+                    // Get copy of user to determine if change has been made
+                    this.OriginalUser = JSON.stringify(this.User);
+
+                    this.editUserReady = true;
+                },
+
+                // error
+                error => {
+                    this.notify.error('Problem loading user information, please reload page.');
+                    this.editUserReady = false;
+                }
+            );
     }
 
-    removeAddress(index: number) {
-        const addr = this.User.addresses[index];
-        if (addr.id !== 0) {
-            addr.deleted = true;
-        } else {
-            this.User.addresses.splice(index, 1);
-        }
-    }
-
-    getActiveAddresses() {
-        return this.User.addresses.filter(x => x.deleted === false || x.deleted === null || x.deleted === undefined);
-    }
-
-    trackAddressByIndex(index: number, obj: any): any {
-        return index;
-    }*/
-
-
-    // Staff (Create, Edit & Delete)
     save() {
         this.processing = true;
         this.fieldErrors = {};
@@ -181,33 +250,24 @@ export class UsersAddComponent implements OnInit {
         // create new object to contain staff information
         const userObj: UserViewModel = JSON.parse(JSON.stringify(this.User));
 
-        // configure address
-        // this.configureAddresses(userObj);
+        // configure department id
+        userObj.departmentId = userObj.departmentId && (userObj.departmentId + '').length > 0 ?
+            parseInt(userObj.departmentId + '', 10) : null;
 
         // configure deactivation status
-        if (userObj.deactivated === 'false') {
+        /*if (userObj.status === 'false') {
             userObj.status = false;
         } else {
             userObj.status = true;
-        }
+        }*/
 
         if (!this.editMode) {
-            userObj.status = true;
+            userObj.status = 'true';
             this.createNewUser(userObj);
         } else {
             this.editUser(userObj);
         }
     }
-
-    /*configureAddresses(staffObj: StaffViewModel) {
-        for (let index = staffObj.addresses.length - 1; index >= 0; index --) {
-            const add = staffObj.addresses[index];
-            if ((add.street === undefined || add.street.trim() === '') && (add.city === undefined || add.city.trim() === '') &&
-                (add.state === undefined || add.state.trim() === '')) {
-                staffObj.addresses.splice(index, 1);
-            }
-        }
-    }*/
 
     createNewUser(userObj: UserViewModel) {
         this.userService.createUser(userObj)
@@ -215,13 +275,9 @@ export class UsersAddComponent implements OnInit {
 
             // success
             (response) => {
-                //if (this.profilePictureComponent.Picture === null) {
-                    // tell parent component to reload staff list
-                    this.userCreated.emit();
-                    this.processing = false;
-                /*} else {
-                    this.uploadStaffPhoto(response.id, false);
-                }*/
+                // tell parent component to reload users list
+                this.userCreated.emit();
+                this.processing = false;
             },
 
             // error
@@ -229,7 +285,10 @@ export class UsersAddComponent implements OnInit {
                 const allErrors: MyValidationErrors = this.validationErrorService.showValidationErrors(error);
                 this.fieldErrors = allErrors.fieldErrors;
                 if (this.fieldErrors.DuplicateUserName) {
-                    this.fieldErrors.Email = 'This email address is already taken';
+                    this.fieldErrors.EmailAddress = 'This email address is already taken';
+                }
+                if (this.fieldErrors.departmentId) {
+                    this.fieldErrors.Department = 'Select a department';
                 }
                 this.processing = false;
             }
@@ -261,7 +320,7 @@ export class UsersAddComponent implements OnInit {
                         // tell parent component to reload staff list
                         this.userEdited.emit();
                         this.processing = false;
-                    //}
+                    // }
                 },
 
                 // error
@@ -269,7 +328,7 @@ export class UsersAddComponent implements OnInit {
                     const allErrors: MyValidationErrors = this.validationErrorService.showValidationErrors(error);
                     this.fieldErrors = allErrors.fieldErrors;
                     if (this.fieldErrors.DuplicateUserName) {
-                        this.fieldErrors.Email = 'This email address is already taken';
+                        this.fieldErrors.EmailAddress = 'This email address is already taken';
                     }
                     this.processing = false;
                 }
@@ -322,64 +381,14 @@ export class UsersAddComponent implements OnInit {
     }
 
 
-    // Picture Upload & Delete
-    /*uploadStaffPhoto(staffId: number, update) {
-        this.staffService.uploadStaffPhoto(staffId, this.profilePictureComponent.Picture)
-        .subscribe(
-
-            // success
-            () => {
-                // tell parent component to reload staff list
-                if (!update) {
-                    this.staffCreated.emit();
-                } else {
-                    this.staffEdited.emit();
-                }
-                this.processing = false;
-            },
-
-            // error
-            error => {
-                const allErrors: MyValidationErrors = this.validationErrorService.showValidationErrors(error);
-                this.fieldErrors = allErrors.fieldErrors;
-                this.processing = false;
-            }
-        );
-    }
-
-    deleteStaffPhoto(staffId: number) {
-        this.staffService.deleteStaffPhoto(staffId)
-        .subscribe(
-
-            // success
-            () => {
-                // tell parent component to reload staff list
-                this.staffEdited.emit();
-                this.processing = false;
-            },
-
-            // error
-            error => {
-                const allErrors: MyValidationErrors = this.validationErrorService.showValidationErrors(error);
-                this.fieldErrors = allErrors.fieldErrors;
-                this.processing = false;
-            }
-        );
-    }*/
-
 
     // Changes
     changesMade() {
         /*if (!this.editMode) {
             return false;
         }*/
-
         const staffInfoChanged = this.OriginalUser !== JSON.stringify(this.User);
-        // const pictureRemoved = this.Staff.photoUrl && this.profilePictureComponent && this.profilePictureComponent.pictureRemoved;
-        // let newPictureSelected = this.profilePictureComponent && this.profilePictureComponent.Picture;
-        // newPictureSelected = newPictureSelected ?
-            // (this.Staff.photoUrl && this.Staff.photoUrl !== '' ? this.profilePictureComponent.newPictureSelected : true) : false;
-        return staffInfoChanged; // || pictureRemoved || newPictureSelected;
+        return staffInfoChanged;
     }
 
 }

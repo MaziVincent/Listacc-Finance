@@ -93,10 +93,10 @@ namespace ListaccFinance.API.Controllers
                 var u = new Admin();
                 await _uService.CreateAdmin(reg, userId);
                 
-                return Ok("successful");
+                return Ok();
             }
 
-            return BadRequest(new { message = " User already exists" });
+            return BadRequest(new { EmailAddress = " User already exists" });
         }
 
 
@@ -155,10 +155,10 @@ namespace ListaccFinance.API.Controllers
                 int userId = int.Parse(userIdString);
                 var u = new User();
                 var resp = await _uService.CreateUserAsync(me, userId);
-                return Ok("successful");
+                return Ok();
             }
 
-            return BadRequest(new {message = " User already exists"});
+            return BadRequest(new {EmailAddress = " User already exists"});
 
             //return RedirectToAction(string actionName, string controllerName, object routeValues);
 
@@ -266,9 +266,9 @@ namespace ListaccFinance.API.Controllers
 
         }
 
-        //[Authorize(Roles = "Admin")]
-        [HttpGet("user")]
-        public async Task<IActionResult> ReturnUser([FromQuery] int Id)
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> ReturnUser(int Id)
         {
             if (!ModelState.IsValid)
             {
