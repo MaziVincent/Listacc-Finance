@@ -101,8 +101,8 @@ namespace ListaccFinance.API.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpPut("EditUser")]
-        public async Task<IActionResult> EditUser([FromQuery]int Id,[FromBody] RegisterModel reg)
+        [HttpPut("EditUser/{Id}")]
+        public async Task<IActionResult> EditUser(RegisterModel reg, int Id)
         {
             if (!ModelState.IsValid)
             {
@@ -122,7 +122,7 @@ namespace ListaccFinance.API.Controllers
 
             await _uService.EditUserAsync(Id, reg, int.Parse(this.User.Claims.First(i => i.Type == "UserID").Value));
 
-            return Ok("done");
+            return Ok();
         }
 
         [Authorize(Roles = "Admin")]

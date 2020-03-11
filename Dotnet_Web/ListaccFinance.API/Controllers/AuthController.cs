@@ -64,7 +64,7 @@ namespace ListaccFinance.API.Controllers
             var currentUser = _context.Users.Where(x => x.Email.ToUpper().CompareTo(mod.EmailAddress.ToUpper()) == 0 && x.Status == true).FirstOrDefault();
             if (currentUser == null || !Hash.Validate(mod.Password, currentUser.salt, currentUser.PasswordHash))
             {
-                return Unauthorized(new { message = "Your login input is incorrect" });
+                return BadRequest(new { message = "Your login input is incorrect" });
             }
 
             var d = await _context.DesktopClients.Where(x => mod.ClientName.ToUpper().CompareTo(x.ClientName.ToUpper()) == 0
@@ -107,7 +107,7 @@ namespace ListaccFinance.API.Controllers
 
             if (currentUser is null)
             {
-                return Unauthorized(new { message = "Not authorized" });
+                return BadRequest(new { message = "Not authorized" });
             }
 
             else
