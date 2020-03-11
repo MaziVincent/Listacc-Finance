@@ -109,7 +109,10 @@ namespace ListaccFinance.API.Controllers
             {
                 return BadRequest(new { message = "Not authorized" });
             }
-
+            if (currentUser.GetType().Name.ToLower().CompareTo("admin") != 0)
+            {
+                return Unauthorized(new {message = "You're not an admin member. This is above your paygrade"});
+            }
             else
             {
                 var PasswordHash = Hash.Create(pmessage, currentUser.salt);
