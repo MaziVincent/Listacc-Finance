@@ -120,6 +120,7 @@ namespace ListaccFinance.API.Controllers
                 return BadRequest(result);
             }
 
+
             await _uService.EditUserAsync(Id, reg, int.Parse(this.User.Claims.First(i => i.Type == "UserID").Value));
 
             return Ok("done");

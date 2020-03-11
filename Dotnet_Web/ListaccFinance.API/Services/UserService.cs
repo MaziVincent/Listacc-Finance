@@ -200,26 +200,18 @@ namespace ListaccFinance.API.Services
         public async Task EditUserAsync(int Id, RegisterModel reg, int MyId)
         {
             var u = await _context.Users.Include(x => x.Person).Where(x => x.Id == Id).FirstOrDefaultAsync();
-            if (!string.IsNullOrEmpty(reg.Address) )
-            {
-                u.Address = reg.Address;
-            }
+            u.Address = reg.Address;
+            
 
             u.DepartmentId = _context.Departments.Where(x => x.Name.CompareTo(reg.Department) ==0).FirstOrDefaultAsync().Id;
             u.Email = reg.EmailAddress;
             u.Person.firstName = reg.firstName;
 
-            if ((reg.DateOfBirth.HasValue))
-            {
-                u.Person.DateOfBirth = reg.DateOfBirth;
-            }
+            u.Person.DateOfBirth = reg.DateOfBirth;
 
 
             u.Person.LastName = reg.LastName;
-            if  (!String.IsNullOrEmpty(reg.Gender) )
-            {
-                u.Person.Gender = reg.Gender;
-            }
+            u.Person.Gender = reg.Gender;
 
             switch (reg.Status.ToLower())
             {
