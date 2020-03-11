@@ -65,7 +65,7 @@ export class UserService {
 
     // Edit User
     editUser(user: UserViewModel): Observable<any> {
-        return this.httpClient.put(this.usersBase + '/update', user);
+        return this.httpClient.put(this.usersBase + '/edituser/' + user.id, user);
     }
 
     // Deactivate user

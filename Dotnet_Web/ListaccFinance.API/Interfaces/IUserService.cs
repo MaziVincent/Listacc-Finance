@@ -17,7 +17,7 @@ namespace ListaccFinance.API.Interfaces
         Task CreateAdmin(RegisterModel reg, int userId);
         Task Deactivate(int Id, int MyId);
         Task Activate(int Id, int MyId);
-        Task<PagedList<User>>  ReturnUsers (SearchPaging props);
+        Task<PagedList<User>> ReturnUsers (SearchPaging props);
         Task<PagedList<User>> ReturnAllUsers(SearchPaging props);
         Task<RegisterModel> ReturnUser(int Id);
     }

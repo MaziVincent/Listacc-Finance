@@ -1,5 +1,7 @@
 ﻿$blue: #4e9fc7;
 $dark-blue: #357290;
+$deep-black-blue: #143445;
+$deeper-black-blue: #0b1c26;
 
 html body .mdi-set, html body .mdi:before {
     line-height: initial;
@@ -578,7 +580,7 @@ NAVBAR
 .topbar {
     /*background: #364f6b; /*#1a3668; #00458b*/
     z-index: 1001;
-    background: #000;
+    background: $deep-black-blue;
     position: fixed;
     top: 0;
     width: 100%;
@@ -637,7 +639,7 @@ NAVBAR
 }
 .topbar .profile-pic-button{
     &:hover{
-        background: #2f2f2f;
+        background: $deeper-black-blue;
 	    border-radius: 3px;
     }
 
@@ -929,6 +931,7 @@ SIDEBAR
         border-color: $blue;
         font-weight: 500;
         border-left: 3px solid $blue;
+        letter-spacing: 0.02rem;
     }
 
     &:hover{
@@ -1351,7 +1354,7 @@ table.table .img-holder{
     font-size: 37px;
 }
 table.table-hover tr:hover td{
-    background: #fbf0e6;
+    background: #e9f4fa;
 }
 table .table-main-link:hover{
     text-decoration: underline !important;
@@ -1663,7 +1666,7 @@ button[disabled] .i-red:hover{
     line-height: 37px;
     margin-top: 4px;
 }
-.btn_black, .btn_orange {
+.btn_blue_black, .btn_orange {
     color: #fff;
     font-size: 16px;
     font-weight: 500;
@@ -1673,15 +1676,15 @@ button[disabled] .i-red:hover{
     line-height: 1.2em;
     border-radius: 4px;
 }
-.btn_black{
-    background-color: #000;
-    border: 1px solid #000;
+.btn_blue_black{
+    background-color: #1f4e69;
+    border: 1px solid #1f4e69;
 }
-    .btn_black:hover {
-        background-color: #313131;
+    .btn_blue_black:hover {
+        background-color: $deep-black-blue;
         color: #fff;
     }
-    .btn_black:disabled{
+    .btn_blue_black:disabled{
         opacity: .5;
         cursor: not-allowed;
     }
@@ -1780,11 +1783,8 @@ form.form-horizontal .control-label {
 form textarea.form-control{
     height: 150px;
 }
-form textarea.form-control{
-    height: 150px;
-}
 form textarea.form-control.small-textarea{
-    height: 100px;
+    height: 70px;
 }
 [type=checkbox]:checked, [type=checkbox]:not(:checked) {
     position: absolute;
@@ -1972,7 +1972,7 @@ input.form-control.edit-mode:hover, textarea.form-control.edit-mode:hover, selec
     padding: 4.5px 7px;   
 }
 .form-control:focus, .mce-tinymce.mce-container.focus, .selectize-input.focus{
-    border-color: #ff7f00;
+    border-color: $blue;
     box-shadow: none; /*0 0 0 0.2rem rgba(255, 127, 0, .25);*/
 }
 input.input-validation-error, select.input-validation-error, textarea.input-validation-error, 
@@ -2047,7 +2047,7 @@ input[type=checkbox], input[type=radio] {
     background-size: 100% 55%;
 }
 .custom-control.custom-radio{
-    display: block !important;
+    display: block;
 }
 .custom-radio .custom-control-indicator {
     border-radius: 50%;
@@ -2415,6 +2415,10 @@ MODAL
             font-size: 14px;
             margin-bottom: .2rem;
             display: inline-block;
+
+            &.custom-control.custom-radio {
+                display: block;
+            }
 
             &.label-group-one{
                 min-width: 85px;
@@ -3197,7 +3201,7 @@ FILTER & SEARCH
         content:"";
         position: absolute;
         left: 8px;
-        top: -10px;
+        top: -9px;
         width: 0;
         height: 0;
         border-style: solid;
@@ -3230,8 +3234,8 @@ FILTER & SEARCH
     top: 2px;
 }
 .dropdown-menu [type=checkbox].filled-in:checked.chk-col-light-blue+label:after {
-    border: 2px solid #000;
-    background-color: #000;
+    border: 2px solid $deep-black-blue;
+    background-color: $deep-black-blue;
     width: 15px;
     height: 15px;
     top: 2px;
@@ -3249,8 +3253,8 @@ FILTER & SEARCH
 }
 .filterCriteria {
     padding: 3px 6px;
-    color: #8a6138;
-    border: 1px solid #8a6138;
+    color: $deeper-black-blue;
+    border: 1px solid $deeper-black-blue;
     border-radius: 5px;
     display: inline-block;
     margin-right: 3px;
@@ -3300,7 +3304,7 @@ FILTER & SEARCH
 
         &:hover{
             background: #f5f5f5;
-            color: #ff7f00;
+            color: $blue;
         }
     }
 
@@ -3369,7 +3373,7 @@ SELECTIZE
     }
 
     .active {
-        background-color: #db720a;
+        background-color: $dark-blue;
         color: #fff;
 
         span{

@@ -8,11 +8,11 @@
     <div class="modal-body" [hidden]="!departmentsReady || !editUserReady">
         <form #myForm="ngForm" (ngSubmit)="save()" class="form-horizontal">
             <div class="col-md-12 p-t-5 p-b-5 button-region">
-                <button type="button" class="btn no-m-r pull-right i-rounded i-red-bordered i-grey-disabled font-16 cursor-pointer m-l-5 icon-only" 
+                <!--<button type="button" class="btn no-m-r pull-right i-rounded i-red-bordered i-grey-disabled font-16 cursor-pointer m-l-5 icon-only" 
                 *ngIf="editMode" [disabled]="processing || deactivating" (click)="deactivate()" ngbTooltip="Deactivate User" placement="top" container="body">
                     <i class="fa fa-ban-o no-m-r" *ngIf="!deactivating"></i>
                     <span *ngIf="deactivating" class="loader loader-small display-inline-block no-animate no-m-l"></span>
-                </button>
+                </button>-->
                 <button type="submit" class="btn no-m-r pull-right i-rounded i-orange i-grey-disabled font-13 cursor-pointer"
                 [disabled]="processing || deactivating || !myForm.form.valid || !telInputDirectiveRef?.isInputValid() || (editMode && !changesMade())">
                     <i class="fa fa-save"></i>
@@ -126,12 +126,12 @@
                                     <label class="control-label font-weight-300 m-b-5 label-group-three">Role</label>
                                     <div class="flex-grow-100">
                                         <div class="form-check no-p-l">
-                                            <label class="custom-control custom-radio">
+                                            <label class="custom-control custom-radio" [hidden]="editMode && User.role == 'Member'">
                                                 <input name="Role" type="radio" class="custom-control-input" value="Admin" [(ngModel)]="User.role" />
                                                 <span class="custom-control-indicator"></span>
                                                 <span class="custom-control-description">Administrator</span>
                                             </label>
-                                            <label class="custom-control custom-radio">
+                                            <label class="custom-control custom-radio" [hidden]="editMode && User.role == 'Admin'">
                                                 <input name="Role" type="radio" class="custom-control-input" value="Member" [(ngModel)]="User.role" />
                                                 <span class="custom-control-indicator"></span>
                                                 <span class="custom-control-description">Member</span>

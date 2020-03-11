@@ -223,7 +223,7 @@ export class UsersAddComponent implements OnInit {
                     // this.User = response;
 
                     // make modifications
-                    this.User.gender = this.User.gender === 'Female' ? 'female' : 'male';
+                    this.User.gender = this.User.gender === 'Female' || this.User.gender === 'female' ? 'female' : 'male';
                     this.User.emailAddress = response.emailAddress;
                     this.User.departmentId = response.departmentId + '';
                     this.User.address = response.address;
@@ -296,31 +296,19 @@ export class UsersAddComponent implements OnInit {
     }
 
     editUser(userObj: UserViewModel) {
-
-        // check if a new picture was selected
-        // let newPictureSelected = this.profilePictureComponent.Picture !== null;
-        // newPictureSelected = newPictureSelected ?
-            // (this.Staff.photoUrl && this.Staff.photoUrl !== '' ? this.profilePictureComponent.newPictureSelected : true) : false;
-
         // if changes were made to staff information then update staff
         if (this.OriginalUser !== JSON.stringify(this.User)) {
             const myUser = userObj;
-            // myUser.removePhoto = this.Staff.photoUrl !== null && this.Staff.photoUrl !== '' ? this.profilePictureComponent.pictureRemoved
-               // : false;
+            myUser.role = this.initialState.User.role;
 
             this.userService.editUser(myUser)
             .subscribe(
 
                 // success
                 () => {
-
-                    /*if (newPictureSelected) {
-                        this.uploadStaffPhoto(myStaff.id, true);
-                    } else {*/
-                        // tell parent component to reload staff list
-                        this.userEdited.emit();
-                        this.processing = false;
-                    // }
+                    // tell parent component to reload staff list
+                    this.userEdited.emit();
+                    this.processing = false;
                 },
 
                 // error
@@ -330,14 +318,13 @@ export class UsersAddComponent implements OnInit {
                     if (this.fieldErrors.DuplicateUserName) {
                         this.fieldErrors.EmailAddress = 'This email address is already taken';
                     }
+                    if (this.fieldErrors.departmentId) {
+                        this.fieldErrors.Department = 'Select a department';
+                    }
                     this.processing = false;
                 }
             );
-        } /*else if (newPictureSelected) { // if picture was just changed
-            this.uploadStaffPhoto(staffObj.id, true);
-        } else if (this.Staff.photoUrl !== null && this.profilePictureComponent.pictureRemoved) { // if picture was just removed
-            this.deleteStaffPhoto(staffObj.id);
-        }*/
+        }
     }
 
     deactivate() {
