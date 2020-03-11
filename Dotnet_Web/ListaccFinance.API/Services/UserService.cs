@@ -20,6 +20,7 @@ namespace ListaccFinance.API.Services
         private readonly IMapper _mapper;
         private readonly IUserRepo _urepo;
 
+
         public UserService(DataContext context, IOtherServices oService, IMapper mapper, IUserRepo uRepo)
         {
             _oService = oService;
@@ -199,15 +200,48 @@ namespace ListaccFinance.API.Services
         public async Task EditUserAsync(int Id, RegisterModel reg, int MyId)
         {
             var u = await _context.Users.Include(x => x.Person).Where(x => x.Id == Id).FirstOrDefaultAsync();
-            u.Address = reg.Address;
+            if (!string.IsNullOrEmpty(reg.Address) )
+            {
+                u.Address = reg.Address;
+            }
+
             u.DepartmentId = _context.Departments.Where(x => x.Name.CompareTo(reg.Department) ==0).FirstOrDefaultAsync().Id;
             u.Email = reg.EmailAddress;
             u.Person.firstName = reg.firstName;
-            u.Person.DateOfBirth = reg.DateOfBirth;
-            u.Person.DateOfBirth = reg.DateOfBirth;
+
+            if ((reg.DateOfBirth.HasValue))
+            {
+                u.Person.DateOfBirth = reg.DateOfBirth;
+            }
+
+
             u.Person.LastName = reg.LastName;
-            u.Person.Gender = reg.Gender;
-            u.SearchString = (reg.LastName + " " + reg.firstName + " " + reg.Gender + " " + reg.EmailAddress + " " + reg.Phone + " " +"Member" + " " + "Active").ToUpper();
+            if  (!String.IsNullOrEmpty(reg.Gender) )
+            {
+                u.Person.Gender = reg.Gender;
+            }
+
+            switch (reg.Status.ToLower())
+            {
+                case "true":
+                    u.Status = true;
+                    break;
+                case "false":
+                    u.Status = false;
+                    break;
+                
+                default:
+                    break;
+            }
+            //u.Status = reg.Status == "true"? true:false;
+            if (!(reg.DepartmentId == null))
+            {
+                u.DepartmentId = reg.DepartmentId.Value;
+            }
+
+            string newStatus = u.Status == true? "Active" : "Inactive";
+            //u.Department  = await _context.Departments.FirstOrDefaultAsync(x => x.Id == reg.DepartmentId);
+            u.SearchString = String.Format(reg.LastName + " " + reg.firstName + " " + reg.Gender + " " + reg.EmailAddress + " " + reg.Phone + " " +"Member" + " " +  newStatus );
 
             // Do password Change later
 
@@ -236,7 +270,6 @@ namespace ListaccFinance.API.Services
 
             return true;
         }
-
         public async Task CreateAdmin(RegisterModel reg, int userId)
         {
             var newUser = new Admin();
