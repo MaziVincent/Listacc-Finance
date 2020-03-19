@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import controllers.MaiinUI;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -35,7 +36,7 @@ import services.net.view_model.SyncInfo;
  */
 public class Network {
     
-    public final static String hostUrl = "http://localhost:5000/"; // 192.168.43.135:49659
+    public final static String hostUrl = "http://192.168.0.101:5000/"; // 192.168.43.211:5000
     public static String authUrl = hostUrl + "api/auth";
     public static String baseUrl = hostUrl + "api/sync";
     public static boolean isConnected = false;
@@ -336,6 +337,16 @@ public class Network {
                 success = true;
                 //throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
             }
+            else {
+                if(conn.getResponseCode() == 401){
+                    // get token from web server
+                    String token = Network.getToken(new LoginViewModel(MaiinUI.loginUser.getEmail(), MaiinUI.loginUser.getPassword()));
+
+                    // save token to file
+                    SyncInfo.saveToken(token);
+                }
+                return new Pair(false, "");
+            }
 
             BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 
@@ -374,7 +385,16 @@ public class Network {
             conn.connect();
             
             if (conn.getResponseCode() != 200) {
-                System.out.println("Failed : HTTP error code : " + conn.getResponseCode());
+                if(conn.getResponseCode() == 401){
+                    // get token from web server
+                    String token = Network.getToken(new LoginViewModel(MaiinUI.loginUser.getEmail(), MaiinUI.loginUser.getPassword()));
+
+                    // save token to file
+                    SyncInfo.saveToken(token);
+                }
+                else {
+                    System.out.println("Failed : HTTP error code : " + conn.getResponseCode());
+                }
                 return null;
                 // throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
             }

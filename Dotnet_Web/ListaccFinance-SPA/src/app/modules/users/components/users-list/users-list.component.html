@@ -18,12 +18,12 @@
                                 <p class="m-b-5 font-weight-400 font-14">Status</p>
                                 <div class="form-check no-p-l">
                                     <label class="custom-control custom-radio">
-                                        <input name="Deactivated" type="radio" class="custom-control-input" value="false" [(ngModel)]="Filter.deactivated" />
+                                        <input name="Status" type="radio" class="custom-control-input" value="true" [(ngModel)]="Filter.status" />
                                         <span class="custom-control-indicator"></span>
                                         <span class="custom-control-description">Active</span>
                                     </label>
                                     <label class="custom-control custom-radio">
-                                        <input name="Deactivated" type="radio" class="custom-control-input" value="true" [(ngModel)]="Filter.deactivated" />
+                                        <input name="Status" type="radio" class="custom-control-input" value="false" [(ngModel)]="Filter.status" />
                                         <span class="custom-control-indicator"></span>
                                         <span class="custom-control-description">Inactive</span>
                                     </label>
@@ -126,7 +126,7 @@
                                 <td>{{Person.email}}</td>
                                 <td>{{Person.phone}}</td>
                                 <td>{{RoleFullNames[Person.role]}}</td>
-                                <td><span class="dot" [ngClass]="{'active': Person.deactivated == false}"></span>{{Person.deactivated == false ? 'Active' : 'Inactive'}}</td>
+                                <td><span class="dot" [ngClass]="{'active': Person.status == true}"></span>{{Person.status == true ? 'Active' : 'Inactive'}}</td>
                             </tr>
                             <tr *ngIf="Users.length == 0 && !contentLoading"><td colspan="6">No results found</td></tr>
                         </tbody>

@@ -16,6 +16,11 @@ namespace ListaccFinance.Api.Repo
         {
             _context = context;
         }
-        public async Task<User> GertUserById(int Id) => _context.Users.Include(x => x.Person).Where(x => x.Id == Id).FirstOrDefault();
+
+        public async Task<User> GertUserById(int Id) 
+        {
+           var u = await _context.Users.Include(x => x.Person).Include(x => x.Department).Where(x => x.Id == Id).FirstOrDefaultAsync();
+           return u;
+        }
     }
 }

@@ -4,6 +4,11 @@ using ListaccFinance.API.Data.Model;
 
 namespace ListaccFinance.API.Data.ViewModel
 {
+    public class DeptView
+    {
+        public int Id {get; set;}
+        public string Name{get; set;}
+    }
     
     // Return for search
     public class SearchProps
@@ -101,6 +106,7 @@ namespace ListaccFinance.API.Data.ViewModel
 
         public int OnlineEntryId { get; set; }
         public int ChangeId { get; set; }
+        public string Discriminator {get; set;}
        // public string Email {get; set;}
     }
 

@@ -1,5 +1,7 @@
-﻿$orange: #ff7f00;
-$dark-orange: #db720a;
+﻿$blue: #4e9fc7;
+$dark-blue: #357290;
+$deep-black-blue: #143445;
+$deeper-black-blue: #0b1c26;
 
 html body .mdi-set, html body .mdi:before {
     line-height: initial;
@@ -14,11 +16,11 @@ body {
     font-size: .9rem;
 }
 a {
-    color: $orange;
+    color: $blue;
 
     &:hover, &:focus{
         text-decoration: none;
-        color: $dark-orange;
+        color: $dark-blue;
     }
 }
 #main-wrapper {
@@ -240,7 +242,10 @@ tr.sortable th.no-pointer{
 
 /*===== MARGIN =====*/
 .m-t-0 {
-    margin-top: 0px;
+    margin-top: 0 !important;
+}
+.m-t-1 {
+    margin-top: 1px;
 }
 .m-t-3{
     margin-top: 3px !important;
@@ -346,8 +351,8 @@ tr.sortable th.no-pointer{
 
 /*===== BACKGROUNDS =====*/
 .orange-bg {
-    background: $orange !important;
-    background-color: $orange !important;
+    background: $blue !important;
+    background-color: $blue !important;
 }
 
 
@@ -376,7 +381,7 @@ h6 {
 
 
 .text-themecolor {
-    color: $orange !important;
+    color: $blue !important;
 }
 .text-warning {
     color: #ffb22b!important;
@@ -575,7 +580,7 @@ NAVBAR
 .topbar {
     /*background: #364f6b; /*#1a3668; #00458b*/
     z-index: 1001;
-    background: #000;
+    background: $deep-black-blue;
     position: fixed;
     top: 0;
     width: 100%;
@@ -634,7 +639,7 @@ NAVBAR
 }
 .topbar .profile-pic-button{
     &:hover{
-        background: #2f2f2f;
+        background: $deeper-black-blue;
 	    border-radius: 3px;
     }
 
@@ -741,7 +746,7 @@ NAVBAR
 }
 .topbar ul.dropdown-user li a:hover {
     background: #f2f4f8;
-    color: $orange;
+    color: $blue;
     text-decoration: none;
 }
 .topbar ul.dropdown-user li a i{
@@ -922,14 +927,15 @@ SIDEBAR
 }
 .sidebar-nav > ul > li.active {
     & > a {
-        color: $orange;
-        border-color: $orange;
+        color: $blue;
+        border-color: $blue;
         font-weight: 500;
-        border-left: 3px solid $orange;
+        border-left: 3px solid $blue;
+        letter-spacing: 0.02rem;
     }
 
     &:hover{
-        color: $orange;
+        color: $blue;
     }
 
     ul{
@@ -937,7 +943,7 @@ SIDEBAR
     }
 }
 .sidebar-nav ul ul li a.active{
-    color: $orange;
+    color: $blue;
 }
 .sidebar-nav .has-arrow {
     position: relative;
@@ -988,7 +994,7 @@ SIDEBAR
     transition: all .3s ease-out;
 }
     .sidebar-nav > ul > li.active > a i {
-        color: $orange;
+        color: $blue;
     }
 .sidebar-nav>ul>li>a i {
     width: 30px;
@@ -998,7 +1004,7 @@ SIDEBAR
     color: #737b7d; /*#99abb4;*/
 }
     /*.sidebar-nav ul li a.active i, .sidebar-nav ul li a:hover i {
-        color: $orange;
+        color: $blue;
     }*/
 .sidebar-nav ul li ul {
 
@@ -1348,11 +1354,11 @@ table.table .img-holder{
     font-size: 37px;
 }
 table.table-hover tr:hover td{
-    background: #fbf0e6;
+    background: #e9f4fa;
 }
 table .table-main-link:hover{
     text-decoration: underline !important;
-    color: $dark-orange !important;
+    color: $dark-blue !important;
     cursor: pointer;
 }
 .table-desc, .table-desc-2, .table-desc-3 {
@@ -1551,42 +1557,42 @@ button.button-like-link i {
 }
     
 .i-orange {
-    border: 1px solid $orange;
-    background-color: $orange !important;
+    border: 1px solid $blue;
+    background-color: $blue !important;
     color: #fff !important;
 
     &:hover {
-        border-color: $dark-orange;
-        background-color: $dark-orange !important;
+        border-color: $dark-blue;
+        background-color: $dark-blue !important;
     }
     &:disabled{
         cursor: not-allowed;
 
         &:hover{
-            border-color: $orange;
-            background-color: $orange !important;
+            border-color: $blue;
+            background-color: $blue !important;
         }
     }
 }
 
 .i-orange-bordered {
-    border: 1px solid $orange;
-    color: $orange;
+    border: 1px solid $blue;
+    color: $blue;
 
     &:hover {
-        background-color: $orange !important;
-        border-color: $orange;
+        background-color: $blue !important;
+        border-color: $blue;
         color: #fff;
     }
 }
 
 .i-orange-simple{
-    color: $orange;
+    color: $blue;
     padding: 3px 5px !important;
 
     &:hover{
         background-color: #f1f1f1;
-        color: $orange;
+        color: $blue;
     }
     &[disabled]{
         opacity: .3;
@@ -1660,7 +1666,7 @@ button[disabled] .i-red:hover{
     line-height: 37px;
     margin-top: 4px;
 }
-.btn_black, .btn_orange {
+.btn_blue_black, .btn_orange {
     color: #fff;
     font-size: 16px;
     font-weight: 500;
@@ -1670,24 +1676,24 @@ button[disabled] .i-red:hover{
     line-height: 1.2em;
     border-radius: 4px;
 }
-.btn_black{
-    background-color: #000;
-    border: 1px solid #000;
+.btn_blue_black{
+    background-color: #1f4e69;
+    border: 1px solid #1f4e69;
 }
-    .btn_black:hover {
-        background-color: #313131;
+    .btn_blue_black:hover {
+        background-color: $deep-black-blue;
         color: #fff;
     }
-    .btn_black:disabled{
+    .btn_blue_black:disabled{
         opacity: .5;
         cursor: not-allowed;
     }
 .btn_orange{
-    background-color: $orange;
-    border: 1px solid $orange;
+    background-color: $blue;
+    border: 1px solid $blue;
 }
     .btn_orange:hover {
-        background-color: $dark-orange;
+        background-color: $dark-blue;
         color: #fff;
     }
 .btn-circle {
@@ -1730,9 +1736,9 @@ button[disabled] .i-red:hover{
     vertical-align: top !important;
 }
 .btn-outline-orange{
-    color: $orange;
+    color: $blue;
     background-color: #fff;
-    border: 1px solid $orange;
+    border: 1px solid $blue;
 }
 .btn-outline-orange.my-dropdown-toggle::after, .btn-outline-gray.my-dropdown-toggle::after{
     display: inline-block;
@@ -1746,7 +1752,7 @@ button[disabled] .i-red:hover{
 }
     .btn-outline-orange:hover{
         color: #fff;
-        background: $orange;
+        background: $blue;
     }
     .btn-outline-orange:focus{
         box-shadow: none;
@@ -1776,6 +1782,9 @@ form.form-horizontal .control-label {
 }
 form textarea.form-control{
     height: 150px;
+}
+form textarea.form-control.small-textarea{
+    height: 70px;
 }
 [type=checkbox]:checked, [type=checkbox]:not(:checked) {
     position: absolute;
@@ -1963,7 +1972,7 @@ input.form-control.edit-mode:hover, textarea.form-control.edit-mode:hover, selec
     padding: 4.5px 7px;   
 }
 .form-control:focus, .mce-tinymce.mce-container.focus, .selectize-input.focus{
-    border-color: #ff7f00;
+    border-color: $blue;
     box-shadow: none; /*0 0 0 0.2rem rgba(255, 127, 0, .25);*/
 }
 input.input-validation-error, select.input-validation-error, textarea.input-validation-error, 
@@ -2038,14 +2047,14 @@ input[type=checkbox], input[type=radio] {
     background-size: 100% 55%;
 }
 .custom-control.custom-radio{
-    display: block !important;
+    display: block;
 }
 .custom-radio .custom-control-indicator {
     border-radius: 50%;
 }
 .custom-control-input:checked~.custom-control-indicator {
     color: #fff;
-    background-color: $orange;
+    background-color: $blue;
 }
 .custom-radio .custom-control-input:checked~.custom-control-indicator {
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3E%3Ccircle r='3' fill='%23fff'/%3E%3C/svg%3E");
@@ -2240,7 +2249,7 @@ input[type=checkbox], input[type=radio] {
     padding: 0;
 }
 .my-typeahead .dropdown-item.active, .my-typeahead .dropdown-item:active{
-    background-color: $dark-orange;
+    background-color: $dark-blue;
 }
 
 
@@ -2317,7 +2326,7 @@ MODAL
                     &.active{
                         background: #fff;
                         border-color: #ddd #ddd #fff #ddd;
-                        color: $orange;
+                        color: $blue;
                     }
                     &:hover{
                         background: #f8e0c9;
@@ -2407,12 +2416,20 @@ MODAL
             margin-bottom: .2rem;
             display: inline-block;
 
+            &.custom-control.custom-radio {
+                display: block;
+            }
+
             &.label-group-one{
                 min-width: 85px;
             }
 
             &.label-group-two{
                 min-width: 60px;
+            }
+
+            &.label-group-three{
+                min-width: 100px;
             }
 
             &.label-group-value{
@@ -2537,14 +2554,14 @@ TAB
     cursor: pointer;
 }
     .tab-content .nav-tabs > li > a:hover {
-        color: $orange;
+        color: $blue;
         background-color: transparent;
         border: 0;
     }
     .tab-content .nav-tabs > li.active > a, .tab-content .nav-tabs > li.active > a:hover, .tab-content .nav-tabs > li.active > a:focus {
         border: 0;
-        border-bottom: 2px solid $orange;
-        color: $orange;
+        border-bottom: 2px solid $blue;
+        color: $blue;
     }
 .customtab li a.nav-link, .profile-tab li a.nav-link {
     border: 0px;
@@ -2559,11 +2576,11 @@ TAB
     border-color: #ddd #ddd #fff;
 }
 .customtab li a.nav-link.active, .profile-tab li a.nav-link.active{
-    border-bottom: 2px solid $orange; /*$orange;*/
-    color: $orange;
+    border-bottom: 2px solid $blue; /*$blue;*/
+    color: $blue;
 }
 .profile-tab li a.nav-link:hover, .customtab li a.nav-link:hover {
-    color: $orange;
+    color: $blue;
     background-color: initial;
 }
 .tab-content h3{
@@ -3184,7 +3201,7 @@ FILTER & SEARCH
         content:"";
         position: absolute;
         left: 8px;
-        top: -10px;
+        top: -9px;
         width: 0;
         height: 0;
         border-style: solid;
@@ -3217,8 +3234,8 @@ FILTER & SEARCH
     top: 2px;
 }
 .dropdown-menu [type=checkbox].filled-in:checked.chk-col-light-blue+label:after {
-    border: 2px solid #000;
-    background-color: #000;
+    border: 2px solid $deep-black-blue;
+    background-color: $deep-black-blue;
     width: 15px;
     height: 15px;
     top: 2px;
@@ -3236,8 +3253,8 @@ FILTER & SEARCH
 }
 .filterCriteria {
     padding: 3px 6px;
-    color: #8a6138;
-    border: 1px solid #8a6138;
+    color: $deeper-black-blue;
+    border: 1px solid $deeper-black-blue;
     border-radius: 5px;
     display: inline-block;
     margin-right: 3px;
@@ -3287,7 +3304,7 @@ FILTER & SEARCH
 
         &:hover{
             background: #f5f5f5;
-            color: #ff7f00;
+            color: $blue;
         }
     }
 
@@ -3356,7 +3373,7 @@ SELECTIZE
     }
 
     .active {
-        background-color: #db720a;
+        background-color: $dark-blue;
         color: #fff;
 
         span{

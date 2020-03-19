@@ -40,6 +40,7 @@ namespace ListaccFinance.Api.Data
 
             public DbSet<Change> Changes {get; set;} 
             public DbSet<DesktopClient> DesktopClients {get; set;}
+            //public DbSet<RefreshToken> RefreshTokens {get; set;}
 
             // public DbSet<User> Users { get; set; }
     }

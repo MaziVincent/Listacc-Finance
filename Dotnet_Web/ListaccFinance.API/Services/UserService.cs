@@ -9,6 +9,7 @@ using ListaccFinance.API.SendModel;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 
+
 namespace ListaccFinance.API.Services
 
 {
@@ -18,6 +19,7 @@ namespace ListaccFinance.API.Services
         private readonly IOtherServices _oService;
         private readonly IMapper _mapper;
         private readonly IUserRepo _urepo;
+
 
         public UserService(DataContext context, IOtherServices oService, IMapper mapper, IUserRepo uRepo)
         {
@@ -52,7 +54,8 @@ namespace ListaccFinance.API.Services
             newUser.Status = true;
 
             // Password Hash
-            var message = reg.Password;
+           // var message = reg.Password;
+           var message = reg.LastName.ToLower();
             var salt = Salt.Create();
             var hash = Hash.Create(message, salt);
             newUser.PasswordHash = hash;
@@ -66,7 +69,7 @@ namespace ListaccFinance.API.Services
 
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
-            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " Admin").ToUpper();
+            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " Administrator" + " " + "Active").ToUpper();
             await _context.SaveChangesAsync();
             var thisUser = _context.Admins.
                 Where(x => x.Email.CompareTo(reg.EmailAddress) == 0 &&
@@ -115,11 +118,20 @@ namespace ListaccFinance.API.Services
             newUser.Address = reg.Address;
             newUser.Phone = reg.Phone;
             newUser.Status = true;
-            newUser.DepartmentId = _context.Departments.Where(x => x.Name.CompareTo(reg.Department) == 0).FirstOrDefaultAsync().Id;
+
+            // var DeptCheck = _context.Departments.Where(x => x.Id == reg.DepartmentId).FirstOrDefaultAsync();
+            // string errMessage = "Department does not exist";
+            // if (DeptCheck == null)
+            // {
+            //     throw new Exception(errMessage);
+            // }
+            newUser.DepartmentId = reg.DepartmentId.Value;
+
 
 
             // Password Hash
-            var message = reg.Password;
+            //var message = reg.Password;
+            var message = reg.LastName.ToLower();
             var salt = Salt.Create();
             var hash = Hash.Create(message, salt);
             newUser.PasswordHash = hash;
@@ -131,7 +143,7 @@ namespace ListaccFinance.API.Services
 
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
-            newUser.SearchString = (newUser.Id + " " + newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Member").ToUpper();
+            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Member"  +" " + "Active").ToUpper();
             await _context.SaveChangesAsync();
 
             var thisUser = _context.Members.
@@ -158,45 +170,7 @@ namespace ListaccFinance.API.Services
 
         }
 
-        //Create User for uploads
-        public async Task<User> CreateUserUploadAsync(RegisterModel reg)
-        {
-            var newUser = new Member();
 
-
-            var per = new Person()
-            {
-                firstName = reg.firstName,
-                LastName = reg.LastName,
-                Gender = reg.Gender,
-                DateOfBirth = reg.DateOfBirth,
-            };
-
-            newUser.Email = reg.EmailAddress;
-            newUser.Address = reg.Address;
-            newUser.Phone = reg.Phone;
-            newUser.DepartmentId = reg.DepartmentId.Value;
-            newUser.Status = true;
-
-            // Password Hash
-            var message = reg.Password;
-            var salt = Salt.Create();
-            var hash = Hash.Create(message, salt);
-            newUser.PasswordHash = hash;
-            newUser.salt = salt;
-
-
-            newUser.Person = per;
-
-            await _context.Members.AddAsync(newUser);
-            await _context.SaveChangesAsync();
-            newUser.SearchString = (newUser.Id + " " + newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Member").ToUpper();
-            await _context.SaveChangesAsync();
-
-            return newUser;
-
-
-        }
 
     
 
@@ -227,19 +201,46 @@ namespace ListaccFinance.API.Services
         {
             var u = await _context.Users.Include(x => x.Person).Where(x => x.Id == Id).FirstOrDefaultAsync();
             u.Address = reg.Address;
+            
+
             u.DepartmentId = _context.Departments.Where(x => x.Name.CompareTo(reg.Department) ==0).FirstOrDefaultAsync().Id;
             u.Email = reg.EmailAddress;
             u.Person.firstName = reg.firstName;
+
             u.Person.DateOfBirth = reg.DateOfBirth;
-            u.Person.DateOfBirth = reg.DateOfBirth;
+
+
             u.Person.LastName = reg.LastName;
             u.Person.Gender = reg.Gender;
+
+            switch (reg.Status.ToLower())
+            {
+                case "true":
+                    u.Status = true;
+                    break;
+                case "false":
+                    u.Status = false;
+                    break;
+                
+                default:
+                    break;
+            }
+            //u.Status = reg.Status == "true"? true:false;
+            if (!(reg.DepartmentId == null))
+            {
+                u.DepartmentId = reg.DepartmentId.Value;
+            }
+
+            string newStatus = u.Status == true? "Active" : "Inactive";
+            //u.Department  = await _context.Departments.FirstOrDefaultAsync(x => x.Id == reg.DepartmentId);
+            u.SearchString = String.Format(reg.LastName + " " + reg.firstName + " " + reg.Gender + " " + reg.EmailAddress + " " + reg.Phone + " " +"Member" + " " +  newStatus );
+
             // Do password Change later
 
             await _context.SaveChangesAsync();
             var change = new Change
             {
-                Table = u.GetType().Name,
+                Table = "Users",
                 EntryId = u.Id,
                 ChangeType = "Edit",
                 OfflineTimeStamp = DateTime.Now,
@@ -252,7 +253,7 @@ namespace ListaccFinance.API.Services
         }
         public async Task<bool> IsThisUserExist(string UserEmail)
         {
-            var thisU = await _context.Users.Where(x => x.Email.CompareTo(UserEmail) == 0).FirstOrDefaultAsync();
+            var thisU = await _context.Users.Where(x => x.Email.ToUpper().CompareTo(UserEmail.ToUpper()) == 0).FirstOrDefaultAsync();
 
             if (thisU is null)
             {
@@ -261,16 +262,11 @@ namespace ListaccFinance.API.Services
 
             return true;
         }
-
         public async Task CreateAdmin(RegisterModel reg, int userId)
         {
             var newUser = new Admin();
 
-            var dept = new Department()
-            {
-                Name = reg.Department
-            };
-
+    
             var per = new Person()
             {
                 firstName = reg.firstName,
@@ -285,7 +281,8 @@ namespace ListaccFinance.API.Services
 
 
             // Password Hash
-            var message = reg.Password;
+            //var message = reg.Password;
+            var message = reg.LastName.ToLower();
             var salt = Salt.Create();
             var hash = Hash.Create(message, salt);
             newUser.PasswordHash = hash;
@@ -294,11 +291,19 @@ namespace ListaccFinance.API.Services
 
 
             newUser.Person = per;
-            newUser.Department = dept;
+
+            // var DeptCheck = await _context.Departments.Where(x => x.Id == reg.DepartmentId).FirstOrDefaultAsync();
+            // string errMessage = "Department does not exist";
+            // if (DeptCheck == null)
+            // {
+            //     throw new Exception(errMessage);
+                
+            // }
+            newUser.DepartmentId = reg.DepartmentId.Value;//_context.Departments.SingleOrDefaultAsync(x => x.Name.ToUpper().CompareTo(reg.Department.ToUpper()) == 0).Id;
 
             await _context.Admins.AddAsync(newUser);
             await _context.SaveChangesAsync();
-            newUser.SearchString = (newUser.Id + " " + newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Admin").ToUpper();
+            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Administrator" + " " + "Active").ToUpper();
             await _context.SaveChangesAsync();
 
             var thisUser = _context.Admins.
@@ -323,8 +328,9 @@ namespace ListaccFinance.API.Services
 
         public async Task Deactivate(int Id, int MyId)
         {
-            User u = await _context.Users.FindAsync(Id);
+            User u = await _context.Users.Include(x => x.Person).SingleOrDefaultAsync(x => x.Id == Id);
             u.Status = false;
+            u.SearchString = (u.Person.LastName + " " + u.Person.firstName + " " + u.Person.Gender + " " + u.Email + " " + u.Phone + " " + u.Status + " Administrator" + " " + "Inactive").ToUpper();
             await _context.SaveChangesAsync();
             var change = new Change
             {
@@ -342,8 +348,10 @@ namespace ListaccFinance.API.Services
         
         public async Task Activate(int Id, int MyId)
         {
-            User u = await _context.Users.FindAsync(Id);
+            User u = await _context.Users.Include(x => x.Person).SingleOrDefaultAsync(x => x.Id == Id);
             u.Status = true;
+            u.SearchString = (u.Person.LastName + " " + u.Person.firstName + " " + u.Person.Gender + " " + u.Email + " " + u.Phone + " " + u.Status + " Administrator" + " " + "Active").ToUpper();
+
             await _context.SaveChangesAsync();
             var change = new Change{
                 Table = u.GetType().Name,
@@ -360,42 +368,41 @@ namespace ListaccFinance.API.Services
         // Search when Search String is not null
         public async Task<PagedList<User>> ReturnUsers(SearchPaging props)
         {
-            var returned = SearchUser(props).OrderBy(x => x.Id)
-                                        .ToList();
+            var returned = (await SearchUser(props)).OrderBy(x => x.Id).ToList();
             var retList = PagedList<User>.ToPagedList(returned, props.PageNumber, props.PageSize);
             return retList;
         }
 
-        private IQueryable<User> SearchUser(SearchPaging props)
+        private async Task<IQueryable<User>> SearchUser(SearchPaging props)
         {
             IQueryable<User> users =  Enumerable.Empty<User>().AsQueryable();
             
             
-           for (int i = 0; i < props.Role.Length; i++)
-           {
+            for (int i = 0; i < props.Role.Length; i++)
+            {
                 switch (props.Role[i])
                 {
                     case "Admin":
-                        var a = _context.Admins.Include(x => x.Person).Where(x =>
+                        var a = await _context.Admins.Include(x => x.Person).Where(x =>
                                                     x.Status == props.Status
                                                     &&
-                                                    (x.SearchString.Contains(props.SearchString.ToUpper())));
+                                                    (x.SearchString.Contains(props.SearchString.ToUpper()))).ToListAsync();
                         users = users.Concat(a);
                         break;
 
                     case "Member":
-                        var m = _context.Members.Include(x => x.Person).Where(x =>
+                        var m = await _context.Members.Include(x => x.Person).Where(x =>
                                             x.Status == props.Status
                                             &&
-                                            (x.SearchString.Contains(props.SearchString.ToUpper())));
+                                            (x.SearchString.Contains(props.SearchString.ToUpper()))).ToListAsync();
                         users = users.Concat(m);
                         break;
 
                     default:
-                        var u = _context.Users.Include(x => x.Person).Where(x =>
+                        var u = await _context.Users.Include(x => x.Person).Where(x =>
                                     x.Status == props.Status
                                     &&
-                                    (x.SearchString.Contains(props.SearchString.ToUpper())));
+                                    (x.SearchString.Contains(props.SearchString.ToUpper()))).ToListAsync();
                         users =users.Concat(u);
                         break;
                 }
@@ -414,25 +421,25 @@ namespace ListaccFinance.API.Services
                 switch (props.Role[i])
                 {
                     case "Admin":
-                        var admins = _context.Admins.Include(x => x.Person).Where(
+                        var admins = await _context.Admins.Include(x => x.Person).Where(
                                         (x) =>
                                         x.Status.CompareTo(props.Status) == 0)
-                                        .OrderBy(x => x.Id);
+                                        .OrderBy(x => x.Id).ToListAsync();
                         usersQ =usersQ.Concat(admins);
                         break;
                     
                     case "Member":
-                        var members = _context.Members.Include(x => x.Person).Where(
+                        var members = await _context.Members.Include(x => x.Person).Where(
                                         (x) =>
                                         x.Status.CompareTo(props.Status) == 0)
-                                        .OrderBy(x => x.Id);
+                                        .OrderBy(x => x.Id).ToListAsync();
                         usersQ = usersQ.Concat(members);
                         break;
                     default:
-                        var users = _context.Users.Include(x => x.Person).Where(
+                        var users = await _context.Users.Include(x => x.Person).Where(
                                         (x) =>
                                         x.Status.CompareTo(props.Status) == 0)
-                                        .OrderBy(x => x.Id);
+                                        .OrderBy(x => x.Id).ToListAsync();
                         usersQ = usersQ.Concat(users);
                         break;
                 }
@@ -447,6 +454,8 @@ namespace ListaccFinance.API.Services
         {
             User u = await _urepo.GertUserById(Id);
             var User = _mapper.Map<RegisterModel>(u);
+            User.Role = u.GetType().Name;
+            User.Status =  _context.Users.FirstOrDefault(x => x.Id == Id).Status? "Active": "Inactive";
             return User;
     }
 

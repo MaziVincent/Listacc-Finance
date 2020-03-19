@@ -53,16 +53,47 @@ public class ClientService extends DataService {
     public ClientSyncItem getClientByChange(Changes ch)
     {
         try{
-            Query q = em.createQuery("Select new services.net.view_model.ClientSyncItem(a.id, a.businessName, "
-                    + "a.phone, a.email, a.address, a.uId, a.uId2, a.amountReceivable, a.onlineEntryId, "
-                    + "p.id, p.firstName, p.lastName, p.gender, p.dateOfBirth, p.onlineEntryId) "
-                    + "FROM Clients a JOIN Persons p ON p.id = a.person.id WHERE a.id = :id");
-            q.setParameter("id", ch.getEntryId());
-            ClientSyncItem result = (ClientSyncItem)q.getSingleResult();
-            result.setChange(ch.getChanges());
+            ClientSyncItem result = getClientInfoOnlyByChange(ch);
+            if(result.getPersonId() != null)
+                result = getClientAndPersonInfoByChange(ch);
             result.setChange(ch.getChanges());
             result.setChangeTimestamp(ch.getTimeStamp());
             result.setChangeUserOnlineEntryId(ch.getUser() != null ? ch.getUser().getOnlineEntryId(): null);
+            return result;
+        }catch(NoResultException ex){
+            return null;
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null;
+    }
+    
+    private ClientSyncItem getClientInfoOnlyByChange(Changes ch)
+    {
+        try{
+            Query q = em.createQuery("Select new services.net.view_model.ClientSyncItem(a.id, a.businessName, "
+                    + "a.phone, a.email, a.address, a.uId, a.uId2, a.amountReceivable, a.onlineEntryId, a.personId) "
+                    + "FROM Clients a WHERE a.id = :id");
+            q.setParameter("id", ch.getEntryId());
+            ClientSyncItem result = (ClientSyncItem)q.getSingleResult();
+            return result;
+        }catch(NoResultException ex){
+            return null;
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null;
+    }
+    
+    private ClientSyncItem getClientAndPersonInfoByChange(Changes ch)
+    {
+        try{
+            Query q = em.createQuery("Select new services.net.view_model.ClientSyncItem(a.id, a.businessName, "
+                    + "a.phone, a.email, a.address, a.uId, a.uId2, a.amountReceivable, a.onlineEntryId, "
+                    + "p.id, p.firstName, p.lastName, p.gender, p.dateOfBirth, p.onlineEntryId) "
+                    + "FROM Clients a JOIN Persons p ON p.id = a.personId WHERE a.id = :id");
+            q.setParameter("id", ch.getEntryId());
+            ClientSyncItem result = (ClientSyncItem)q.getSingleResult();
             return result;
         }catch(NoResultException ex){
             return null;

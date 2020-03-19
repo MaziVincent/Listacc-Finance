@@ -10,9 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import com.victorlaerte.asynctask.AsyncTask;
 import helpers.GsonHelper;
 import java.util.List;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.StringProperty;
-import javafx.scene.paint.Paint;
+import javafx.beans.property.BooleanProperty;
 import services.data.ClientService;
 import services.data.CostCategoryService;
 import services.data.DepartmentService;
@@ -28,14 +26,13 @@ import services.net.view_model.SyncInfo;
  */
 public class SynchronizationDownloadService extends AsyncTask<Void, String, Void>  { // Params, Progress, Result
     
-    private StringProperty activitySp;
-    private SimpleObjectProperty<Paint> color;
+    private BooleanProperty connectionDisplayPro, syncDisplayPro;
     
     public SynchronizationDownloadService(){}
     
-    public SynchronizationDownloadService(StringProperty activitySp, SimpleObjectProperty color){
-        this.activitySp = activitySp;
-        this.color = color;
+    public SynchronizationDownloadService(BooleanProperty connectionDisplayPro, BooleanProperty syncDisplayPro){
+        this.connectionDisplayPro = connectionDisplayPro;
+        this.syncDisplayPro = syncDisplayPro;
     }
     
     @Override
@@ -43,6 +40,7 @@ public class SynchronizationDownloadService extends AsyncTask<Void, String, Void
         //This method runs on UI Thread before background task has started
         // activitySp.set("Syncing is in process...");
         // color.set(Color.WHITE);
+        // toggleLabel(true);
     }
     
     @Override
@@ -67,8 +65,9 @@ public class SynchronizationDownloadService extends AsyncTask<Void, String, Void
     @Override
     public void onPostExecute(Void result) {
         // update UI thread after success/failure
-        if(!Network.isSyncingUp) {
-            updateStatusLabel("");
+        if(!Network.isSyncingUp && !Network.isSyncingDown) {
+            toggleLabel(false);
+            // updateStatusLabel("");
         }
     }
     
@@ -77,10 +76,19 @@ public class SynchronizationDownloadService extends AsyncTask<Void, String, Void
         //This method update your UI Thread during the execution of background thread
      //   double progress = (double)params[0]
        // this.controller.updateProgress(progress);
-       updateStatusLabel(params[0]);
+       // updateStatusLabel(params[0]);
+        toggleLabel(true);
     }
     
-    private void updateStatusLabel(String content){
+    private void toggleLabel(boolean show){
+        if (show){
+            connectionDisplayPro.set(false);
+            syncDisplayPro.set(true);
+        }
+        else{
+            connectionDisplayPro.set(true);
+            syncDisplayPro.set(false);
+        }
         // activitySp.set(content);
     }
     

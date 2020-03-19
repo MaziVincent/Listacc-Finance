@@ -57,7 +57,7 @@ public class SyncInfo {
             }
             else {// if file does not exist
                 // create directory
-                if(!file.getParentFile().exists()) file.mkdirs();
+                if(!file.getParentFile().exists()) file.getParentFile().mkdirs();
                 
                 // create new file
                 if(file.createNewFile()){

@@ -69,11 +69,12 @@ public class UserSyncItem extends Users implements SyncItem{
         result.setPhone(entry.getPhone());
         result.setAddress(entry.getAddress());
         result.setDiscriminator(entry.getDiscriminator());
-        result.setDiscriminator("User");
+        // result.setDiscriminator("User");
         result.setSalt(entry.getSalt());
         result.setOnlineEntryId(onlineEntryId);
         result.setDepartment(department);
         result.setPerson(person);
+        result.setStatus(entry.getStatus());
         return result;
     }
     

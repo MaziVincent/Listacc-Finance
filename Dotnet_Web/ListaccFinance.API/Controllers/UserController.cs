@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using ListaccFinance.Api.Data;
@@ -10,11 +12,13 @@ using ListaccFinance.API.SendModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ListaccFinance.API.Controllers
 {
     [ApiController]
-    [Authorize]
+    // [Authorize]
     [Route("api/[controller]")]
     public class UserController: ControllerBase
     {
@@ -23,13 +27,15 @@ namespace ListaccFinance.API.Controllers
         private readonly DataContext _context;
         private readonly ITokenGenerator _generator;
         private readonly IMapper _mapper;
+        private readonly IOtherServices _oService;
 
-        public UserController(IUserService uservice, DataContext context, ITokenGenerator generator, IMapper mapper )
+        public UserController(IUserService uservice, DataContext context, ITokenGenerator generator, IMapper mapper, IOtherServices oService )
         {
             _uService =uservice;
             _context = context;
             _generator = generator;
             _mapper = mapper;
+            _oService = oService;
         }
 
 
@@ -37,6 +43,7 @@ namespace ListaccFinance.API.Controllers
 
 
         [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [HttpPost("FirstCreateUser")]
         public async Task<IActionResult> FirstCreateUser(RegisterModel me)
         {
@@ -57,13 +64,26 @@ namespace ListaccFinance.API.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("CreateAdmin")]
         public async Task<IActionResult> CreateAdmin(RegisterModel reg)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+            var DeptCheck = await _context.Departments.Where(x => x.Id == reg.DepartmentId).FirstOrDefaultAsync();
+            //string errors = $" ";
+           
+
+            if (DeptCheck == null)
+            {
+                var error = new
+                {
+                    errors = new { departmentId = "[department selected does not exist]",}, };
+
+                string result = JsonSerializer.Serialize(error);
+                return BadRequest(result);
             }
 
             if (!await _uService.IsThisUserExist(reg.EmailAddress))
@@ -73,24 +93,37 @@ namespace ListaccFinance.API.Controllers
                 var u = new Admin();
                 await _uService.CreateAdmin(reg, userId);
                 
-                return Ok("successful");
+                return Ok();
             }
 
-            return BadRequest(new { message = " User already exists" });
+            return BadRequest(new { EmailAddress = " User already exists" });
         }
 
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("EditUser")]
-        public async Task<IActionResult> EditUser([FromQuery]int Id,[FromBody] RegisterModel reg)
+        [HttpPut("EditUser/{Id}")]
+        public async Task<IActionResult> EditUser(RegisterModel reg, int Id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            var DeptCheck = await _context.Departments.Where(x => x.Id == reg.DepartmentId).FirstOrDefaultAsync();
+            if (DeptCheck == null)
+            {
+                var error = new
+                {
+                    errors = new { departmentId = "[department selected does not exist]", },
+                };
+
+                string result = JsonSerializer.Serialize(error);
+                return BadRequest(result);
+            }
+
+
             await _uService.EditUserAsync(Id, reg, int.Parse(this.User.Claims.First(i => i.Type == "UserID").Value));
 
-            return Ok("done");
+            return Ok();
         }
 
         [Authorize(Roles = "Admin")]
@@ -103,6 +136,19 @@ namespace ListaccFinance.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var DeptCheck = await _context.Departments.Where(x => x.Id == me.DepartmentId).FirstOrDefaultAsync();
+            if (DeptCheck == null)
+            {
+                var error = new
+                {
+                    errors = new { departmentId = "[department selected does not exist]", },
+                };
+
+                string result = JsonSerializer.Serialize(error);
+                return BadRequest(result);
+            }
+
+
 
             if (!await _uService.IsThisUserExist(me.EmailAddress))
             {
@@ -110,10 +156,10 @@ namespace ListaccFinance.API.Controllers
                 int userId = int.Parse(userIdString);
                 var u = new User();
                 var resp = await _uService.CreateUserAsync(me, userId);
-                return Ok("successful");
+                return Ok();
             }
 
-            return BadRequest(new {message = " User already exists"});
+            return BadRequest(new {EmailAddress = " User already exists"});
 
             //return RedirectToAction(string actionName, string controllerName, object routeValues);
 
@@ -138,7 +184,7 @@ namespace ListaccFinance.API.Controllers
             return Ok();
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> ReturnUsers ([FromQuery] SearchPaging props)
         {
@@ -222,15 +268,18 @@ namespace ListaccFinance.API.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("user")]
-        public async Task<IActionResult> ReturnUser([FromQuery] int Id)
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> ReturnUser(int Id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Bad model");
             }
             var u = await _uService.ReturnUser(Id);
+            u.Department = _oService.Strip(u.Department);
             return Ok(u);
         }
+    
+        
     }
 }

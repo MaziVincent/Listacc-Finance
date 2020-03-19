@@ -14,11 +14,10 @@ namespace ListaccFinance.API.Interfaces
         Task EditUserAsync(int Id, RegisterModel reg, int MyId);
         bool IsUserExist();
         Task<bool> IsThisUserExist(string UserEmail);
-        Task<User> CreateUserUploadAsync(RegisterModel reg);
         Task CreateAdmin(RegisterModel reg, int userId);
         Task Deactivate(int Id, int MyId);
         Task Activate(int Id, int MyId);
-        Task<PagedList<User>>  ReturnUsers (SearchPaging props);
+        Task<PagedList<User>> ReturnUsers (SearchPaging props);
         Task<PagedList<User>> ReturnAllUsers(SearchPaging props);
         Task<RegisterModel> ReturnUser(int Id);
     }

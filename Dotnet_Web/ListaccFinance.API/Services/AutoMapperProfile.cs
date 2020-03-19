@@ -60,6 +60,13 @@ public class AutoMapperProfile : Profile
         CreateMap<User, RegisterModel>().ForPath(dest => dest.DateOfBirth, opt => opt.MapFrom(s => s.Person.DateOfBirth))
                                         .ForPath(dest => dest.firstName, opt => opt.MapFrom(s => s.Person.firstName))
                                         .ForPath(dest => dest.LastName, opt => opt.MapFrom(s => s.Person.LastName))
-                                        .ForPath(dest => dest.Gender, opt => opt.MapFrom(s => s.Person.Gender));
+                                        .ForPath(dest => dest.Gender, opt => opt.MapFrom(s => s.Person.Gender))
+                                        .ForMember(dest => dest.EmailAddress, opt => opt.MapFrom(s => s.Email))
+                                        .ForPath(dest => dest.Department, opt => opt.MapFrom(s => s.Department.Name));
+
+
+
+    // mapper for returming list of departments
+         CreateMap<Department, DeptView>();
     }
 }
