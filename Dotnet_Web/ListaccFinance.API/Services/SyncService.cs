@@ -390,6 +390,7 @@ namespace ListaccFinance.API.Services
             var userCh = await _context.Users.Where(x => x.Id == ch.EntryId).Include(x => x.Person).FirstOrDefaultAsync();
             var user = _mapper.Map<UserViewModel>(userCh);
             user.ChangeId = ch.Id;
+            user.Discriminator = userCh.GetType().Name;
             return user;
 
         }

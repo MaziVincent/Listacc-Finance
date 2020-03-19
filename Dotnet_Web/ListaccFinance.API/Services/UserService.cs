@@ -240,7 +240,7 @@ namespace ListaccFinance.API.Services
             await _context.SaveChangesAsync();
             var change = new Change
             {
-                Table = u.GetType().Name,
+                Table = "Users",
                 EntryId = u.Id,
                 ChangeType = "Edit",
                 OfflineTimeStamp = DateTime.Now,

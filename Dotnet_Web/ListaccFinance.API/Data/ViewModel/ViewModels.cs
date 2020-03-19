@@ -106,6 +106,7 @@ namespace ListaccFinance.API.Data.ViewModel
 
         public int OnlineEntryId { get; set; }
         public int ChangeId { get; set; }
+        public string Discriminator {get; set;}
        // public string Email {get; set;}
     }
 
