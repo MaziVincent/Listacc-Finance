@@ -1570,6 +1570,7 @@ public class MaiinUI implements Initializable {
         String amountStr = expTxtAmount.getText().trim();    
         String description = expTxtDescription.getText().trim();
         String lastName = "";
+        String phone = expTxtPhone.getText();
         if(expRadioPerson.isSelected())
         {
             lastName =  expTxtLastName.getText().trim();
@@ -1581,7 +1582,7 @@ public class MaiinUI implements Initializable {
                 invalid = expComboCost.getSelectionModel().isEmpty() || 
                             expComboProject.getSelectionModel().isEmpty() ||
                             expComboIssuer.getSelectionModel().isEmpty() ||
-                            amount < 1 ||  description.length() < 2 || 
+                            amount < 1 ||  description.length() < 2 || phone.length() < 1 ||
                             (expRadioNew.isSelected() && expRadioPerson.isSelected() && (lastName.length() <  1 ||
                                  firstName.length() < 1 )) ||
                         (expRadioBusiness.isSelected() && ( firstName.length() < 1));
