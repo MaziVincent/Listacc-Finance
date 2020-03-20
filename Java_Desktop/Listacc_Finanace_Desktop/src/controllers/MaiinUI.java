@@ -863,7 +863,9 @@ public class MaiinUI implements Initializable {
                    //disable save button
                    dptSaveBtnDisableProp.set(true);
          //populate all department list combo box
+         prjComboDepartment.setItems(null);
          prjComboDepartment.setItems(departmentData);
+         
          prjComboDepartment.setConverter(new DeptStringConverter(prjComboDepartment));
 
           departmentListTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
@@ -1012,8 +1014,9 @@ public class MaiinUI implements Initializable {
                 departmentListTable.getSelectionModel().select(null);
                 refreshDepartmentTable();
                 departmentListTable.refresh();
-                });
                 dptTextName.setText("");
+                });
+                
            }
            else{
                 error("Could not update Department");
