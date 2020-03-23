@@ -148,7 +148,7 @@ public class SynchronizationDownloadService extends AsyncTask<Void, String, Void
                         }
                         
                         // Populate Tables
-                        mainUI.populateTables();
+                        if(mainUI != null) mainUI.populateTables();
                     }
                     if(changes.size() < 10) moreInfo = false;
                 }
