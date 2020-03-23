@@ -171,7 +171,7 @@ public class MaiinUI implements Initializable {
         synDownExec.scheduleAtFixedRate(() -> {
             Platform.runLater(() -> {
                 SynchronizationDownloadService conn = 
-                    new SynchronizationDownloadService(connectionDisplayPro, syncDisplayPro); //activitySp
+                    new SynchronizationDownloadService(connectionDisplayPro, syncDisplayPro, this); //activitySp
                 conn.execute();
             });
         }, 0, 3, TimeUnit.MINUTES);
@@ -215,7 +215,7 @@ public class MaiinUI implements Initializable {
 
     }
         
-    private void populateTables()
+    public void populateTables()
     {
         Platform.runLater(() -> {refreshDepartmentTable();});
         Platform.runLater(() -> {refreshProjectView();});
