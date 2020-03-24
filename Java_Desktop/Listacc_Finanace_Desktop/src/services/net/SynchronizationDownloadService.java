@@ -58,7 +58,7 @@ public class SynchronizationDownloadService extends AsyncTask<Void, String, Void
             publishProgress("Syncing is in process...");
             
             // download updates from other tables
-            downloadUpdates();
+            downloadUpdates(false);
             
             // signify that operation has completed so another can begin
             Network.isSyncingDown = false;
@@ -96,7 +96,7 @@ public class SynchronizationDownloadService extends AsyncTask<Void, String, Void
         // activitySp.set(content);
     }
     
-    public boolean downloadUpdates(){
+    public boolean downloadUpdates(boolean firstLaunch){
         try{
             Gson gson = GsonHelper.CUSTOM_GSON;
 
@@ -107,7 +107,7 @@ public class SynchronizationDownloadService extends AsyncTask<Void, String, Void
                 SyncInfo syncInfo = SyncInfo.getLastSyncInfo();
                 
                 // download data
-                String result = Network.downloadData(syncInfo);
+                String result = Network.downloadData(syncInfo, firstLaunch);
                 
                 // process (create/edit data)
                 if(result != null && !result.isEmpty()){

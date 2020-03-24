@@ -147,7 +147,7 @@ public class AuthenticationService extends AsyncTask<Void, String, Authenticatio
     }
     
     private boolean retrieveOnlineInfo(){
-        return new SynchronizationDownloadService().downloadUpdates();
+        return new SynchronizationDownloadService().downloadUpdates(true);
     }
       
 }

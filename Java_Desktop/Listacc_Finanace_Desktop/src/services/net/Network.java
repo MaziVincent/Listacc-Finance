@@ -36,7 +36,7 @@ import services.net.view_model.SyncInfo;
  */
 public class Network {
     
-    public final static String hostUrl = "http://192.168.0.101:5000/"; // 192.168.43.211:5000
+    public final static String hostUrl = "http://192.168.0.101:5000/"; // localhost:5000
     public static String authUrl = hostUrl + "api/auth";
     public static String baseUrl = hostUrl + "api/sync";
     public static boolean isConnected = false;
@@ -374,9 +374,9 @@ public class Network {
     
     
     // DOWNLOAD
-    public static String downloadData(SyncInfo syncInfo) {
+    public static String downloadData(SyncInfo syncInfo, boolean firstLaunch) {
         try{
-            URL url = new URL(baseUrl+ "/download/" + syncInfo.getLastChangeId());
+            URL url = new URL(baseUrl+ "/download/" + syncInfo.getLastChangeId() + "/" + firstLaunch);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             //conn.setRequestProperty("Accept", "application/json");
