@@ -8,6 +8,7 @@ package services.net;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.victorlaerte.asynctask.AsyncTask;
+import controllers.MaiinUI;
 import helpers.GsonHelper;
 import java.util.List;
 import javafx.beans.property.BooleanProperty;
@@ -27,12 +28,15 @@ import services.net.view_model.SyncInfo;
 public class SynchronizationDownloadService extends AsyncTask<Void, String, Void>  { // Params, Progress, Result
     
     private BooleanProperty connectionDisplayPro, syncDisplayPro;
+    private MaiinUI mainUI;
     
     public SynchronizationDownloadService(){}
     
-    public SynchronizationDownloadService(BooleanProperty connectionDisplayPro, BooleanProperty syncDisplayPro){
+    public SynchronizationDownloadService(BooleanProperty connectionDisplayPro, 
+            BooleanProperty syncDisplayPro, MaiinUI mainUI){
         this.connectionDisplayPro = connectionDisplayPro;
         this.syncDisplayPro = syncDisplayPro;
+        this.mainUI = mainUI;
     }
     
     @Override
@@ -142,6 +146,9 @@ public class SynchronizationDownloadService extends AsyncTask<Void, String, Void
                                     break;
                             }
                         }
+                        
+                        // Populate Tables
+                        if(mainUI != null) mainUI.populateTables();
                     }
                     if(changes.size() < 10) moreInfo = false;
                 }
