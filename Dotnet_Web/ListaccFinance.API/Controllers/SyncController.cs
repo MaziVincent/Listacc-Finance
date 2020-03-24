@@ -527,18 +527,28 @@ namespace ListaccFinance.API.Controllers
 
 
         [Authorize]
-        [HttpGet("Download/{lastSyncID}")]
-        public async Task<IActionResult> DownloadData([FromRoute]int lastSyncID)
+        [HttpGet("Download/{lastSyncID}/{isFirst}")]
+        public async Task<IActionResult> DownloadData([FromRoute]int lastSyncID, bool isFirst)
         {
+
             const int numnerOfItems = 10;
             string MacAddress = this.User.Claims.First(i => i.Type == "macAddr").Value;
 
             var dc = await _context.DesktopClients.Where((x) => x.ClientMacAddress.CompareTo(MacAddress) == 0).FirstOrDefaultAsync();
-
-            var lastChanges = await _context.Changes
-                                .Where(i => i.Id > lastSyncID)
-                                .Except(_context.Changes.Where(((x) => x.DesktopClientId == dc.Id)))
-                                .OrderBy(x => x.Id).Take(numnerOfItems).ToListAsync();
+            List<Change> lastChanges;
+            if (!isFirst)
+            {
+                lastChanges = await _context.Changes
+                                    .Where(i => i.Id > lastSyncID)
+                                    .Except(_context.Changes.Where(((x) => x.DesktopClientId == dc.Id)))
+                                    .OrderBy(x => x.Id).Take(numnerOfItems).ToListAsync();
+            }
+            else
+            {
+                lastChanges = await _context.Changes
+                                    .Where(i => i.Id > lastSyncID)
+                                    .OrderBy(x => x.Id).Take(numnerOfItems).ToListAsync();
+            }
 
             List<SyncViewModel> syncValues = new List<SyncViewModel>();
 
