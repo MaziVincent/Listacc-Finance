@@ -539,8 +539,8 @@ namespace ListaccFinance.API.Controllers
             if (!isFirst)
             {
                 lastChanges = await _context.Changes
-                                    .Where(i => i.Id > lastSyncID)
-                                    .Except(_context.Changes.Where(((x) => x.DesktopClientId == dc.Id)))
+                                    .Where(i => i.Id > lastSyncID && i.DesktopClientId != dc.Id)
+                                    //.Except(_context.Changes.Where(((x) => x.DesktopClientId == dc.Id)))
                                     .OrderBy(x => x.Id).Take(numnerOfItems).ToListAsync();
             }
             else
