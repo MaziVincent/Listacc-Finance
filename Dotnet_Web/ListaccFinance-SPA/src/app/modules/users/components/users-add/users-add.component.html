@@ -14,7 +14,7 @@
                     <span *ngIf="deactivating" class="loader loader-small display-inline-block no-animate no-m-l"></span>
                 </button>-->
                 <button type="submit" class="btn no-m-r pull-right i-rounded i-orange i-grey-disabled font-13 cursor-pointer"
-                [disabled]="processing || deactivating || !myForm.form.valid || !telInputDirectiveRef?.isInputValid() || (editMode && !changesMade())">
+                [disabled]="processing || deactivating || !myForm.form.valid || !telInputDirectiveRef?.isInputValid() || (editMode && !changesMade()) || nameEmpty()">
                     <i class="fa fa-save"></i>
                     Save
                     <span *ngIf="processing" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>

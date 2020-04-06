@@ -254,6 +254,10 @@ export class UsersAddComponent implements OnInit {
         userObj.departmentId = userObj.departmentId && (userObj.departmentId + '').length > 0 ?
             parseInt(userObj.departmentId + '', 10) : null;
 
+        // adjust names
+        userObj.lastName = userObj.lastName.trim();
+        userObj.firstName = userObj.firstName.trim();
+
         // configure deactivation status
         /*if (userObj.status === 'false') {
             userObj.status = false;
@@ -376,6 +380,12 @@ export class UsersAddComponent implements OnInit {
         }*/
         const staffInfoChanged = this.OriginalUser !== JSON.stringify(this.User);
         return staffInfoChanged;
+    }
+
+    nameEmpty() {
+        const lastNameEmpty = this.User.lastName === null || this.User.lastName.trim().length === 0;
+        const firstNameEmpty = this.User.firstName === null || this.User.firstName.trim().length === 0;
+        return lastNameEmpty || firstNameEmpty;
     }
 
 }
