@@ -17,6 +17,7 @@ namespace ListaccFinance.API.SendModel
         public string Password {get; set;}
 
         [Required]
+        [EmailAddress(ErrorMessage="Enter a valid email address.")]
         public string EmailAddress {get; set;}
     }
 
@@ -26,6 +27,7 @@ namespace ListaccFinance.API.SendModel
         public string Password { get; set; }
 
         [Required]
+        [EmailAddress(ErrorMessage="Enter a valid email address.")]
         public string EmailAddress { get; set; }
     }
 
@@ -41,6 +43,7 @@ namespace ListaccFinance.API.SendModel
         public string Phone { get; set; }
         public string Address { get; set; }
         [Required]
+        [EmailAddress(ErrorMessage="Enter a valid email address.")]
         public string EmailAddress {get; set;}
         public string Password { get; set; }
         public string Department {get; set;}

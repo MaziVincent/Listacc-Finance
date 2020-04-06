@@ -233,7 +233,8 @@ namespace ListaccFinance.API.Services
 
             string newStatus = u.Status == true? "Active" : "Inactive";
             //u.Department  = await _context.Departments.FirstOrDefaultAsync(x => x.Id == reg.DepartmentId);
-            u.SearchString = String.Format(reg.LastName + " " + reg.firstName + " " + reg.Gender + " " + reg.EmailAddress + " " + reg.Phone + " " +"Member" + " " +  newStatus );
+            bool isAdmin = u is Admin;
+            u.SearchString = String.Format(reg.LastName + " " + reg.firstName + " " + reg.Gender + " " + reg.EmailAddress + " " + reg.Phone + (isAdmin ? " Administrator" : " Member") + " " +  newStatus ).ToUpper();
 
             // Do password Change later
 
