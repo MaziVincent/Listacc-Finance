@@ -9,7 +9,6 @@ namespace ListaccFinance.API.Data.Model
         [Required]
         public string Name {get;set;}
         public string Description {get;set;}
-        
         public int DepartmentId {get;set;}
         public Department Department {get;set;}
         public ICollection<Service> Services {get;set;}

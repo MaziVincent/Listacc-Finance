@@ -13,8 +13,8 @@ namespace ListaccFinance.API.Data.Model
         public double Amount {get;set;}
         public int CostCategoryId {get;set;}
         public CostCategory CostCategory {get;set;}
-        public int ProjectId {get;set;}
-        public Project Project {get;set;}
+        public Project Project { get; set; }
+        public int ProjectId {get;set;}       
         public int IssuerId {get;set;}
         public User Issuer {get;set;}
 
