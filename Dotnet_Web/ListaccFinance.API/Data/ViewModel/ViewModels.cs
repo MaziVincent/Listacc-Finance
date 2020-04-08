@@ -6,7 +6,7 @@ namespace ListaccFinance.API.Data.ViewModel
 {
     public class DeptView
     {
-        public int Id {get; set;}
+       // public int Id {get; set;}
         public string Name{get; set;}
     }
     
@@ -24,6 +24,19 @@ namespace ListaccFinance.API.Data.ViewModel
         public bool Status { get; set; }
 
     }
+    public class SearchDept
+    {
+        public string key{get; set;}
+        public int PageNumber { get; set; } = 1;
+        public int _pageSize { get; set; } = 5;
+        public int PageSize
+        {
+            get { return _pageSize; }
+            set { _pageSize = value > MaxPageSize ? MaxPageSize : value; }
+        }
+        const int MaxPageSize = 20;
+    }
+    
     public class SearchPaging
     {
         public string SearchString { get; set; }

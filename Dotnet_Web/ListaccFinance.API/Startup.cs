@@ -44,6 +44,7 @@ namespace ListaccFinance.API
             services.AddScoped<ISyncService, SyncService>();
             services.AddScoped<IOtherServices, OtherServices>();
             services.AddScoped<IUserRepo, UserRepo>();
+            services.AddScoped<IDeptService, DeptService>();
 
             //services.AddScoped(typeof(ISyncService<>),typeof(SyncService<>));
             //DBContext
