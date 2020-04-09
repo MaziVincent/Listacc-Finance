@@ -44,10 +44,11 @@ namespace ListaccFinance.API
             services.AddScoped<ISyncService, SyncService>();
             services.AddScoped<IOtherServices, OtherServices>();
             services.AddScoped<IUserRepo, UserRepo>();
+            services.AddScoped<IDeptService, DeptService>();
 
             //services.AddScoped(typeof(ISyncService<>),typeof(SyncService<>));
             //DBContext
-            services.AddDbContext<DataContext>(con => con.UseSqlite(
+            services.AddDbContext<DataContext>(con => con.UseSqlServer(
                 Configuration.GetConnectionString("DefaultConnection")));
 
 
@@ -74,7 +75,7 @@ namespace ListaccFinance.API
             builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
             builder.AddEntityFrameworkStores<DataContext>();
             builder.AddRoleValidator<RoleValidator<Role>>();
-            services.AddDbContext<DataContext>(x => x.UseSqlite(
+            services.AddDbContext<DataContext>(x => x.UseSqlServer(
             Configuration.GetConnectionString("DefaultConnection"))
             );
 

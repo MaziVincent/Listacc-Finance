@@ -108,21 +108,21 @@ namespace ListaccFinance.API.Controllers
                             var dChange = _mapper.Map<Department>(sync.dept);
                             int dId = sync.dept.Id;
 
-                            if(sync.dept.OnlineEntryId is null)
+                            if (sync.dept.OnlineEntryId is null)
                             {
                                 if (sync.dept.Change is "EDIT")
                                 {
                                     int OnlineId = 0;
                                     foreach (var map in mapList)
                                     {
-                                        if(map.Id == sync.dept.Id && map.Table.CompareTo("Departments") == 0)
+                                        if (map.Id == sync.dept.Id && map.Table.CompareTo("Departments") == 0)
                                         {
                                             OnlineId = map.OnlineEntryId;
                                             break;
                                         }
                                     }
-                                    
-                                    int EntryId =await _sservice.UploadOldDeptAsync(dChange, OnlineId);
+
+                                    int EntryId = await _sservice.UploadOldDeptAsync(dChange, OnlineId);
                                     await SaveChangesAsync(sync.dept.ChangeTimeStamp, sync.dept.Change, sync.Table, EntryId, sync.dept.ChangeUserOnlineEntryId);
 
                                     break;
@@ -136,7 +136,7 @@ namespace ListaccFinance.API.Controllers
                                 int EntryId = await _sservice.UploadOldDeptAsync(dChange, sync.dept.OnlineEntryId.Value);
                                 await SaveChangesAsync(sync.dept.ChangeTimeStamp, sync.dept.Change, sync.Table, EntryId, sync.dept.ChangeUserOnlineEntryId);
                             }
-                            
+
                             break;
 
 
@@ -201,7 +201,7 @@ namespace ListaccFinance.API.Controllers
                                 if (sync.client.Change.CompareTo("EDIT") == 0)
                                 {
                                     int OnlineId = 0;
-                                    foreach(var map in mapList)
+                                    foreach (var map in mapList)
                                     {
                                         if (map.Id == sync.client.Id && map.Table.CompareTo("Clients") == 0)
                                         {
@@ -244,17 +244,17 @@ namespace ListaccFinance.API.Controllers
                             {
                                 if (sync.project.Change.CompareTo("EDIT") == 0)
                                 {
-                                    int OnlineId  = 0;
+                                    int OnlineId = 0;
                                     foreach (var map in mapList)
                                     {
-                                        if (map.Id  == sync.project.Id && map.Table.CompareTo("Projects") == 0)
+                                        if (map.Id == sync.project.Id && map.Table.CompareTo("Projects") == 0)
                                         {
                                             OnlineId = map.OnlineEntryId;
                                             break;
                                         }
                                     }
                                     int EntryId = await _sservice.UploadOldProjectAsync(prChange, OnlineId);
-                                    await SaveChangesAsync(sync.project.ChangeTimeStamp, sync.project.Change, sync.Table, prId, sync.project.ChangeUserOnlineEntryId);
+                                    await SaveChangesAsync(sync.project.ChangeTimeStamp, sync.project.Change, sync.Table, EntryId, sync.project.ChangeUserOnlineEntryId);
                                     break;
 
                                 }
@@ -276,7 +276,7 @@ namespace ListaccFinance.API.Controllers
                             {
                                 if (sync.costCategory.Change.CompareTo("EDIT") == 0)
                                 {
-                                    int OnlineId  = 0;
+                                    int OnlineId = 0;
                                     foreach (var map in mapList)
                                     {
                                         if (map.Id == sync.costCategory.Id && map.Table.CompareTo("CostCategories") == 0)
@@ -284,7 +284,7 @@ namespace ListaccFinance.API.Controllers
                                             OnlineId = map.OnlineEntryId;
                                             break;
                                         }
-                                        
+
                                     }
                                     int EntryId = await _sservice.UploadOldCostAsync(ccChange, OnlineId);
                                     await SaveChangesAsync(sync.costCategory.ChangeTimeStamp, sync.costCategory.Change, sync.Table, EntryId, sync.costCategory.ChangeUserOnlineEntryId);
@@ -356,7 +356,7 @@ namespace ListaccFinance.API.Controllers
                                     int OnlineId = 0;
                                     foreach (var map in mapList)
                                     {
-                                        if (map.Id == sync.expenditure.Id && map.Table.CompareTo("Expenditures") ==0)
+                                        if (map.Id == sync.expenditure.Id && map.Table.CompareTo("Expenditures") == 0)
                                         {
                                             OnlineId = map.OnlineEntryId;
                                             break;
@@ -373,7 +373,7 @@ namespace ListaccFinance.API.Controllers
                             }
                             else
                             {
-                                int EntryId  = await _sservice.UploadOldExpenditureAsync(eChange, sync.expenditure.OnlineEntryId.Value);
+                                int EntryId = await _sservice.UploadOldExpenditureAsync(eChange, sync.expenditure.OnlineEntryId.Value);
                                 await SaveChangesAsync(sync.expenditure.ChangeTimeStamp, sync.expenditure.Change, sync.Table, EntryId, sync.expenditure.ChangeUserOnlineEntryId);
 
                             }
@@ -394,7 +394,7 @@ namespace ListaccFinance.API.Controllers
                                     }
                                 }
                             }
-                            sChange.FixedAmount = sync.service.FixedAmount == 1? true: false;
+                            sChange.FixedAmount = sync.service.FixedAmount == 1 ? true : false;
                             if (sync.service.OnlineEntryId is null)
                             {
                                 if (sync.service.Change == "EDIT")
@@ -402,7 +402,7 @@ namespace ListaccFinance.API.Controllers
                                     int OnlineId = 0;
                                     foreach (var map in mapList)
                                     {
-                                        if (map.Id ==  sync.service.Id && map.Table.CompareTo("Services") == 0)
+                                        if (map.Id == sync.service.Id && map.Table.CompareTo("Services") == 0)
                                         {
                                             OnlineId = map.OnlineEntryId;
                                             break;
@@ -484,8 +484,8 @@ namespace ListaccFinance.API.Controllers
                                     int OnlineId = 0;
                                     foreach (var map in mapList)
                                     {
-                                       
-                                        if(map.Id == sync.income.Id)
+
+                                        if (map.Id == sync.income.Id)
                                         {
                                             OnlineId = map.OnlineEntryId;
                                             break;
