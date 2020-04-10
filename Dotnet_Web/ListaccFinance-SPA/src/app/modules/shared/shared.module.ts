@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { Ng2TelInputModule } from 'ng2-tel-input';
 import { Ng7BootstrapBreadcrumbModule } from 'ng7-bootstrap-breadcrumb';
-import { NgbCollapseModule, NgbPaginationModule, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCollapseModule, NgbPaginationModule, NgbModalModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { LayoutComponent } from './components/layout/layout.component';
 import { BsDropdownModule } from 'ngx-bootstrap';
 import { MyPaginationComponent } from './components/my-pagination/my-pagination.component';
@@ -15,6 +15,8 @@ import { ConfirmExitComponent } from './components/confirm-exit/confirm-exit.com
 import { ConfirmDeleteComponent } from './components/confirm-delete/confirm-delete.component';
 import { NgSelectizeModule } from 'ng-selectize';
 import { InterceptorProviders } from 'src/app/interceptors/interceptor-providers';
+import { DepartmentsAddComponent } from '../departments/components/departments-add/departments-add.component';
+import { DepartmentsService } from '../departments/departments.service';
 
 @NgModule({
   imports: [
@@ -35,8 +37,9 @@ import { InterceptorProviders } from 'src/app/interceptors/interceptor-providers
     NgbCollapseModule,
     NgbPaginationModule,
     NgbModalModule,
+    NgbTooltipModule,
     NgSelectizeModule,
-    BsDropdownModule.forRoot()
+    BsDropdownModule.forRoot(),
   ],
   exports: [
     CommonModule,
@@ -46,6 +49,7 @@ import { InterceptorProviders } from 'src/app/interceptors/interceptor-providers
     NgbCollapseModule,
     NgbPaginationModule,
     NgbModalModule,
+    NgbTooltipModule,
     NgSelectizeModule,
     BsDropdownModule,
     MyPaginationComponent
@@ -55,14 +59,17 @@ import { InterceptorProviders } from 'src/app/interceptors/interceptor-providers
     LayoutComponent,
     MyPaginationComponent,
     ConfirmExitComponent,
-    ConfirmDeleteComponent
+    ConfirmDeleteComponent,
+    DepartmentsAddComponent
   ],
   entryComponents: [
     ConfirmExitComponent,
-    ConfirmDeleteComponent
+    ConfirmDeleteComponent,
+    DepartmentsAddComponent
   ],
   providers: [
-    InterceptorProviders
+    InterceptorProviders,
+    DepartmentsService
   ]
 })
 export class SharedModule { }

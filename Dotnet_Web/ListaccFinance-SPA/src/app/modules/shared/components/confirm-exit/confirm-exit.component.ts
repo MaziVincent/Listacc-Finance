@@ -10,7 +10,7 @@ export class ConfirmExitComponent implements OnInit {
 
   @Output() closeEditModal = new EventEmitter<any>();
 
-  constructor(private activeModal: NgbActiveModal) { }
+  constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
   }

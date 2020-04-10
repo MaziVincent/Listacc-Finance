@@ -227,7 +227,7 @@ public class ClientService extends DataService {
             updateClient.setBusinessName(client.getBusinessName());
             updateClient.setEmail(client.getEmail());
             updateClient.setPhone(client.getPhone());
-            updateClient.setAddress(client.getAddress());
+            updateClient.setUId(client.getUId());
             em.persist(updateClient);
             em.getTransaction().commit();
             em.close();

@@ -7,7 +7,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="396.0" prefWidth="612.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TextField fx:id="clientTxtSearch" layoutX="14.0" layoutY="24.0" onKeyTyped="#searchClient" prefHeight="25.0" prefWidth="280.0" promptText="Search Client" />
+      <TextField fx:id="clientTxtSearch" layoutX="14.0" layoutY="24.0" onKeyReleased="#searchClient" prefHeight="25.0" prefWidth="280.0" promptText="Search Client" />
       <Button fx:id="selectBtn" disable="true" layoutX="345.0" layoutY="24.0" mnemonicParsing="false" onAction="#confirm" prefHeight="25.0" prefWidth="85.0" text="Select" />
       <TableView fx:id="clientListTable" layoutX="7.0" layoutY="56.0" prefHeight="332.0" prefWidth="597.0">
          <columns>

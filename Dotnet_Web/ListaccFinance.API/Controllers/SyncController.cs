@@ -48,7 +48,7 @@ namespace ListaccFinance.API.Controllers
 
         }
 
-        private int deptId;
+        // private int deptId;
 
 
         [Authorize]

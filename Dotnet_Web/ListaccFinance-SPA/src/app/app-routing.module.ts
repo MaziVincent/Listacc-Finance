@@ -12,6 +12,12 @@ const routes: Routes = [
             .then(mod => mod.LoginModule)
     },
     {
+        path: 'departments',
+        canActivate: [AuthGuard],
+        loadChildren: () => import ('./modules/departments/departments.module')
+            .then(mod => mod.DepartmentsModule)
+    },
+    {
         path: 'users',
         canActivate: [AuthGuard],
         loadChildren: () => import ('./modules/users/users.module')

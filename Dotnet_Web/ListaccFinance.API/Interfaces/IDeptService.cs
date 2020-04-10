@@ -10,9 +10,10 @@ namespace ListaccFinance.API.Interfaces
     {
         //Task<List<DeptView>> ReturnAllDeptViews();
         Task<List<Department>> ReturnAllDepts();
-        Task EditDepartment(int Id, string newName);
-        Task CreateDepartment(string name);
+        Task EditDepartment(int Id, string newName, int MyId);
+        Task CreateDepartment(string name, int MyId);
         Task<bool> IsDeptExist(string name);
+        Task<bool> IsDeptExist(string name, int departmentId);
         Task<PagedList<Department>> ReturnPagedUserList(SearchDept props);
     }
 }

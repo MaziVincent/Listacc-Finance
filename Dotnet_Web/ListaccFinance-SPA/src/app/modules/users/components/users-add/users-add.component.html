@@ -1,7 +1,7 @@
 <div class="myModalContainer" [ngClass]="{'has-loading': !departmentsReady || !editUserReady}">
     <div class="modal-header" [hidden]="!departmentsReady || !editUserReady">
         <h4 class="modal-title pull-left font-weight-500 font-16 text-uppercase">{{initialState.title}}</h4>
-        <button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!processing && !deactivating">
+        <button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!processing">
             <i class="mdi mdi-close"></i>
         </button>
     </div>
@@ -13,8 +13,8 @@
                     <i class="fa fa-ban-o no-m-r" *ngIf="!deactivating"></i>
                     <span *ngIf="deactivating" class="loader loader-small display-inline-block no-animate no-m-l"></span>
                 </button>-->
-                <button type="submit" class="btn no-m-r pull-right i-rounded i-orange i-grey-disabled font-13 cursor-pointer"
-                [disabled]="processing || deactivating || !myForm.form.valid || !telInputDirectiveRef?.isInputValid() || (editMode && !changesMade()) || nameEmpty()">
+                <button type="submit" class="btn no-m-r pull-right i-rounded i-blue i-grey-disabled font-13 cursor-pointer"
+                [disabled]="processing || !myForm.form.valid || !telInputDirectiveRef?.isInputValid() || (editMode && !changesMade()) || nameEmpty()">
                     <i class="fa fa-save"></i>
                     Save
                     <span *ngIf="processing" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>
@@ -115,11 +115,19 @@
                                 <div class="form-group display-flex">
                                     <label class="control-label font-weight-300 m-b-5 label-group-three">Department</label>
                                     <div class="flex-grow-100">
-                                        <ng-selectize [config]="selectizeConfig" [options]="Departments" (onFocus)="selectizeFocus($event)" name="department" [(ngModel)]="User.departmentId"
+                                        <!--  (onFocus)="selectizeFocus($event)" [errorClass]="input-validation-error"-->
+                                        <ng-selectize [config]="selectizeConfig" [options]="Departments" name="department" [(ngModel)]="User.departmentId"
                                             [ngClass]="{'input-validation-error': fieldErrors.Department, 'edit-mode': editMode}"
-                                            [errorClass]="input-validation-error" required></ng-selectize>
+                                            required></ng-selectize>
                                         <span *ngIf="fieldErrors.Department" class="field-validation-error white-space-pre m-t-0">{{fieldErrors.Department}}</span>
                                     </div>
+                                    <button type="button" (click)="openNewDepartmentModal()" class="button-like-link no-animate"
+                                        ngbTooltip="Add New" placement="top" container="body">
+                                        <i class="fa fa-plus i-extra-small-box i-rounded i-bordered i-blue add-new"></i>
+                                    </button>
+                                    <!--<button class="loading-button-placeholder button-like-link add-new no-animate" [hidden]="!loadingAddDeptView">
+                                        <span class="loader loader-small display-inline-block load-blue"></span>
+                                    </button>-->
                                 </div>
 
                                 <div class="form-group display-flex">
@@ -150,9 +158,10 @@
                                     <hr class="m-t-1 m-b-15">
                                 </div>
                                 <div class="form-group">
-                                    <ng-selectize [config]="statusSelectizeConfig" [options]="StatusOptions" (onFocus)="selectizeFocus($event)" name="status" [(ngModel)]="User.status"
+                                    <!-- (onFocus)="selectizeFocus($event)" [errorClass]="input-validation-error"-->
+                                    <ng-selectize [config]="statusSelectizeConfig" [options]="StatusOptions" name="status" [(ngModel)]="User.status"
                                         [ngClass]="{'input-validation-error': fieldErrors.Status, 'edit-mode': editMode}" [enabled]="editMode"
-                                        [errorClass]="input-validation-error" class="small-selectize" required></ng-selectize>
+                                         class="small-selectize" required></ng-selectize>
                                     <span *ngIf="fieldErrors.Status" class="field-validation-error white-space-pre">{{fieldErrors.Status}}</span>
                                 </div>
                             </div>

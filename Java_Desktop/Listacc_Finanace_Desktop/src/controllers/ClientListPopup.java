@@ -60,41 +60,45 @@ public class ClientListPopup implements Initializable {
         this.income = income;
     }
     
-      @Override
-        public void initialize(URL url, ResourceBundle rb) {
-            ObservableList<DisplayClient> clientData
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        ObservableList<DisplayClient> clientData
             = FXCollections.observableArrayList(clientList);
-            if(income)
-            clientsFiltered =  new FilteredList<DisplayClient>(clientData,(p -> (null != p.getUId() && !p.getUId().trim().isEmpty()) ));
-            else 
-                clientsFiltered =  new FilteredList<DisplayClient>(clientData,(p -> (null == p.getUId() || p.getUId().isEmpty()) ));
-                  clientListTable.setItems(clientsFiltered);
-            clientColSerial.setCellFactory(indexCellFactory());
-            clientColId.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("id"));
-            clientColName.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("name"));
-            clientColEmail.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("email"));
-            clientColPhone.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("phone"));
-            clientColAddress.setCellValueFactory(new PropertyValueFactory<DisplayUser, String>("address"));
-             try{
-                clientListTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-                if (newSelection != null ) {
-                    selectBtn.setDisable(false);
-                }
-                else 
-                    selectBtn.setDisable(true);
-                });
-                }catch(Exception ex){ex.printStackTrace();}
-        }
+        if(income)
+            clientsFiltered =  new FilteredList<>(clientData,(p -> (null != p.getUId() && !p.getUId().trim().isEmpty()) ));
+        else 
+            clientsFiltered =  new FilteredList<>(clientData,(p -> (null == p.getUId() || p.getUId().isEmpty()) ));
         
-        @FXML 
-        private void searchClient(KeyEvent evt){
-            String search = clientTxtSearch.getText().toLowerCase().trim();
-            clientsFiltered.setPredicate(p -> p.getName().toLowerCase().contains(search.trim()) ||
-        p.getLastName().toLowerCase().contains(search.trim()) ||
-        p.getEmail().toLowerCase().contains(search.trim()) ||
-        p.getPhone().toLowerCase().contains(search.trim()));
-        clientListTable.setItems(clientsFiltered); 
+        clientListTable.setItems(clientsFiltered);
+        clientColSerial.setCellFactory(indexCellFactory());
+        clientColId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        clientColName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        clientColEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        clientColPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        clientColAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+        try{
+            clientListTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null ) {
+                   selectBtn.setDisable(false);
+                }
+                else {
+                   selectBtn.setDisable(true);
+                }
+            });
         }
+        catch(Exception ex){ex.printStackTrace();}
+    }
+    
+    @FXML 
+    private void searchClient(KeyEvent evt){
+        String search = clientTxtSearch.getText().toLowerCase().trim();
+        clientsFiltered.setPredicate(p -> p.getName().toLowerCase().contains(search.trim()) ||
+            p.getLastName().toLowerCase().contains(search.trim()) ||
+            p.getEmail().toLowerCase().contains(search.trim()) ||
+            p.getPhone().toLowerCase().contains(search.trim()) ||
+            p.getAddress().toLowerCase().contains(search.trim()));
+        clientListTable.setItems(clientsFiltered); 
+    }
         
     @FXML
     private void cancelPop() {
