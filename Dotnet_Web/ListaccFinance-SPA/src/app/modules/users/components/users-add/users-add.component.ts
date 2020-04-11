@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angu
 import { NgForm } from '@angular/forms';
 import { Ng2TelInput } from 'ng2-tel-input';
 import { UserViewModel, StatusOption } from 'src/app/models/user';
-import { NgbModalOptions, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalOptions, NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from '../../user.service';
 import { ValidationErrorService } from 'src/app/services/validation-error.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -11,6 +11,7 @@ import { MyValidationErrors } from 'src/app/models/my-validation-errors';
 import { ConfirmDeleteComponent } from 'src/app/modules/shared/components/confirm-delete/confirm-delete.component';
 import { DepartmentViewModel } from 'src/app/models/department';
 import { NotificationService } from 'src/app/services/notification.service';
+import { DepartmentsAddComponent } from 'src/app/modules/departments/components/departments-add/departments-add.component';
 
 @Component({
   selector: 'app-users-add',
@@ -49,6 +50,7 @@ export class UsersAddComponent implements OnInit {
 
     profilePictureConfig: any;
 
+    modalRef: NgbModalRef;
     modalConfig: NgbModalOptions = {
         centered: true,
         keyboard: true,
@@ -157,21 +159,43 @@ export class UsersAddComponent implements OnInit {
         this.departmentsReady = false;
 
         if (!this.userService.DepartmentsList) {
-            this.userService.getDepartments()
-                .subscribe(
-                    // success
-                    response => {
-                        this.completeLoad(response);
-                    },
-
-                    // error
-                    error => {
-                        this.notify.error('Problem loading departments, please reload the page.');
-                    }
-                );
+           this.loadFreshDepartmentsList(false);
         } else {
             this.completeLoad(this.userService.DepartmentsList);
         }
+    }
+
+    loadFreshDepartmentsList(newDeptCreated: boolean) {
+        this.userService.getDepartments()
+        .subscribe(
+            // success
+            response => {
+                if (newDeptCreated) {
+                    this.userService.DepartmentsList = response;
+
+                    // find latest entry
+                    let dept = null;
+                    for (const d of this.userService.DepartmentsList) {
+                        if (dept === null || dept.id < d.id) {
+                            dept = d;
+                        }
+                    }
+
+                    // add new item
+                    this.Departments.push({id: dept.id, name: dept.name});
+
+                    this.User.departmentId = null;
+                    this.User.departmentId = dept.id + '';
+                } else  {
+                    this.completeLoad(response);
+                }
+            },
+
+            // error
+            error => {
+                this.notify.error('Problem loading departments, please reload the page.');
+            }
+        );
     }
 
     completeLoad(list: DepartmentViewModel[]) {
@@ -208,6 +232,24 @@ export class UsersAddComponent implements OnInit {
         if (this.telInputDirectiveRef.isInputValid()) {
             this.fieldErrors.Phone = null;
         }
+    }
+
+
+    // Create Department
+    openNewDepartmentModal() {
+        const initialState = {
+            title: 'Add Department'
+        };
+        this.modalRef = this.modalService.open(DepartmentsAddComponent, this.modalConfig);
+        this.modalRef.componentInstance.initialState = initialState;
+        this.modalRef.componentInstance.departmentCreated.subscribe(
+            () => {
+                this.modalRef.close();
+                this.notify.success('Department was created successfully!');
+                this.loadFreshDepartmentsList(true);
+                // this.reloadPage();
+            }
+        );
     }
 
 

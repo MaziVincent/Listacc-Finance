@@ -7,6 +7,8 @@ using ListaccFinance.API.Data.ViewModel;
 using ListaccFinance.API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Linq;
 
 namespace ListaccFinance.API.Controllers
 {
@@ -69,20 +71,39 @@ namespace ListaccFinance.API.Controllers
             {
                 if (await _dService.IsDeptExist(name))
                 {
-                    return BadRequest("dept already exists");
+                    var error = new
+                    {
+                        errors = new { Name = "Department already exists", },
+                    };
+
+                    string result = JsonSerializer.Serialize(error);
+                    return BadRequest(result);
                 }
-                await _dService.CreateDepartment(name);
+                await _dService.CreateDepartment(name, int.Parse(this.User.Claims.First(i => i.Type == "UserID").Value));
                 return Ok();
             }
             return BadRequest();
 
         }
 
-        [HttpPut("Edit")]
-        public async Task<IActionResult> EditDepartment([FromQuery]int Id,[FromQuery]string newName)
+        [HttpPut("Edit/{id}/{newName}")]
+        public async Task<IActionResult> EditDepartment(int Id, string newName)
         {
-            await _dService.EditDepartment(Id, newName);
-            return Ok("done");
+            if (await _dService.IsDeptExist(newName, Id)) 
+            {
+                    var error = new
+                    {
+                        errors = new { Name = "Department already exists", },
+                    };
+
+                    string result = JsonSerializer.Serialize(error);
+                    return BadRequest(result);
+            }
+            else 
+            {
+                await _dService.EditDepartment(Id, newName, int.Parse(this.User.Claims.First(i => i.Type == "UserID").Value));
+                return Ok();
+            }
         }
 
 

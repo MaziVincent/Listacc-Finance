@@ -82,8 +82,10 @@ public class UserService extends DataService {
             Persons person = new PersonService().getPersonByOnlineEntryId(item.getPersonId());
             if(person == null){
                 // modify date
-                Date birthDate = DateHelper.StringToDate(item.getPerson().getDateOfBirth());
-                item.getPerson().setDateOfBirth(birthDate.getTime() + "");
+                if(item.getPerson().getDateOfBirth() != null) {
+                    Date birthDate = DateHelper.StringToDate(item.getPerson().getDateOfBirth());
+                    item.getPerson().setDateOfBirth(birthDate.getTime() + "");
+                }
                 
                 // create person
                 PersonService personService = new PersonService();

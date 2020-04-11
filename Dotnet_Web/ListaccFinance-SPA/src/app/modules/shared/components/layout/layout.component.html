@@ -88,13 +88,13 @@
                               <span class="hide-menu">Dashboard </span>
                           </a>
                       </li>
-                      <!--<li [ngClass]="{'active': ActivePage == 'orders' }">
-                          <a class="waves-effect waves-dark" routerLink="/qm-staff/orders" aria-expanded="false">
-                              <i class="mdi mdi-cart"></i>
-                              <span class="hide-menu">Orders</span>
+                      <li [ngClass]="{'active': ActivePage == 'departments'}">
+                          <a class="waves-effect waves-dark" routerLink="/departments" aria-expanded="false">
+                              <i class="mdi mdi-sitemap"></i>
+                              <span class="hide-menu">Departments</span>
                           </a>
-                      </li>-->
-                      <li [ngClass]="{'active': ActivePage == 'users' }">
+                      </li>
+                      <li [ngClass]="{'active': ActivePage == 'users'}">
                           <a class="waves-effect waves-dark" routerLink="/users" aria-expanded="false">
                               <i class="mdi mdi-account-card-details"></i>
                               <span class="hide-menu">Users</span>
@@ -153,7 +153,7 @@
          </div>
   
          <!-- Container fluid -->
-         <div class="container-fluid" [ngClass]="{'no-p-l wide-container-fluid sm-no-p-lr': hasLeftTab}">
+         <div class="container-fluid"> <!--[ngClass]="{'no-p-l wide-container-fluid sm-no-p-lr': hasLeftTab}">-->
              <router-outlet></router-outlet>
          </div>
   

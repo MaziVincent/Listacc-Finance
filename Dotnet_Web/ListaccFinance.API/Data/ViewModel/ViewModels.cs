@@ -6,8 +6,8 @@ namespace ListaccFinance.API.Data.ViewModel
 {
     public class DeptView
     {
-       // public int Id {get; set;}
-        public string Name{get; set;}
+        public int Id {get; set;}
+        public string Name {get; set;}
     }
     
     // Return for search
@@ -24,9 +24,10 @@ namespace ListaccFinance.API.Data.ViewModel
         public bool Status { get; set; }
 
     }
+    
     public class SearchDept
     {
-        public string key{get; set;}
+        public string SearchString {get; set;}
         public int PageNumber { get; set; } = 1;
         public int _pageSize { get; set; } = 5;
         public int PageSize
@@ -63,6 +64,7 @@ namespace ListaccFinance.API.Data.ViewModel
         public Person Person { get; set; }
         public bool Status { get; set; }
     }
+    
     public class SyncViewModel
     {
         public DepartMentViewModel dept {get; set;}

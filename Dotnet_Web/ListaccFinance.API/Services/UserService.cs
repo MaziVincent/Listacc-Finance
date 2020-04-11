@@ -54,23 +54,23 @@ namespace ListaccFinance.API.Services
             newUser.Status = true;
 
             // Password Hash
-           // var message = reg.Password;
-           var message = reg.LastName.ToLower();
+            // var message = reg.Password;
+            var message = reg.LastName.ToLower();
             var salt = Salt.Create();
             var hash = Hash.Create(message, salt);
             newUser.PasswordHash = hash;
             newUser.salt = salt;
 
-
-
             newUser.Person = per;
             newUser.Department = dept;
 
-
+            //await _context.SaveChangesAsync();
+            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " Administrator" + " " + "Active").ToUpper();      
+            
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
-            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " Administrator" + " " + "Active").ToUpper();
-            await _context.SaveChangesAsync();
+
+            // retrieve id of newly created item
             var thisUser = _context.Admins.
                 Where(x => x.Email.CompareTo(reg.EmailAddress) == 0 &&
                  x.PasswordHash.CompareTo(hash) == 0).FirstOrDefault();
@@ -200,19 +200,27 @@ namespace ListaccFinance.API.Services
         public async Task EditUserAsync(int Id, RegisterModel reg, int MyId)
         {
             var u = await _context.Users.Include(x => x.Person).Where(x => x.Id == Id).FirstOrDefaultAsync();
-            u.Address = reg.Address;
-            
 
-            u.DepartmentId = _context.Departments.Where(x => x.Name.CompareTo(reg.Department) ==0).FirstOrDefaultAsync().Id;
-            u.Email = reg.EmailAddress;
+            // general info
+            u.Person.LastName = reg.LastName;
             u.Person.firstName = reg.firstName;
-
+            u.Person.Gender = reg.Gender;
             u.Person.DateOfBirth = reg.DateOfBirth;
 
+            // contact info
+            u.Email = reg.EmailAddress;
+            u.Phone = reg.Phone;
+            
+            // department
+            if (reg.DepartmentId != null)
+            {
+                u.DepartmentId = reg.DepartmentId.Value;
+            }
+            else if (!String.IsNullOrWhiteSpace(reg.Department)){
+                u.DepartmentId = _context.Departments.Where(x => x.Name.CompareTo(reg.Department) ==0).FirstOrDefaultAsync().Id;
+            }
 
-            u.Person.LastName = reg.LastName;
-            u.Person.Gender = reg.Gender;
-
+            // status
             switch (reg.Status.ToLower())
             {
                 case "true":
@@ -220,25 +228,23 @@ namespace ListaccFinance.API.Services
                     break;
                 case "false":
                     u.Status = false;
-                    break;
-                
+                    break;       
                 default:
                     break;
             }
             //u.Status = reg.Status == "true"? true:false;
-            if (!(reg.DepartmentId == null))
-            {
-                u.DepartmentId = reg.DepartmentId.Value;
-            }
 
+            // address
+            u.Address = reg.Address;
+
+            // search string
             string newStatus = u.Status == true? "Active" : "Inactive";
-            //u.Department  = await _context.Departments.FirstOrDefaultAsync(x => x.Id == reg.DepartmentId);
             bool isAdmin = u is Admin;
             u.SearchString = String.Format(reg.LastName + " " + reg.firstName + " " + reg.Gender + " " + reg.EmailAddress + " " + reg.Phone + (isAdmin ? " Administrator" : " Member") + " " +  newStatus ).ToUpper();
 
             // Do password Change later
 
-            await _context.SaveChangesAsync();
+            // await _context.SaveChangesAsync();
             var change = new Change
             {
                 Table = "Users",
@@ -249,6 +255,8 @@ namespace ListaccFinance.API.Services
                 UserId = MyId
             };
             await _context.Changes.AddAsync(change);
+
+            // save all changes
             await _context.SaveChangesAsync();
 
         }

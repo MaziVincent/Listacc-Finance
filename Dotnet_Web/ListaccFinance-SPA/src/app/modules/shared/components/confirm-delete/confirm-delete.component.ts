@@ -14,8 +14,9 @@ export class ConfirmDeleteComponent implements OnInit {
     Item: string;
     ExtraMessage: string;
     Action: string;
+    processing: boolean;
 
-    constructor(private activeModal: NgbActiveModal) { }
+    constructor(public activeModal: NgbActiveModal) { }
 
     ngOnInit() {
         if (this.ModalContent.item) {
