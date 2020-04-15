@@ -36,7 +36,7 @@ import services.net.view_model.SyncInfo;
  */
 public class Network {
     
-    public final static String hostUrl = "http://localhost:5000/"; // 192.168.0.101:5000
+    public final static String hostUrl = "http://listaccc.w27.wh-2.com/api/"; // http://localhost:5000/ // 192.168.0.101:5000
     public static String authUrl = hostUrl + "api/auth";
     public static String baseUrl = hostUrl + "api/sync";
     public static boolean isConnected = false;
