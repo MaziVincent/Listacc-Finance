@@ -93,11 +93,11 @@ namespace ListaccFinance.API.Services
                 OnlineTimeStamp = DateTime.Now,
                 OfflineTimeStamp = DateTime.Now
             };
-            await _context.Changes.AddAsync(change);
-            await _context.SaveChangesAsync();
+
             await _context.Changes.AddAsync(changeDept);
             await _context.SaveChangesAsync();
-
+            await _context.Changes.AddAsync(change);
+            await _context.SaveChangesAsync();
 
             return "done";
 
