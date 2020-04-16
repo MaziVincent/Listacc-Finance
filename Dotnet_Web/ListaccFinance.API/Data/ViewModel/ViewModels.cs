@@ -184,6 +184,8 @@ namespace ListaccFinance.API.Data.ViewModel
         public int CostCategoryId { get; set; }
         public int ProjectId { get; set; }
         public int IssuerId { get; set; }
+        public int OnlineEntryId { get; set; }
+        public int ChangeId { get; set; }
     }
 
     public class ServiceViewModel
@@ -213,6 +215,8 @@ namespace ListaccFinance.API.Data.ViewModel
         public int Unit { get; set; }
         public int IncomeId { get; set; }
         public int UserId { get; set; }
+        public int OnlineEntryId { get; set; }
+        public int ChangeId { get; set; }
 
     }
 }

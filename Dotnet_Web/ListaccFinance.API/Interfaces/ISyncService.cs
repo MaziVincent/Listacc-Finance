@@ -20,9 +20,9 @@ namespace ListaccFinance.API.Interfaces
         Task<ClientViewModel> DownloadClientAsync(Change ch);
         Task<ProjectViewModel> DownloadProjectAsync(Change ch);
         Task<CostCategoryViewModel> DownloadCostAsync(Change ch);
-        //Task<ExpenditureViewModel> DownloadExpenditureAsync(Change ch);
+        Task<ExpenditureViewModel> DownloadExpenditureAsync(Change ch);
         Task<ServiceViewModel> DownloadServicesAsync(Change ch);
-        //Task<IncomeViewModel> DownloadIncomesAsync(Change ch);
+        Task<IncomeViewModel> DownloadIncomesAsync(Change ch);
 
 
         //Uploads

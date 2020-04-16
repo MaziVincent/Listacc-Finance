@@ -577,9 +577,16 @@ namespace ListaccFinance.API.Controllers
                     case "CostCategories":
                         obj.costCategory = await _sservice.DownloadCostAsync(ch);
                         break;
+                    case "Expenditures":
+                        obj.expenditure = await _sservice.DownloadExpenditureAsync(ch);
+                        break;
                     case "Services":
                         obj.service = await _sservice.DownloadServicesAsync(ch);
                         break;
+                    case "Incomes":
+                        obj.income = await _sservice.DownloadIncomesAsync(ch);
+                        break;
+                    
                 }
                 obj.Table = ch.Table;
                 syncValues.Add(obj);

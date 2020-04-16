@@ -113,7 +113,7 @@ namespace ListaccFinance.API.Services
         {
             try
             {
-                if (string.IsNullOrEmpty(c.BusinessName))
+                if (!string.IsNullOrEmpty(c.BusinessName))
                 {
                     var biz = new Client();
                     biz.Address = c.Address;
@@ -145,7 +145,7 @@ namespace ListaccFinance.API.Services
                 };
                 newC.Address = c.Address;
                 newC.AmountReceivable = c.AmountReceivable;
-                newC.BusinessName = c.BusinessName;
+               // newC.BusinessName = c.BusinessName;
                 newC.Email = c.Email;
                 newC.PersonId = c.PersonId;
                 newC.Phone = c.Phone;
@@ -419,13 +419,13 @@ namespace ListaccFinance.API.Services
             return cost;
         }
 
-        /*public async Task<ExpenditureViewModel> DownloadExpenditureAsync(Change ch)
+        public async Task<ExpenditureViewModel> DownloadExpenditureAsync(Change ch)
         {
-            var expCh = _context.Expenditures.Where(x => x.Id == ch.EntryId).FirstOrDefaultAsync();
+            var expCh = await _context.Expenditures.Where(x => x.Id == ch.EntryId).FirstOrDefaultAsync();
             var expenditure =  _mapper.Map<ExpenditureViewModel>(expCh);
-            expenditure.ChangeId = cd.Id;
+            expenditure.ChangeId = ch.Id;
             return expenditure;
-        }*/
+        }
 
         public async Task<ServiceViewModel> DownloadServicesAsync(Change ch)
         {
@@ -437,13 +437,13 @@ namespace ListaccFinance.API.Services
 
 
 
-        /*public async Task<IncomeViewModel> DownloadIncomesAsync(Change ch)
+        public async Task<IncomeViewModel> DownloadIncomesAsync(Change ch)
         {
             var incomeCh = await _context.Incomes.Where(x => x.Id == ch.EntryId).FirstOrDefaultAsync();
             var income = _mapper.Map<IncomeViewModel>(incomeCh);
             income.ChangeId = ch.Id;
             return income;
-        }*/
+        }
 
     } 
 

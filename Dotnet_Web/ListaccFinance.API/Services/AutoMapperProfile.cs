@@ -18,6 +18,8 @@ public class AutoMapperProfile : Profile
         CreateMap<Project, ProjectViewModel>();
         CreateMap<Client, ClientViewModel>();
         CreateMap<Service, ServiceViewModel>();
+        CreateMap<Expenditure, ExpenditureViewModel>();
+        CreateMap<Income, IncomeViewModel>();
 
 
         // Mapping for uploads

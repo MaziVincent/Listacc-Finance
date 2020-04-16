@@ -64,11 +64,11 @@ namespace ListaccFinance.API.Services
             newUser.Person = per;
             newUser.Department = dept;
 
-            //await _context.SaveChangesAsync();
             newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " Administrator" + " " + "Active").ToUpper();      
             
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
+
 
             // retrieve id of newly created item
             var thisUser = _context.Admins.
@@ -151,10 +151,12 @@ namespace ListaccFinance.API.Services
             newUser.Person = per;
             //newUser.Department = dept;
 
+
+            //await _context.SaveChangesAsync();
+            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Member"  +" " + "Active").ToUpper();
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
-            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Member"  +" " + "Active").ToUpper();
-            await _context.SaveChangesAsync();
+
 
             var thisUser = _context.Members.
                             Where(x => x.Email.CompareTo(reg.EmailAddress) == 0 &&
@@ -320,11 +322,12 @@ namespace ListaccFinance.API.Services
             // }
             newUser.DepartmentId = reg.DepartmentId.Value;//_context.Departments.SingleOrDefaultAsync(x => x.Name.ToUpper().CompareTo(reg.Department.ToUpper()) == 0).Id;
 
+           
+            //await _context.SaveChangesAsync();
+            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Administrator" + " " + "Active").ToUpper();
             await _context.Admins.AddAsync(newUser);
             await _context.SaveChangesAsync();
-            newUser.SearchString = (newUser.Person.LastName + " " + newUser.Person.firstName + " " + newUser.Person.Gender + " " + newUser.Email + " " + newUser.Phone + " " + newUser.Status + " Administrator" + " " + "Active").ToUpper();
-            await _context.SaveChangesAsync();
-
+          
             var thisUser = _context.Admins.
                             Where(x => x.Email.CompareTo(reg.EmailAddress) == 0 &&
                              x.PasswordHash.CompareTo(hash) == 0).FirstOrDefault();
