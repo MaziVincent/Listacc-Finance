@@ -149,11 +149,13 @@ public class ClientService extends DataService {
             em.getTransaction().begin();
             
             Clients existingRecord = getClientByOnlineEntryId(item.getId());
-            Persons person = new PersonService().getPersonByOnlineEntryId(item.getPerson().getId());
-            if(person == null){
+            Persons person = item.getPerson() != null ? new PersonService().getPersonByOnlineEntryId(item.getPerson().getId()) : null;
+            if(person == null && item.getPerson() != null){
                 // modify date
-                Date birthDate = DateHelper.StringToDate(item.getPerson().getDateOfBirth());
-                item.getPerson().setDateOfBirth(birthDate.getTime() + "");
+                if(item.getPerson().getDateOfBirth() != null) {
+                    Date birthDate = DateHelper.StringToDate(item.getPerson().getDateOfBirth());
+                    item.getPerson().setDateOfBirth(birthDate.getTime() + "");
+                }
                 
                 // create person
                 PersonService personService = new PersonService();

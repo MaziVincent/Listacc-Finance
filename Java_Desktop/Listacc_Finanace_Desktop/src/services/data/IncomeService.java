@@ -16,6 +16,7 @@ import model.Clients;
 import model.Incomes;
 import model.Persons;
 import model.Services;
+import model.Users;
 import model.display.DisplayIncome;
 import services.net.view_model.IncomeSyncItem;
 import services.net.view_model.UploadResponseViewModel;
@@ -82,6 +83,22 @@ public class IncomeService extends DataService {
             a.setChange(ch.getChanges());
             a.setChangeTimestamp(ch.getTimeStamp());
             a.setChangeUserOnlineEntryId(ch.getUser() != null ? ch.getUser().getOnlineEntryId(): null);
+            return a;
+        }catch(NoResultException ex){
+            return null;
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null;
+    }
+    
+    public Incomes getIncomeByOnlineEntryId(int onlineEntryId)
+    {
+        try{
+            Query q = em.createNamedQuery("Incomes.findByOnlineEntryId");
+            q.setParameter("onlineEntryId", onlineEntryId);
+            Incomes a = (Incomes)q.getSingleResult();
+            
             return a;
         }catch(NoResultException ex){
             return null;
@@ -157,6 +174,33 @@ public class IncomeService extends DataService {
         }
          
      }
+    
+    public boolean addDownloadedEntry(IncomeSyncItem item)
+    {
+        try{
+            em.getTransaction().begin();
+            
+            Incomes existingRecord = getIncomeByOnlineEntryId(item.getId());
+            Services service = new ServiceService().getServiceByOnlineEntryId(item.getServiceId());
+            Clients client = new ClientService().getClientByOnlineEntryId(item.getClientId());
+            Users user = new UserService().getUserByOnlineEntryId(item.getUserId());
+            Incomes income = item.getIncomeId() != 0 ? getIncomeByOnlineEntryId(item.getIncomeId()) : null;
+            if(existingRecord == null){
+                Incomes newRecord = IncomeSyncItem.map(item, service, client, user, income);
+                em.persist(newRecord);
+            }
+            else{
+                existingRecord = IncomeSyncItem.map(existingRecord, item, item.getId(), service, client, user, income);
+                em.merge(existingRecord);
+            }
+            
+            em.getTransaction().commit();
+        
+            return true;
+        }catch(Exception exc){
+            return false;
+        }
+    }
     
     public boolean updateEntryAsSynced(UploadResponseViewModel entry)
     {

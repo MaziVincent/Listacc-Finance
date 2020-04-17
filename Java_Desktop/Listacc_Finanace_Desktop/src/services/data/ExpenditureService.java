@@ -104,6 +104,49 @@ public class ExpenditureService extends DataService {
         return null;
     }
     
+    public Expenditures getExpenditureByOnlineEntryId(int onlineEntryId)
+    {
+        try{
+            Query q = em.createNamedQuery("Expenditures.findByOnlineEntryId");
+            q.setParameter("onlineEntryId", onlineEntryId);
+            Expenditures a = (Expenditures)q.getSingleResult();
+            
+            return a;
+        }catch(NoResultException ex){
+            return null;
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null;
+    }
+    
+    public boolean addDownloadedEntry(ExpenditureSyncItem item)
+    {
+        try{
+            em.getTransaction().begin();
+            
+            Expenditures existingRecord = getExpenditureByOnlineEntryId(item.getId());
+            Projects project = new ProjectService().getProjectByOnlineEntryId(item.getProjectId());
+            Clients client = new ClientService().getClientByOnlineEntryId(item.getClientId());
+            CostCategories costCategory = new CostCategoryService().getCostCategoryByOnlineEntryId(item.getCostCategoryId());
+            Users issuer = new UserService().getUserByOnlineEntryId(item.getIssuerId());
+            if(existingRecord == null){
+                Expenditures newRecord = ExpenditureSyncItem.map(item, project, client, costCategory, issuer);
+                em.persist(newRecord);
+            }
+            else{
+                existingRecord = ExpenditureSyncItem.map(existingRecord, item, item.getId(), project, client, costCategory, issuer);
+                em.merge(existingRecord);
+            }
+            
+            em.getTransaction().commit();
+        
+            return true;
+        }catch(Exception exc){
+            return false;
+        }
+    }
+    
     public boolean updateEntryAsSynced(UploadResponseViewModel entry)
     {
         try{

@@ -15,6 +15,8 @@ import javafx.beans.property.BooleanProperty;
 import services.data.ClientService;
 import services.data.CostCategoryService;
 import services.data.DepartmentService;
+import services.data.ExpenditureService;
+import services.data.IncomeService;
 import services.data.ProjectService;
 import services.data.ServiceService;
 import services.data.UserService;
@@ -144,6 +146,14 @@ public class SynchronizationDownloadService extends AsyncTask<Void, String, Void
                                     new ServiceService().addDownloadedEntry(entry.getService());
                                     syncInfo.setLastChangeId(entry.getService().getChangeId());
                                     break;
+                                case "Expenditures":
+                                    new ExpenditureService().addDownloadedEntry(entry.getExpenditure());
+                                    syncInfo.setLastChangeId(entry.getExpenditure().getChangeId());
+                                    break;
+                                case "Incomes":
+                                    new IncomeService().addDownloadedEntry(entry.getIncome());
+                                    syncInfo.setLastChangeId(entry.getIncome().getChangeId());
+                                    break;
                             }
                         }
                         
@@ -162,6 +172,7 @@ public class SynchronizationDownloadService extends AsyncTask<Void, String, Void
             return true;
         }
         catch(Exception ex){
+            ex.printStackTrace();
             return false;
         }
     }

@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.IllegalArgumentException;
 import java.net.HttpURLConnection;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -36,7 +37,7 @@ import services.net.view_model.SyncInfo;
  */
 public class Network {
     
-    public final static String hostUrl = "http://listaccc.w27.wh-2.com/api/"; // http://localhost:5000/ // 192.168.0.101:5000
+    public final static String hostUrl = "http://listaccc.w27.wh-2.com/api/"; //"http://listaccc.w27.wh-2.com/api/"; // http://localhost:5000/ // 192.168.0.101:5000
     public static String authUrl = hostUrl + "api/auth";
     public static String baseUrl = hostUrl + "api/sync";
     public static boolean isConnected = false;
@@ -367,6 +368,9 @@ public class Network {
             e.printStackTrace();
         } 
         catch (IOException e) {
+            e.printStackTrace();
+        }
+        catch (IllegalArgumentException e){
             e.printStackTrace();
         }
         return new Pair(false, "");
