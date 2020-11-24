@@ -1,0 +1,314 @@
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { FinanceUsersAddComponent } from '../finance-users-add/finance-users-add.component';
+import { UserViewModel } from 'src/app/our-apps/finance/models/user';
+import { switchMap, distinctUntilChanged, debounceTime } from 'rxjs/operators';
+import { Title } from '@angular/platform-browser';
+import { LayoutComponent } from '../../../finance-shared/components/layout/layout.component';
+import { FinanceNotificationService } from '../../../finance-shared/services/finance-notification.service';
+import { FinanceUsersService } from '../../finance-users.service';
+import { NgbModal, NgbModalOptions, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { Subject } from 'rxjs';
+import { Pagination } from 'src/app/our-apps/finance/models/pagination';
+
+@Component({
+  selector: 'app-finance-users-list',
+  templateUrl: './finance-users-list.component.html',
+  styleUrls: ['./finance-users-list.component.css']
+})
+export class FinanceUsersListComponent implements OnInit {
+
+    contentLoading = false;
+    pagination: Pagination;
+
+    Users: UserViewModel[] = [];
+    // DisplayeUsers: UserListViewModel[] = [];
+
+    @ViewChild('searchText', {static: false}) searchText: ElementRef;
+    lastSearchTerm: string = null;
+    private searchTerms = new Subject<string>();
+
+    Filter: {role: string[], status: string} = { role : [], status: 'true'};
+    SelectedFilter: {role: string[], status: string} = { role : [], status: 'true'};
+    filtered: boolean;
+    FilteredElements: any[] = [];
+    RoleFullNames: any;
+
+    modalRef: NgbModalRef;
+    private modalConfig: NgbModalOptions = {
+        size: 'xl',
+        centered: true,
+        keyboard: false,
+        backdrop: 'static'
+    };
+
+    constructor(private titleService: Title,
+                parentComponent: LayoutComponent,
+                private notify: FinanceNotificationService,
+                private userService: FinanceUsersService,
+                private modalService: NgbModal) {
+
+        // set page title
+        this.titleService.setTitle('Users | Listacc Finance');
+
+        // set page heading
+        parentComponent.PageHeading = 'Users';
+        parentComponent.PageSubHeading = '';
+
+        // initialize pagination parameters
+        this.pagination = {
+            currentPage: 1,
+            itemsPerPage: 20,
+            totalCount: 0,
+            maxSize: 5,
+            rotate: true
+        };
+
+        this.RoleFullNames = {
+            Admin : 'Administrator',
+            Member : 'Member'
+        };
+    }
+
+    ngOnInit() {
+        // this.createDummyData();
+        this.loadUsers();
+        this.setupSearch();
+    }
+
+    setupSearch() {
+        this.searchTerms.pipe(
+            // wait 500ms after each keystroke before considering the term
+            debounceTime(400),
+
+            // ignore new term if same as previous term
+            distinctUntilChanged(),
+
+            // switch to new search observable each time the term changes
+            switchMap((term: string) => this.userService.getUserList(1, this.pagination.itemsPerPage, term,
+                this.Filter.role, this.Filter.status))
+        ).subscribe(response => {
+            this.pagination.currentPage = response.pagination.currentPage;
+            this.pagination.totalCount = response.pagination.totalCount;
+
+            this.Users = response.result;
+
+            this.contentLoading = false;
+        });
+    }
+
+    createDummyData() {
+        /*this.Users = [
+        {
+            firstName : 'Ebuka',
+            lastName : 'Olisaemeka',
+            gender : 'Male',
+            email : 'olisaemekaebuka@gmail.com',
+            phone : '+2347039466051',
+            role : 'Rider'
+        },
+        {
+            firstName : 'Vincent',
+            lastName : 'Mazi',
+            gender : 'Male',
+            email : 'vincentgeorge@gmail.com',
+            phone : '+2347039466051',
+            role : 'Administrator'
+        },
+        {
+            firstName : 'Nneka',
+            lastName : 'Ogbonna',
+            gender : 'Female',
+            email : 'ogbonnaneka@gmail.com',
+            phone : '+2347039466051',
+            role : 'Administrator'
+        },
+        {
+            firstName : 'Uchechi',
+            lastName : 'Okah',
+            gender : 'Female',
+            email : 'okahuchechi@gmail.com',
+            phone : '+2347039466051',
+            role : 'Front Desk Operator'
+        },
+        {
+            firstName : 'Agozie',
+            lastName : 'Okechukwu',
+            gender : 'Male',
+            email : 'victoragome@gmail.com',
+            phone : '+2347039466051',
+            role : 'Rider'
+        }
+        ];
+        this.pagination.totalCount = this.Users.length;
+        this.DisplayedUsers = this.Users.slice(0, this.pagination.itemsPerPage);*/
+    }
+
+    // Content Loading Operations
+    loadUsers(pageNumber?: number) {
+        this.contentLoading = true;
+
+        pageNumber = pageNumber || this.pagination.currentPage;
+        // ensure this uses search and filter
+        this.userService.getUserList(pageNumber, this.pagination.itemsPerPage, this.lastSearchTerm,
+            this.Filter.role, this.Filter.status)
+            .subscribe(
+                // success
+                response => {
+                    this.pagination.currentPage = response.pagination.currentPage;
+                    this.pagination.totalCount = response.pagination.totalCount;
+
+                    this.Users = response.result;
+                    this.SelectedFilter.status = this.Filter.status;
+                    this.SelectedFilter.role = [];
+                    this.Filter.role.forEach((value: string) => {
+                        this.SelectedFilter.role.push(value);
+                    });
+
+                    // show filters
+                    this.filtered = false;
+                    this.FilteredElements = [];
+                    for (const key in this.Filter) {
+                        if (this.Filter.hasOwnProperty(key)) {
+                            const value = this.Filter[key];
+                            if (Array.isArray(value)) {
+                                if (value.length > 0) {
+                                    this.filtered = true;
+                                    for (const index in value) {
+                                        if (value.hasOwnProperty(index)) {
+                                            this.FilteredElements.push({key, value: this.RoleFullNames[value[index]], index });
+                                        }
+                                    }
+                                }
+                            } else if (value !== null) {
+                                this.filtered = true;
+                                this.FilteredElements.push({key: key === 'status' ? 'Status' : key,
+                                    value: (key === 'status' ? (value === 'true' ? 'Active' : 'Inactive') : value)});
+                            }
+                        }
+                    }
+
+                    this.contentLoading = false;
+                },
+
+                // error
+                error => {
+                    this.notify.error('Problem loading user list, please reload page.');
+                    this.contentLoading = false;
+                }
+            );
+    }
+
+    reloadPage() {
+        this.clearFilterForReload();
+        this.searchText.nativeElement.value = '';
+        this.setupSearch();
+        this.lastSearchTerm = null;
+        this.loadUsers(1);
+    }
+
+    pageChanged(newPageNumber: number): void {
+        /*const startItem = (newPageNumber - 1) * this.pagination.itemsPerPage;
+        const endItem = newPageNumber * this.pagination.itemsPerPage;
+        this.DisplayedStaff = this.Staff.slice(startItem, endItem);*/
+
+        this.pagination.currentPage = newPageNumber;
+        this.loadUsers();
+        window.scrollTo(0, 0);
+    }
+
+
+    // Search Operations
+    search(term: string): void {
+        this.contentLoading = true;
+        this.searchTerms.next(term);
+        this.lastSearchTerm = term;
+    }
+
+
+    // Filter Opeations
+    clearFilterForReload() {
+        this.Filter.role = [];
+        // this.Filter.status = 'true';
+    }
+
+    clearFilter() {
+        this.Filter.role = [];
+        this.Filter.status = 'true';
+        if (this.filtered) {
+            this.loadUsers(1);
+        }
+    }
+
+    handleFilterOpen() {
+        // return to previous settings
+        this.Filter.status = this.SelectedFilter.status;
+        this.Filter.role = [];
+        this.SelectedFilter.role.forEach((value: string) => {
+            this.Filter.role.push(value);
+        });
+    }
+
+    toggleFilterRole(role: string) {
+        const index = this.Filter.role.indexOf(role);
+        if (index === -1) {
+            this.Filter.role.push(role);
+        } else {
+            this.Filter.role.splice(index, 1);
+        }
+    }
+
+    removeFilter(key: string, index?: number) {
+        if (index === null) {
+            this.Filter[key] = null;
+        } else if (Array.isArray(this.Filter[key])) {
+            this.Filter[key].splice(index, 1);
+        }
+        this.loadUsers(1);
+    }
+
+    filter() {
+        this.loadUsers(1);
+    }
+
+
+
+    // Create & Edit Operations
+    openNewUserModal() {
+        const initialState = {
+            title: 'Add User'
+        };
+        this.modalRef = this.modalService.open(FinanceUsersAddComponent, this.modalConfig);
+        this.modalRef.componentInstance.initialState = initialState;
+        this.modalRef.componentInstance.userCreated.subscribe(
+            () => {
+                this.modalRef.close();
+                this.notify.success('User was created successfully!');
+                this.reloadPage();
+            }
+        );
+    }
+
+    openUserEditModal(selectedUser: UserViewModel) {
+        const initialState = {
+            title: 'Edit User',
+            User: selectedUser
+        };
+        this.modalRef = this.modalService.open(FinanceUsersAddComponent, this.modalConfig);
+        this.modalRef.componentInstance.initialState = initialState;
+        this.modalRef.componentInstance.userEdited.subscribe(
+            () => {
+                this.modalRef.close();
+                this.notify.success('User was updated successfully!');
+                this.reloadPage();
+            }
+        );
+        this.modalRef.componentInstance.userDeleted.subscribe(
+            () => {
+                this.modalRef.close();
+                this.notify.success('User was deleted successfully!');
+                this.reloadPage();
+            }
+        );
+    }
+
+}

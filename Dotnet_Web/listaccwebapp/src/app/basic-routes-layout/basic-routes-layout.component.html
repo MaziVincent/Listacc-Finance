@@ -1,0 +1,242 @@
+<div class="preloader">
+  <div class="preloader_image"></div>
+</div>
+
+
+<!-- Unyson messages modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="messages_modal">
+  <div class="fw-messages-wrap ls p-normal">
+      <!-- Uncomment this UL with LI to show messages in modal popup to your user: -->
+      <!--
+  <ul class="list-unstyled">
+      <li>Message To User</li>
+  </ul>
+  -->
+
+  </div>
+</div>
+
+
+<div id="canvas">
+  <div id="box_wrapper">
+      <header class="page_header ds">
+          <div class="container-fluid">
+              <div class="row align-items-center">
+                  <div class="col-xl-2 col-lg-3 col-11" style="padding-bottom: 5px;" >
+                      <a routerLink="/" class="logo text-center">
+                          <img [src]="logoPath" alt="" class="animate" data-animation="fadeInUp" >
+                      </a>
+                  </div>
+                  <div class="col-xl-8 col-lg-6 col-1 text-sm-center">
+                      <!-- main nav start -->
+                      <nav class="top-nav">
+                          <ul class="nav sf-menu">
+
+
+                              <li class="active">
+                                  <a  routerLink="/" >Home</a>
+                                  
+                              </li>
+                              <li>
+                                  <a disabled="disabled">About</a>
+                                  <ul>
+                                      <li>
+                                          <a routerLink="/about"> About Us</a>
+                                      </li>
+                                      <li>
+                                          <a routerLink="/team"> Our Team</a>
+                                      </li>
+                                      
+                                      
+                                          
+                                          </ul>
+                              </li>
+                              <li>
+                                  <a routerLink="/services">Services</a>
+                                  
+                                      
+                              </li>
+                              <!-- blog -->
+
+                              <!-- gallery -->
+                              <li>
+                                  <a routerLink="/solutions">Our Solutions</a>
+                                  
+                              </li>
+                              <!-- eof Gallery -->
+
+
+                              <li>
+                                  <a routerLink="/academy">Academy</a>
+                                  
+                              </li>
+                              <!-- eof pages -->
+
+                              <li>
+                                  
+                                  <a routerLink="/contacts">Contacts</a>
+                                  
+                              </li>
+                              <!-- eof contact -->
+
+                              <li>
+                                  <a routerLink="/blog">Blog</a>
+                                  
+                              </li>
+                              <!-- eof blog -->
+
+                              
+                              <!-- contacts -->
+
+                          </ul>
+
+
+                      </nav>
+                      <!-- eof main nav -->
+                  </div>
+                  
+                  <!--
+                  <div class="search-box">
+                      <input type="text" name="search" placeholder="search keyword" class="search-text">
+                      <a href="#" class="search-btn">
+                          <i class="fa fa-search"></i>
+                      </a>
+                  </div>
+                  -->
+              </div>
+          </div>
+          <!-- header toggler -->
+          <span class="toggle_menu">
+              <span></span>
+          </span>
+      </header>
+  
+      <router-outlet></router-outlet>
+
+      <footer class="page_footer ds s-pb-100 s-pt-100 c-gutter-60 s-parallax bordered-footer bottom-none">
+          <div class="container">
+              <div class="row">
+                  <div class="divider-110 d-none d-xl-block"></div>
+
+                  <div class="col-md-4 col-lg-4 animate" data-animation="fadeInUp">
+
+                      <div class="widget widget_categories">
+
+                          <h3 class="widget-title">Solutions </h3>
+
+                          <ul>
+                              <li class="cat-item">
+                                  <a routerLink="/solutions"> SchoolCater</a>
+                                  <span class="color-main"><i class="fal fa-school"></i></span>
+                              </li>
+                              <li class="cat-item">
+                                  <a routerLink="/solutions">TestRoom</a>
+                                  <span class="color-main"> <i class="fal fa-user-edit"></i></span>
+                              </li>
+                              <li class="cat-item">
+                                  <a routerLink="/solutions">BioTracker</a>
+                                  <span class="color-main"><i class="fal fa-fingerprint"></i></span>
+                              </li>
+                              
+                          </ul>
+                      </div>
+
+                  </div>
+
+                  <div class="col-md-4 text-center animate footer-contact" data-animation="fadeInUp">
+                      <div class="widget widget_icons_list">
+                          <div class="footer-logo">
+                              <img src="../assets/images/logoTrans.png" alt="">
+                          </div>
+                          <h3 class="widget-title name">listacc
+                              <span>Ltd</span>
+                          </h3>
+                          <p class="next">
+                              We pursue a global vision to put technological solutions in the hands of every professional
+                              individual, businesses, organisation.
+                          </p>
+                          <ul>
+                              <li class="icon-inline">
+                                  <div class="icon-styled icon-top color-main fs-14">
+                                      <i class="fal fa-map-marker-alt"></i>
+                                  </div>
+                                  <p>
+                                      4th Floor, DreamLink Concepts Tower, Mile50, Abakaliki, Ebonyi State. 
+                                  </p>
+                              </li>
+                              <li class="icon-inline">
+                                  <div class="icon-styled icon-top color-main fs-14">
+                                      <i class="far fa-phone-alt"></i>
+                                  </div>
+                                  <p> <span class="color-main"> 081</span>-66300937</p>
+                              </li>
+                              <li class="icon-inline">
+                                  <div class="icon-styled icon-top color-main fs-14">
+                                      <i class="far fa-phone-alt"></i>
+                                  </div>
+                                  <p> <span class="color-main"> 070</span>-39466051</p>
+                              </li>
+                              <li class="icon-inline">
+                                  <div class="icon-styled icon-top color-main fs-14">
+                                      <i class="far fa-phone-alt"></i>
+                                  </div>
+                                  <p> <span class="color-main"> 081</span>-38699452</p>
+                              </li>
+                              <li class="icon-inline">
+                                  <div class="icon-styled icon-top color-main fs-14">
+                                      <i class="fa fa-envelope"></i>
+                                  </div>
+                                  <p>
+                                      <a href="#">info@listacc.com</a>
+                                  </p>
+                              </li>
+                          </ul>
+                          <div class="widget widget_social_buttons">
+                              <a href="#" class=" color-bg-icon rounded-icon" style="background: #3e5c9a;color: #fff;" title="facebook"><i class="fab fa-facebook-f fa-lg"></i></a> &nbsp;
+                              <a href="#" class=" color-bg-icon rounded-icon" style="background: #55acee;color: #fff;" title="twitter"><i class="fab fa-twitter fa-lg"></i></a> &nbsp;
+                              <a href="#" class=" color-bg-icon rounded-icon" style="background-color: #dd4b39;" title="google"> <i class="fab fa-google-plus fa-lg"></i></a>
+                          </div> 
+                      </div>
+                  </div>
+
+                  <div class="col-md-4 text-center animate mailchimp" data-animation="fadeInUp">
+                      <div class="widget widget_mailchimp">
+
+                          <h3 class="widget-title">Newsletter</h3>
+
+                          <p>
+                              Enter your email address here always to be
+                              <br> updated. We promise not to spam!
+                          </p>
+
+                          <form class="signup" >
+                              <label for="mailchimp_email">
+                                  <span class="screen-reader-text">Subscribe:</span>
+                              </label>
+
+                              <input  name="email" type="email" class="form-control mailchimp_email" placeholder="Email address">
+
+                              <div class="response"></div>
+                          </form>
+
+                      </div>
+                  </div>
+                  <div class="divider-10 d-none d-xl-block"></div>
+              </div>
+          </div>
+      </footer>
+
+      <section class="page_copyright light-copy ls s-py-25 copyright-ls">
+          <div class="container">
+              <div class="row align-items-center">
+                  <div class="divider-20 d-none d-lg-block"></div>
+                  <div class="col-md-12 text-center">
+                      <p>&copy; Copyright
+                          <span class="copyright_year color-main">2020</span> Listacc Ltd - All Rights Reserved</p>
+                  </div>
+                  <div class="divider-20 d-none d-lg-block"></div>
+              </div>
+          </div>
+      </section>
+  </div> <!-- end of box wrapper-->
+</div> <!-- end of canvas-->

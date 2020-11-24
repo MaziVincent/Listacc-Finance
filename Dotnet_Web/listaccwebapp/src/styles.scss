@@ -1,0 +1,16 @@
+@import './assets/css/finance-style.scss';
+.finance-app-layout {
+  @import './assets/css/finance/bootstrap.css';
+  @import './assets/css/finance/animate.css';
+  @import './assets/css/finance/myanimate.css';
+  @import './assets/css/finance/icons/materialdesignicons/materialdesignicons.min.css';
+  @import './assets/css/finance/icons/themify-icons/themify-icons.css';
+  @import './assets/css/finance/spinners.css';
+  @import '~dropzone/dist/min/dropzone.min.css';
+}
+
+/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: 'Trebuchet MS';
+  src: url(assets/fonts/Trebuchet_MS.ttf) format("opentype");
+}

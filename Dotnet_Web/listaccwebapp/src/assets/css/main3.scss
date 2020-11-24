@@ -1,0 +1,49 @@
+.basic-app-layout {
+    div.margin-div{
+        margin: 100px 0 30px 0;
+    }
+
+    div.margin-div2{
+        margin: 0px 0 60px 0;
+    }
+
+    .login-div{
+        width: 5%;
+        height: 40%;
+        
+        
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+
+    .login-btn i {
+        font-size: 70px;
+        
+        
+        text-transform: uppercase;
+        -webkit-transition: all 0.5s linear 0.5s;
+        transition: all 0.5s linear 0.5s;
+        text-align: center;
+    }
+  
+    .login-btn i:hover {
+        text-shadow: 0 6px 14px 0 #666666;
+        transform: scale(0.5s);
+        
+    }
+
+    .flex-container{
+        display: flex;
+        flex-direction: row;
+    }
+
+    .clients-logo{
+        padding:6px 2px;
+    }
+
+    .clients-logo img{
+        width: 240px;
+        height: 200px;   
+    }
+}
