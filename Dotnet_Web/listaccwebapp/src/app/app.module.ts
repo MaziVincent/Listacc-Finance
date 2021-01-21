@@ -1,3 +1,4 @@
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
@@ -59,7 +60,8 @@ import { BasicRoutesLayoutComponent } from './basic-routes-layout/basic-routes-l
       AppRoutingModule,
       ReactiveFormsModule,
       HttpClientModule,
-      FormsModule
+      FormsModule,
+      NgbModalModule
    ],
    exports: [
       BsDropdownModule
