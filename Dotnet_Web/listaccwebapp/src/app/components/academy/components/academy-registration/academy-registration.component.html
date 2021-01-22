@@ -1,7 +1,7 @@
 <div id="academy-registration">
     <div class="modal-header no-border-bottom">
         <h4 class="modal-title text-capitalize" id="modal-basic-title"><span>Abakaliki Tech Bootcamp</span> <br/> is coming soon!</h4>
-        <a class="close cursor-pointer" aria-label="Close" (click)="close()">
+        <a class="close cursor-pointer" aria-label="Close" (click)="close()" *ngIf="!processing">
             <span aria-hidden="true">&times;</span>
         </a>
     </div>
@@ -42,6 +42,9 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="register()">REGISTER</button>
+        <button type="button" class="btn" (click)="register()" [disabled]="processing">
+            REGISTER
+            <span *ngIf="processing" class="loader display-inline-block pull-right"></span>
+        </button>
     </div>
 </div>

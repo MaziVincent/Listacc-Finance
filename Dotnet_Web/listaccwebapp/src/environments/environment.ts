@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  AcademyUrl: 'http://localhost:5001/api/',
   FinanceUrl: 'http://localhost:5000/api/'
 };
 

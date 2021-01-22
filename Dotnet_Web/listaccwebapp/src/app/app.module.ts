@@ -1,4 +1,5 @@
-import { AcademyRegistrationComponent } from './academy/components/academy-registration/academy-registration.component';
+import { ValidationErrorService } from 'src/app/services/validation-error.service';
+import { AcademyRegistrationComponent } from './components/academy/components/academy-registration/academy-registration.component';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -6,33 +7,32 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LayoutComponent } from './layout/layout.component';
-import { HomeComponent } from './home/home.component';
-import { AboutComponent } from './about/about.component';
-import { TeamComponent } from './team/team.component';
-import { TestimonialsComponent } from './testimonials/testimonials.component';
-import { ServicesComponent } from './services/services.component';
-import { SolutionsComponent } from './solutions/solutions.component';
-import { AcademyComponent } from './academy/academy.component';
-import { ContactsComponent } from './contacts/contacts.component';
-import { BlogComponent } from './blog/blog.component';
-import { LoginComponent } from './login/login.component';
-import { PortalComponent } from './portal/portal.component';
+import { HomeComponent } from './components/home/home.component';
+import { AboutComponent } from './components/about/about.component';
+import { TeamComponent } from './components/team/team.component';
+import { TestimonialsComponent } from './components/testimonials/testimonials.component';
+import { ServicesComponent } from './components/services/services.component';
+import { SolutionsComponent } from './components/solutions/solutions.component';
+import { AcademyComponent } from './components/academy/academy.component';
+import { ContactsComponent } from './components/contacts/contacts.component';
+import { BlogComponent } from './components/blog/blog.component';
+import { LoginComponent } from './components/login/login.component';
+import { PortalComponent } from './components/portal/portal.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { ContactService } from './scriptservice/contact.service';
-import { FinanceRootComponent } from './finance-root/finance-root.component';
+import { ContactService } from './services/contact.service';
+import { FinanceRootComponent } from './components/finance-root/finance-root.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { BasicRoutesLayoutComponent } from './basic-routes-layout/basic-routes-layout.component';
 import { CountdownModule } from 'ngx-date-countdown';
+import { AcademyService } from './services/academy.service';
+import { BasicRoutesLayoutComponent } from './components/basic-routes-layout/basic-routes-layout.component';
 
 
 @NgModule({
    declarations: [
       AppComponent,
-      LayoutComponent,
       HomeComponent,
       AboutComponent,
       TeamComponent,
@@ -74,7 +74,9 @@ import { CountdownModule } from 'ngx-date-countdown';
       BsDropdownModule
    ],
    providers: [
-      ContactService
+      ContactService,
+      AcademyService,
+      ValidationErrorService
    ],
    bootstrap: [
       AppComponent

@@ -1,22 +1,20 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AppRoutes } from './routes';
-import { HomeComponent } from './home/home.component';
-import { LayoutComponent } from './layout/layout.component';
-import { AboutComponent } from './about/about.component';
-import { TeamComponent } from './team/team.component';
-import { TestimonialsComponent } from './testimonials/testimonials.component';
-import { ServicesComponent } from './services/services.component';
-import { SolutionsComponent } from './solutions/solutions.component';
-import { ContactsComponent } from './contacts/contacts.component';
-import { BlogComponent } from './blog/blog.component';
-import { AcademyComponent } from './academy/academy.component';
-import { LoginComponent } from './login/login.component';
-import { PortalComponent } from './portal/portal.component';
+import { HomeComponent } from './components/home/home.component';
+import { AboutComponent } from './components/about/about.component';
+import { TeamComponent } from './components/team/team.component';
+import { TestimonialsComponent } from './components/testimonials/testimonials.component';
+import { ServicesComponent } from './components/services/services.component';
+import { SolutionsComponent } from './components/solutions/solutions.component';
+import { ContactsComponent } from './components/contacts/contacts.component';
+import { BlogComponent } from './components/blog/blog.component';
+import { AcademyComponent } from './components/academy/academy.component';
+import { LoginComponent } from './components/login/login.component';
+import { PortalComponent } from './components/portal/portal.component';
 import { FinanceLoginGuard } from './our-apps/finance/guards/finance-login.guard';
-import { BasicRoutesLayoutComponent } from './basic-routes-layout/basic-routes-layout.component';
 import { FinanceAuthGuard } from './our-apps/finance/guards/finance-auth.guard';
-import { FinanceRootComponent } from './finance-root/finance-root.component';
+import { FinanceRootComponent } from './components/finance-root/finance-root.component';
+import { BasicRoutesLayoutComponent } from './components/basic-routes-layout/basic-routes-layout.component';
 
 
 const routes: Routes = [
@@ -59,7 +57,6 @@ const routes: Routes = [
         component: BasicRoutesLayoutComponent,
         children: [
             { path: '', component: HomeComponent },
-            { path: 'layout', component: LayoutComponent },
             { path: 'about', component: AboutComponent },
             { path: 'team', component: TeamComponent },
             { path: 'testimonials', component: TestimonialsComponent },

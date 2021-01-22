@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { MyValidationErrors } from 'src/app/our-apps/finance/models/my-validation-errors';
+import { ValidationErrorService } from 'src/app/services/validation-error.service';
+import { AcademyService } from '../../../../services/academy.service';
 
 @Component({
   selector: 'app-academy-registration',
@@ -7,6 +10,9 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./academy-registration.component.scss']
 })
 export class AcademyRegistrationComponent implements OnInit {
+
+
+    @Output() registrationComplete = new EventEmitter<any>();
 
     CountdownEndDate = 'January 25, 2021';
     Units = 'Days | Hours | Minutes | Seconds';
@@ -16,7 +22,9 @@ export class AcademyRegistrationComponent implements OnInit {
     fieldErrors: any = {};
     processing!: boolean;
 
-    constructor(private activeModal: NgbActiveModal) {
+    constructor(private activeModal: NgbActiveModal,
+                private academyService: AcademyService,
+                private validationErrorService: ValidationErrorService) {
         this.Registration = new RegistrationInfo();
     }
 
@@ -30,8 +38,8 @@ export class AcademyRegistrationComponent implements OnInit {
     register(): void{
         this.fieldErrors = {};
         this.processing = true;
-        // TODO: Make button spin
         let error = false;
+
         // check for error
         if (!this.Registration.lastName || this.Registration.lastName.trim() === '') {
             this.fieldErrors.LastName = 'Enter your last name/surname';
@@ -44,8 +52,8 @@ export class AcademyRegistrationComponent implements OnInit {
         if (!this.Registration.phone || this.Registration.phone.trim() === '') {
             this.fieldErrors.Phone = 'Enter your phone number';
             error = true;
-        } else if (!this.validPhoneNumber(this.Registration.phone)) { // TODO: Validate phone number
-            this.fieldErrors.Email = 'Enter a valid phone number';
+        } else if (!this.validPhoneNumber(this.Registration.phone)) {
+            this.fieldErrors.Phone = 'Enter a valid phone number';
         }
         if (!this.Registration.email || this.Registration.email.trim() === '') {
             this.fieldErrors.Email = 'Enter your email address';
@@ -56,8 +64,27 @@ export class AcademyRegistrationComponent implements OnInit {
 
         // TODO: send to server
         if (!error){
-            // TODO: if error, show error
-            // TODO: if success, close modal, show success message
+            this.registrationComplete.emit();
+            /*this.academyService.registerComingSoon(this.Registration)
+            .subscribe(
+
+                // success
+                (response) => {
+                    // TODO: if success, close modal, show success message
+                    this.registrationComplete.emit();
+                },
+
+                // error
+                (errors) => {
+                    // TODO: if error, show error
+                    const allErrors: MyValidationErrors = this.validationErrorService.showValidationErrors(errors);
+                    this.fieldErrors = allErrors.fieldErrors;
+                    // if (this.fieldErrors.error && this.fieldErrors.error.indexOf('name') !== - 1) {
+                        // this.fieldErrors.Name = this.fieldErrors.error;
+                    // }
+                    this.processing = false;
+                }
+            );*/
         } else {
             this.processing = false;
         }
@@ -69,7 +96,7 @@ export class AcademyRegistrationComponent implements OnInit {
     }
 
     validPhoneNumber(phone: string): boolean {
-        const re = /^[0]\d{10}$/;///(^[0]\d{10}$)|(^[\+]?[234]\d{12}$)/;
+        const re = /(^[0]\d{10}$)|(^[\+]?[234]\d{12}$)/;
         return re.test(phone);
     }
 

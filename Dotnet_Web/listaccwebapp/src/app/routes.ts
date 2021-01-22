@@ -1,23 +1,21 @@
 import { Routes, Route } from '@angular/router';
 import { FinanceRoutes } from './our-apps/finance/finance-routes';
-import { HomeComponent } from './home/home.component';
-import { LayoutComponent } from './layout/layout.component';
-import { AboutComponent } from './about/about.component';
-import { TeamComponent } from './team/team.component';
-import { TestimonialsComponent } from './testimonials/testimonials.component';
-import { ServicesComponent } from './services/services.component';
-import { SolutionsComponent } from './solutions/solutions.component';
-import { ContactsComponent } from './contacts/contacts.component';
-import { BlogComponent } from './blog/blog.component';
-import { AcademyComponent } from './academy/academy.component';
-import { LoginComponent } from './login/login.component';
-import { PortalComponent } from './portal/portal.component';
+import { HomeComponent } from './components/home/home.component';
+import { AboutComponent } from './components/about/about.component';
+import { TeamComponent } from './components/team/team.component';
+import { TestimonialsComponent } from './components/testimonials/testimonials.component';
+import { ServicesComponent } from './components/services/services.component';
+import { SolutionsComponent } from './components/solutions/solutions.component';
+import { ContactsComponent } from './components/contacts/contacts.component';
+import { BlogComponent } from './components/blog/blog.component';
+import { AcademyComponent } from './components/academy/academy.component';
+import { LoginComponent } from './components/login/login.component';
+import { PortalComponent } from './components/portal/portal.component';
 
 export const AppRoutes: Routes = [];
 
 const BasicRoutes: Routes = [
     { path: '', component: HomeComponent },
-    { path: 'layout', component: LayoutComponent },
     { path: 'about', component: AboutComponent },
     { path: 'team', component: TeamComponent },
     { path: 'testimonials', component: TestimonialsComponent },

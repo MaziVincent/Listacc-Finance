@@ -1,6 +1,5 @@
-import { FinanceRootComponent } from './../../finance-root/finance-root.component';
+import { FinanceRootComponent } from '../../components/finance-root/finance-root.component';
 import { Routes } from '@angular/router';
-import { FinanceLoginGuard } from './guards/finance-login.guard';
 
 export const FinanceRoutes: Routes = [
     {
