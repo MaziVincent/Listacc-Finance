@@ -47,3 +47,86 @@
         height: 200px;   
     }
 }
+
+
+/* Registration Pop-Up */
+.no-border-bottom{border-bottom: 0;}
+.no-padding-left{padding-left: 0;}
+.cursor-pointer{cursor: pointer;}
+.field-validation-error {
+    color: #b94a48;
+    margin-top: -5px;
+    display: block;
+    letter-spacing: normal;
+}
+input.input-validation-error, select.input-validation-error, textarea.input-validation-error, div.input-validation-error,
+input.input-validation-error.edit-mode, select.input-validation-error.edit-mode, textarea.input-validation-error.edit-mode, 
+input.input-validation-error.edit-mode:hover, select.input-validation-error.edit-mode:hover, textarea.input-validation-error.edit-mode:hover  {
+    border: 1px solid #b94a48 !important;
+}
+.white-space-pre {
+    font-size: 12px !important;
+    white-space: pre;
+}
+#academy-registration {
+    .modal-header {
+        padding-bottom: 0;
+
+        .close{
+            font-weight: 300;
+            font-size: 30px;
+        }
+        h4{
+            margin-bottom: 0;
+            padding: 20px 0 0 20px;
+            line-height: 40px;
+            span {color: #f5a142}
+        }
+    }
+    .modal-body{
+        .body-container {
+            padding: 0 20px;
+            p {line-height: 25px;}
+            .form-control {
+                text-align: left;
+                height: 48px;
+                padding-left: 15px;
+                font-size: 14px;
+            }
+            label span {
+                font-size: 10px;
+                opacity: .5;
+            }
+            .countdown {
+                margin-bottom: 15px;
+
+                .measurements{
+                    margin: 0 7px;
+
+                    .measurements-number{
+                        font-size: 28px;
+                        color: #fff;
+                        background-color: #666666;
+                        font-weight: 500;
+                        padding: 15px 0;
+                        border-radius: 5px;
+                        margin-bottom: 3px;
+                    }
+                    .measurements-text{
+                        color: #9c9a9a;
+                        font-weight: 500;
+                    }
+                }
+            }
+        }
+    }
+    .modal-footer{
+        padding-top: 0;
+        justify-content: center;
+        border-top: 0;
+        .btn{
+            font-size: 14px;
+            padding: 23px 56px;
+        }
+    }
+}

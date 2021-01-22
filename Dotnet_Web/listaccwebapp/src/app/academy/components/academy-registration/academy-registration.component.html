@@ -1,0 +1,47 @@
+<div id="academy-registration">
+    <div class="modal-header no-border-bottom">
+        <h4 class="modal-title text-capitalize" id="modal-basic-title"><span>Abakaliki Tech Bootcamp</span> <br/> is coming soon!</h4>
+        <a class="close cursor-pointer" aria-label="Close" (click)="close()">
+            <span aria-hidden="true">&times;</span>
+        </a>
+    </div>
+    <div class="modal-body">
+        <div class="body-container">
+            <p>Register now to reserve a seat in our comprehensive computer graphics and web design bootcamp, time is ticking!</p>
+            <div class="text-center">
+                <countdown units="{{Units}}" showZero="true" end="{{CountdownEndDate}}"></countdown>
+            </div>
+            <form class="container no-padding-left">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="last_name">Last Name</label>
+                        <input id="last_name" class="form-control" name="last_name" type="text" 
+                        [(ngModel)]="Registration.lastName" [ngClass]="{'input-validation-error': fieldErrors.LastName}" />
+                        <span *ngIf="fieldErrors.LastName" class="field-validation-error white-space-pre">{{fieldErrors.LastName}}</span>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="first_name">First Name</label>
+                        <input id="first_name" class="form-control" name="first_name" type="text"
+                        [(ngModel)]="Registration.firstName" [ngClass]="{'input-validation-error': fieldErrors.FirstName}" />
+                        <span *ngIf="fieldErrors.FirstName" class="field-validation-error white-space-pre">{{fieldErrors.FirstName}}</span>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="phone">Phone Number</label>
+                        <input id="phone" class="form-control" name="phone" type="tel"
+                        [(ngModel)]="Registration.phone" [ngClass]="{'input-validation-error': fieldErrors.Phone}" />
+                        <span *ngIf="fieldErrors.Phone" class="field-validation-error white-space-pre">{{fieldErrors.Phone}}</span>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="email">Email Address<span>(Optional)</span></label>
+                        <input id="email" class="form-control" name="email" type="email"
+                        [(ngModel)]="Registration.email" [ngClass]="{'input-validation-error': fieldErrors.Email}" />
+                        <span *ngIf="fieldErrors.Email" class="field-validation-error white-space-pre">{{fieldErrors.Email}}</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="register()">REGISTER</button>
+    </div>
+</div>

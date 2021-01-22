@@ -1,3 +1,4 @@
+import { AcademyRegistrationComponent } from './academy/components/academy-registration/academy-registration.component';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -25,6 +26,7 @@ import { FinanceRootComponent } from './finance-root/finance-root.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { BasicRoutesLayoutComponent } from './basic-routes-layout/basic-routes-layout.component';
+import { CountdownModule } from 'ngx-date-countdown';
 
 
 @NgModule({
@@ -43,7 +45,8 @@ import { BasicRoutesLayoutComponent } from './basic-routes-layout/basic-routes-l
       LoginComponent,
       PortalComponent,
       FinanceRootComponent,
-      BasicRoutesLayoutComponent
+      BasicRoutesLayoutComponent,
+      AcademyRegistrationComponent
    ],
    imports: [
       ToastrModule.forRoot({
@@ -61,7 +64,11 @@ import { BasicRoutesLayoutComponent } from './basic-routes-layout/basic-routes-l
       ReactiveFormsModule,
       HttpClientModule,
       FormsModule,
-      NgbModalModule
+      NgbModalModule,
+      CountdownModule
+   ],
+   entryComponents: [
+      AcademyRegistrationComponent
    ],
    exports: [
       BsDropdownModule

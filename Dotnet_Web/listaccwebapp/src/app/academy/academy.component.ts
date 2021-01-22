@@ -1,5 +1,6 @@
+import { AcademyRegistrationComponent } from './components/academy-registration/academy-registration.component';
 import { Component, OnInit, TemplateRef, ViewChild, AfterViewInit } from '@angular/core';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDismissReasons, NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-academy',
@@ -12,36 +13,35 @@ export class AcademyComponent implements OnInit, AfterViewInit {
 
     closeResult = '';
 
-    constructor(private modalService: NgbModal) { }
+    modalConfig: NgbModalOptions = {
+        size: 'lg',
+        centered: true,
+        keyboard: true,
+        backdrop: 'static'
+    };
+
+    constructor(private modalService: NgbModal) {}
 
     ngOnInit(): void {}
 
     ngAfterViewInit(): void {
-        const user = {
-            id: 10
-        };
-        // this.modalRef =
+
+        // open the modal popup when the page becomes visible
         setTimeout(() => {
-            this.modalService.open(this.templateRef, {ariaLabelledBy: 'modal-basic-title'})
-                .result.then(
-                    (result) => {
-                        this.closeResult = `Closed with: ${result}`;
-                    },
-                    (reason) => {
-                        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-                    }
-                );
+            this.open();
         });
     }
 
-    open(content) {
-        this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(
-            (result) => {
-                this.closeResult = `Closed with: ${result}`;
-            },
-            (reason) => {
-                this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-            });
+    open() {
+        this.modalService.open(AcademyRegistrationComponent, this.modalConfig)
+            /*.result.then(
+                (result) => {
+                    this.closeResult = `Closed with: ${result}`;
+                },
+                (reason) => {
+                    this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+                }
+            );*/
     }
 
     private getDismissReason(reason: any): string {
