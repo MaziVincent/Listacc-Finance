@@ -21328,7 +21328,8 @@ html {
 
 	.comingsoon {
 		background-image: url("../images/img/comingsoon.jpg");
-		margin-top: -60px;
+		margin-top: -70px;
+		opacity: 1;
 	}
 
 	.comingsoon .content-soon {
@@ -22897,5 +22898,10 @@ html {
 	h4,
 	h5 {
 		line-height: 60px;
+	}
+
+	/*== ADDITION ===*/
+	.up-80{
+		margin-top: -80px;
 	}
 }

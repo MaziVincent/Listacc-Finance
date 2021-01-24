@@ -64,8 +64,7 @@ export class AcademyRegistrationComponent implements OnInit {
 
         // TODO: send to server
         if (!error){
-            this.registrationComplete.emit();
-            /*this.academyService.registerComingSoon(this.Registration)
+            this.academyService.registerComingSoon(this.Registration)
             .subscribe(
 
                 // success
@@ -84,7 +83,7 @@ export class AcademyRegistrationComponent implements OnInit {
                     // }
                     this.processing = false;
                 }
-            );*/
+            );
         } else {
             this.processing = false;
         }
