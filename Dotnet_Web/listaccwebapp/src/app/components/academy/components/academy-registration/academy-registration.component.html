@@ -37,6 +37,30 @@
                         [(ngModel)]="Registration.email" [ngClass]="{'input-validation-error': fieldErrors.Email}" />
                         <span *ngIf="fieldErrors.Email" class="field-validation-error white-space-pre">{{fieldErrors.Email}}</span>
                     </div>
+                    <div class="form-group col-md-6">
+                        <label for="gender">Gender</label>
+                        <label class="radio-control">
+                            <input class="form-control" name="gender" type="radio" value="Female" [(ngModel)]="Registration.gender"/>
+                            <span>Female</span>
+                        </label>
+                        <label class="radio-control">
+                            <input class="form-control" name="gender" type="radio" value="Male" [(ngModel)]="Registration.gender"/>
+                            <span>Male</span>
+                        </label>
+                        <span *ngIf="fieldErrors.Gender" class="field-validation-error white-space-pre">{{fieldErrors.Gender}}</span>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="email">Course</label>
+                        <label class="radio-control">
+                            <input class="form-control" name="selectedProgram" type="radio" value="1" [(ngModel)]="Registration.selectedProgram"/>
+                            <span>Web Design and Development</span>
+                        </label>
+                        <label class="radio-control">
+                            <input class="form-control" name="selectedProgram" type="radio" value="2" [(ngModel)]="Registration.selectedProgram"/>
+                            <span>Graphics Design and Animation</span>
+                        </label>
+                        <span *ngIf="fieldErrors.SelectedProgram" class="field-validation-error white-space-pre">{{fieldErrors.SelectedProgram}}</span>
+                    </div>
                 </div>
             </form>
         </div>
