@@ -47,3 +47,142 @@
         height: 200px;   
     }
 }
+
+
+/*===== LOADING BUTTON ===== */
+.loader {
+    margin-left: 15px;
+    font-size: 5px;
+    position: relative;
+    text-indent: -9999em;
+    border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+    border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+    border-left: 1.1em solid #ffffff;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation: load8 1.1s infinite linear;
+    animation: load8 1.1s infinite linear;
+
+    & ,&:after{
+        border-radius: 50%;
+        width: 5em;
+        height: 5em;
+    }
+
+    &.display-inline-block{
+        margin-bottom: -7px;
+    }
+
+    &.loader-small{
+        width: 4em;
+        height: 4em;
+        margin-left: 5px;
+        margin-top: -0.2em;
+    }
+}
+@-webkit-keyframes load8 {
+0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+}
+}
+@keyframes load8 {
+0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+}
+}
+
+
+/* Registration Pop-Up */
+.no-border-bottom{border-bottom: 0;}
+.no-padding-left{padding-left: 0;}
+.cursor-pointer{cursor: pointer;}
+.display-inline-block { display: inline-block !important }
+.field-validation-error {
+    color: #b94a48;
+    margin-top: -5px;
+    display: block;
+    letter-spacing: normal;
+}
+input.input-validation-error, select.input-validation-error, textarea.input-validation-error, div.input-validation-error,
+input.input-validation-error.edit-mode, select.input-validation-error.edit-mode, textarea.input-validation-error.edit-mode, 
+input.input-validation-error.edit-mode:hover, select.input-validation-error.edit-mode:hover, textarea.input-validation-error.edit-mode:hover  {
+    border: 1px solid #b94a48 !important;
+}
+.white-space-pre {
+    font-size: 12px !important;
+    white-space: pre;
+}
+#academy-registration {
+    .modal-header {
+        padding-bottom: 0;
+
+        .close{
+            font-weight: 300;
+            font-size: 30px;
+        }
+        h4{
+            margin-bottom: 0;
+            padding: 20px 0 0 20px;
+            line-height: 40px;
+            span {color: #f5a142}
+        }
+    }
+    .modal-body{
+        .body-container {
+            padding: 0 20px;
+            p {line-height: 25px;}
+            .form-control {
+                text-align: left;
+                height: 48px;
+                padding-left: 15px;
+                font-size: 14px;
+            }
+            label span {
+                font-size: 10px;
+                opacity: .5;
+            }
+            .countdown {
+                margin-bottom: 15px;
+
+                .measurements{
+                    margin: 0 7px;
+
+                    .measurements-number{
+                        font-size: 28px;
+                        color: #fff;
+                        background-color: #666666;
+                        font-weight: 500;
+                        padding: 15px 0;
+                        border-radius: 5px;
+                        margin-bottom: 3px;
+                    }
+                    .measurements-text{
+                        color: #9c9a9a;
+                        font-weight: 500;
+                    }
+                }
+            }
+        }
+    }
+    .modal-footer{
+        padding-top: 0;
+        justify-content: center;
+        border-top: 0;
+        .btn{
+            font-size: 14px;
+            padding: 23px 56px;
+        }
+    }
+}
