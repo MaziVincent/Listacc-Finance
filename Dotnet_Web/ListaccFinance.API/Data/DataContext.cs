@@ -16,14 +16,31 @@ namespace ListaccFinance.Api.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
+             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Expenditure>(exp => {
-                base.OnModelCreating(modelBuilder);
+               
             modelBuilder.Entity<User>().ToTable("Users");
 
                 exp.HasOne(a => a.Issuer).WithMany(e => e.Expenditures).HasForeignKey(f => f.IssuerId);
                 exp.HasOne(a => a.Client).WithMany(v => v.Expenditures).HasForeignKey(f => f.ClientId);
             });
 
+             modelBuilder.Entity<Project>(prj => {
+                 prj.HasMany(p => p.Expenditures).WithOne(p => p.Project).OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<User>(inc => {
+                inc.HasMany(p => p.Incomes).WithOne(p => p.User)
+                .HasForeignKey(u => u.UserId).OnDelete(DeleteBehavior.NoAction);
+                 //inc.HasMany(p => p.Incomes).WithOne(p => p.Client).OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<Client>(inc => {
+                inc.HasMany(p => p.Incomes).WithOne(p => p.Client).OnDelete(DeleteBehavior.NoAction);
+                 //inc.HasMany(p => p.Incomes).WithOne(p => p.Client).OnDelete(DeleteBehavior.NoAction);
+            });
+
+           
             
         }
 
@@ -40,6 +57,12 @@ namespace ListaccFinance.Api.Data
 
             public DbSet<Change> Changes {get; set;} 
             public DbSet<DesktopClient> DesktopClients {get; set;}
+
+            public DbSet<Academy_Student> Academy_Students { get; set; }
+            public DbSet<Academy_Program> Academy_Programs { get; set; }
+            public DbSet<Academy_Registraion> Academy_Registraions { get; set; }
+            public DbSet<Academy_Project> Academy_Projects { get; set; }
+
             //public DbSet<RefreshToken> RefreshTokens {get; set;}
 
             // public DbSet<User> Users { get; set; }

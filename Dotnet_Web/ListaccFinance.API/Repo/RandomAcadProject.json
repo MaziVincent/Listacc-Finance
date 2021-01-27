@@ -1,0 +1,24 @@
+[
+    {
+        "Name":"Abakaliki Tech Bootcamp",
+        "Description": "A One  week ...",
+        "StartDate": "2021-02-5",
+        "Academy_Programs" :
+        [ 
+            {
+                "Name" : "Web Appliaction Development",
+                "Description" : "",
+                "Fee": 0
+            },
+
+            {
+                "Name" : "Graphics and Animation",
+                "Description" : "",
+                "Fee": 0
+            }
+
+
+    ]
+    }
+
+]

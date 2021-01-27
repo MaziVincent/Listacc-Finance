@@ -2,6 +2,7 @@ using AutoMapper;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Data.ViewModel;
 using ListaccFinance.API.SendModel;
+using ListaccFinance.API.ViewModels;
 using Microsoft.AspNetCore.Identity;
 
 public class AutoMapperProfile : Profile
@@ -70,5 +71,14 @@ public class AutoMapperProfile : Profile
 
     // mapper for returming list of departments
          CreateMap<Department, DeptView>();
+
+
+         CreateMap<Academy_Project, AacdemyProjectDto>();
+         CreateMap<Academy_Program, AcademyProgramDto>();
+         CreateMap<StudentRegistration, Academy_Student>().ForMember(dest => dest.UserName, opt => opt.MapFrom(
+             s => s.Email
+         ));
+
+
     }
 }

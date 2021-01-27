@@ -8,6 +8,7 @@ using ListaccFinance.Api.Data;
 using ListaccFinance.API.Data.Model;
 using ListaccFinance.API.Interfaces;
 using ListaccFinance.API.SendModel;
+using ListaccFinance.API.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -83,6 +84,35 @@ namespace ListaccFinance.API.Services
             
             return tokenString;
         }
+
+        public async Task<string> GenerateStudentRegistrationToken(StudentRegistration student)
+            {
+                var tokenClaims = new List<Claim> { };
+                tokenClaims.Add(new Claim("LastName", student.LastName));
+                tokenClaims.Add(new Claim("FirstName", student.FirstName));
+                tokenClaims.Add(new Claim("PhoneNumber", student.PhoneNumber));
+                tokenClaims.Add(new Claim("Email", student.Email));
+                tokenClaims.Add(new Claim("Gender", student.Gender));
+
+                var keyByte = Encoding.UTF8.GetBytes(_config.GetSection("LoginSettings:Key").Value);
+
+                var key = new SymmetricSecurityKey(keyByte);
+                var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(tokenClaims),
+                    SigningCredentials = credentials,
+                    Expires = DateTime.Now.AddDays(7),
+                };
+                var tokenHandler = new JwtSecurityTokenHandler();
+
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var tokenString = tokenHandler.WriteToken(token);
+
+                
+                return tokenString;
+            }
 
     }    
 }

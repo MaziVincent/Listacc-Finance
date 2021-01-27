@@ -12,4 +12,5 @@ namespace ListaccFinance.API.Data.Model
         public string Name {get;set;}
         public ICollection<Project> Projects {get;set;}
     }
+    
 }
