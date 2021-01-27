@@ -61,6 +61,14 @@ export class AcademyRegistrationComponent implements OnInit {
         } else if (!this.validEmail(this.Registration.email)) {
             this.fieldErrors.Email = 'Enter a valid email address';
         }
+        if (!this.Registration.gender || this.Registration.gender.trim() === '') {
+            this.fieldErrors.Gender = 'Select your gender';
+            error = true;
+        }
+        if (!this.Registration.selectedProgram || this.Registration.selectedProgram === 0) {
+            this.fieldErrors.selectedProgram = 'Select your training path';
+            error = true;
+        }
 
         // TODO: send to server
         if (!error){
@@ -106,4 +114,6 @@ export class RegistrationInfo {
     firstName!: string;
     phone!: string;
     email!: string;
+    gender!: string;
+    selectedProgram!: number;
 }

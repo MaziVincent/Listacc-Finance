@@ -153,6 +153,19 @@ input.input-validation-error.edit-mode:hover, select.input-validation-error.edit
                 font-size: 10px;
                 opacity: .5;
             }
+            label.radio-control{
+                display: block;
+                input {
+                    display: inline-block;
+                    width: auto;
+                    height: auto;
+                    margin-top: 0;
+                }
+                span {
+                    padding-left: 5px;
+                    vertical-align: text-bottom;
+                }
+            }
             .countdown {
                 margin-bottom: 15px;
 
