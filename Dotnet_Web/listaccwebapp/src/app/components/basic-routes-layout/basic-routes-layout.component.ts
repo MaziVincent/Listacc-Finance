@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, Renderer2, OnDestroy } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationCancel, NavigationEnd, NavigationStart, Router } from '@angular/router';
 
 @Component({
   selector: 'app-basic-routes-layout',
@@ -12,6 +12,7 @@ export class BasicRoutesLayoutComponent implements AfterViewInit, OnDestroy {
     loadAPI: Promise<any>;
     previousUrl = '';
     logoPath = '../assets/images/logoTrans2.png';
+    loadingView: boolean;
 
     navigationSubscription;
 
@@ -19,16 +20,24 @@ export class BasicRoutesLayoutComponent implements AfterViewInit, OnDestroy {
                 private renderer: Renderer2) {
         // add css class to body
         this.renderer.addClass(document.body, 'basic-app-layout');
+        this.loadingView = true;
 
         this.navigationSubscription = this.router.events.subscribe((event) => {
           if (event instanceof NavigationEnd){
-          if (this.previousUrl !== ''){
-              this.loadAPI = new Promise(resolve => {
-                  this.loadScripts();
-                  resolve(true);
-              });
+            if (this.previousUrl !== ''){
+                this.loadAPI = new Promise(resolve => {
+                    this.loadScripts();
+                    resolve(true);
+                });
+            }
+            this.previousUrl = event.url;
+            this.loadingView = false;
           }
-          this.previousUrl = event.url;
+          else if (event instanceof NavigationStart) {
+            this.loadingView = true;
+            // this.notificationService.clearAllToasts();
+          } else if (event instanceof NavigationCancel) {
+              this.loadingView = false;
           }
       });
     }

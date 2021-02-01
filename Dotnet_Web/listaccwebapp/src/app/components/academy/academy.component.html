@@ -41,7 +41,7 @@
     <div class="d-none d-lg-block divider-80"></div>
 </section>
 
-<section class="ls ms s-pt-10 s-pb-130 s-pt-lg-0 s-pb-lg-75 s-pt-xl-20 s-pb-xl-50 c-gutter-60 up-80">
+<section class="ls ms s-pt-10 s-pb-130 s-pt-lg-0 s-pb-lg-60 s-pt-xl-20 s-pb-xl-50 c-gutter-60 up-80">
     <div class="container c-mt-30">
         <div class="row">
             <div class="d-none d-lg-block divider-55"></div>
@@ -73,11 +73,42 @@
                 <!--<h2 class="special-heading">
                     Coming Soon!
                 </h2>-->
-                <h2 class="special-heading">
-                    <span>Abakaliki Tech Bootcamp</span> <br/> is coming soon!
+                <h2 class="special-heading" *ngIf="UpcomingProject">
+                    <span>{{UpcomingProject.name}}</span> <br/><span class="hook-one">Is Coming Soon</span>
                 </h2>
-                <!--<p>ICT Bootcamp </p>-->       
-                <div id="comingsoon-countdown" data-date="January 25, 2021 10:00:00"></div>
+                <h2 class="special-heading" *ngIf="PastProject">
+                    <span>{{PastProject.name}}</span> <br/> <span class="hook-one">started</span>
+                </h2>
+                <!--<p>ICT Bootcamp </p>-->
+                <!--<div id="comingsoon-countdown" data-date="January 25, 2021 10:00:00"></div> "January 25, 2021 10:00:00" -->
+                <div class="text-center">
+                    <countdown *ngIf="UpcomingProject" units="{{Units}}" showZero="true" end="{{CountdownEndDate}}"></countdown>
+                    <div class="countdown mycountup" *ngIf="PastProject">
+                        <div class="measurements Days">
+                            <p class="measurements-number">{{DaysPast}}</p>
+                            <span class="divider">  </span>
+                            <p class="measurements-text">Days</p>
+                        </div>
+                        <div class="measurements Hours ">
+                            <p class="measurements-number">{{HoursPast}}</p>
+                            <span class="divider">  </span>
+                            <p class="measurements-text">Hours</p>
+                        </div>
+                        <div class="measurements Minutes">
+                            <p class="measurements-number">{{MinutesPast}}</p>
+                            <span class="divider">  </span>
+                            <p class="measurements-text">Minutes</p>
+                        </div>
+                        <div class="measurements   Seconds">
+                            <p class="measurements-number">{{SecondsPast}}</p>
+                            <p class="measurements-text">Seconds</p>
+                        </div>
+                    </div>
+                    <h2 class="special-heading hook-two">
+                        <span *ngIf="UpcomingProject">To Go!</span>
+                        <span *ngIf="PastProject">ago!</span>
+                    </h2>
+                </div>
                 <button type="button" class="btn" (click)="open()">
                     REGISTER NOW
                 </button>

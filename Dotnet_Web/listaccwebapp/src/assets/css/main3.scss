@@ -142,7 +142,17 @@ input.input-validation-error.edit-mode:hover, select.input-validation-error.edit
     .modal-body{
         .body-container {
             padding: 0 20px;
-            p {line-height: 25px;}
+            p {line-height: 25px;
+                &.hook-one span, &.hook-two span{
+                    background: #fff;
+                    padding: 0 10px;
+                    display: inline-block;
+                    font-weight: 500;
+                }
+                &.hook-two{
+                    margin-top: -20px;
+                    margin-bottom: 25px !important;
+                }}
             .form-control {
                 text-align: left;
                 height: 48px;
@@ -169,8 +179,21 @@ input.input-validation-error.edit-mode:hover, select.input-validation-error.edit
             .countdown {
                 margin-bottom: 15px;
 
+                &.mycountup{
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    align-content: center;
+                    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+                    border: 2px solid #f5a142;
+                    margin-top: -20px;
+                    padding-top: 20px;
+                    padding-bottom: 20px;
+                }
+
                 .measurements{
                     margin: 0 7px;
+                    min-width: 70px;
 
                     .measurements-number{
                         font-size: 28px;
@@ -196,6 +219,94 @@ input.input-validation-error.edit-mode:hover, select.input-validation-error.edit
         .btn{
             font-size: 14px;
             padding: 23px 56px;
+            &:disabled:hover{
+                background-color: #f5a142;
+                color: white;
+            }
+        }
+    }
+}
+.comingsoon {
+    h2 span.hook-one, h2.hook-two span{
+        background: #fff;
+        padding: 0 10px;
+        display: inline-block;
+    }
+    h2.hook-two{
+        margin-top: -40px;
+        margin-bottom: 25px !important;
+    }
+    .countdown {
+        margin-bottom: 25px;
+        border: 5px solid #f5a142;
+        margin-top: -40px;
+        padding-top: 40px;
+        padding-bottom: 30px;
+
+        &.mycountup{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            align-content: center;
+        }
+
+        .measurements{
+            margin: 0 7px;
+            font-family: "Poppins", sans-serif;
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+            display: table-cell;
+            padding: 10px 30px 20px;
+            text-align: center;
+
+            .measurements-number{
+                color: #f5a142;
+                font-size: 80px;
+                font-weight: 700;
+                line-height: 1;
+            }
+            .measurements-text{
+                color: #323232;
+                display: block;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 0.2em;
+                min-width: 11em;
+                text-transform: uppercase;
+            }
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    #academy-registration {
+        .modal-header{
+            h4 {
+                font-size: 30px;
+                line-height: 33px;
+            }
+        }
+        .modal-body{
+            p{
+                line-height: 22px;
+                margin-bottom: 15px;
+            }
+        }
+    }
+
+    .comingsoon {
+        .countdown {
+            .measurements {
+                padding: 20px 8px 0;
+
+                .measurements-number {
+                    font-size: 45px;
+                }
+
+                .measurements-text {
+                    letter-spacing: 0.1em;
+                    min-width: 5em;
+                }
+            }
         }
     }
 }

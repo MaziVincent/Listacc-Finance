@@ -28,6 +28,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { CountdownModule } from 'ngx-date-countdown';
 import { AcademyService } from './services/academy.service';
 import { BasicRoutesLayoutComponent } from './components/basic-routes-layout/basic-routes-layout.component';
+import { AcademyResolver } from './resolvers/academy.resolver';
 
 
 @NgModule({
@@ -76,7 +77,8 @@ import { BasicRoutesLayoutComponent } from './components/basic-routes-layout/bas
    providers: [
       ContactService,
       AcademyService,
-      ValidationErrorService
+      ValidationErrorService,
+      AcademyResolver
    ],
    bootstrap: [
       AppComponent

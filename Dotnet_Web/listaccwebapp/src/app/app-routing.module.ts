@@ -15,6 +15,7 @@ import { FinanceLoginGuard } from './our-apps/finance/guards/finance-login.guard
 import { FinanceAuthGuard } from './our-apps/finance/guards/finance-auth.guard';
 import { FinanceRootComponent } from './components/finance-root/finance-root.component';
 import { BasicRoutesLayoutComponent } from './components/basic-routes-layout/basic-routes-layout.component';
+import { AcademyResolver } from './resolvers/academy.resolver';
 
 
 const routes: Routes = [
@@ -64,7 +65,12 @@ const routes: Routes = [
             { path: 'solutions', component: SolutionsComponent },
             { path: 'contacts', component: ContactsComponent },
             { path: 'blog', component: BlogComponent },
-            { path: 'academy', component: AcademyComponent },
+            {
+                path: 'academy', component: AcademyComponent,
+                resolve: {
+                    academyInfo: AcademyResolver
+                }
+            },
             { path: 'login', component: LoginComponent },
             { path: 'portal', component: PortalComponent }
         ]

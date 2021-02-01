@@ -1,43 +1,68 @@
 <div id="academy-registration">
     <div class="modal-header no-border-bottom">
-        <h4 class="modal-title text-capitalize" id="modal-basic-title"><span>Abakaliki Tech Bootcamp</span> <br/> is coming soon!</h4>
+        <h4 *ngIf="!Past" class="modal-title text-capitalize" id="modal-basic-title"><span>{{Project.name}}</span> <br/> is coming soon!</h4>
+        <h4 *ngIf="Past" class="modal-title text-capitalize" id="modal-basic-title"><span>{{Project.name}}</span> <br/> has started!</h4>
         <a class="close cursor-pointer" aria-label="Close" (click)="close()" *ngIf="!processing">
             <span aria-hidden="true">&times;</span>
         </a>
     </div>
     <div class="modal-body">
         <div class="body-container">
-            <p>Register now to reserve a seat in our comprehensive computer graphics and web design bootcamp, time is ticking!</p>
+            <p *ngIf="!Past">Register now to reserve a seat in our comprehensive computer graphics and web design bootcamp, time is ticking!</p>
+            <p *ngIf="Past">Classes have already started, register now to join our comprehensive computer graphics and web design bootcamp, time is ticking!</p>   
             <div class="text-center">
-                <countdown units="{{Units}}" showZero="true" end="{{CountdownEndDate}}"></countdown>
+                <p *ngIf="Past" class="hook-one"><span>Classes started</span></p>
+                <countdown *ngIf="!Past" units="{{Units}}" showZero="true" end="{{CountdownEndDate}}"></countdown>
+                <div class="countdown mycountup" *ngIf="Past">
+                    <div class="measurements Days">
+                        <p class="measurements-number">{{DaysPast}}</p>
+                        <span class="divider">  </span>
+                        <p class="measurements-text">Days</p>
+                    </div>
+                    <div class="measurements Hours ">
+                        <p class="measurements-number">{{HoursPast}}</p>
+                        <span class="divider">  </span>
+                        <p class="measurements-text">Hours</p>
+                    </div>
+                    <div class="measurements Minutes">
+                        <p class="measurements-number">{{MinutesPast}}</p>
+                        <span class="divider">  </span>
+                        <p class="measurements-text">Minutes</p>
+                    </div>
+                    <div class="measurements Seconds">
+                        <p class="measurements-number">{{SecondsPast}}</p>
+                        <p class="measurements-text">Seconds</p>
+                    </div>
+                </div>
+                <p *ngIf="Past" class="hook-two"><span>ago!</span></p>
             </div>
             <form class="container no-padding-left">
                 <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-lg-6 col-md-12">
                         <label for="last_name">Last Name</label>
                         <input id="last_name" class="form-control" name="last_name" type="text" 
                         [(ngModel)]="Registration.lastName" [ngClass]="{'input-validation-error': fieldErrors.LastName}" />
                         <span *ngIf="fieldErrors.LastName" class="field-validation-error white-space-pre">{{fieldErrors.LastName}}</span>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-lg-6 col-md-12">
                         <label for="first_name">First Name</label>
                         <input id="first_name" class="form-control" name="first_name" type="text"
                         [(ngModel)]="Registration.firstName" [ngClass]="{'input-validation-error': fieldErrors.FirstName}" />
                         <span *ngIf="fieldErrors.FirstName" class="field-validation-error white-space-pre">{{fieldErrors.FirstName}}</span>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-lg-6 col-md-12">
                         <label for="phone">Phone Number</label>
                         <input id="phone" class="form-control" name="phone" type="tel"
-                        [(ngModel)]="Registration.phone" [ngClass]="{'input-validation-error': fieldErrors.Phone}" />
-                        <span *ngIf="fieldErrors.Phone" class="field-validation-error white-space-pre">{{fieldErrors.Phone}}</span>
+                        [(ngModel)]="Registration.phoneNumber" [ngClass]="{'input-validation-error': fieldErrors.PhoneNumber}" />
+                        <span *ngIf="fieldErrors.PhoneNumber" class="field-validation-error white-space-pre">{{fieldErrors.PhoneNumber}}</span>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="email">Email Address<span>(Optional)</span></label>
+                    <div class="form-group col-lg-6 col-md-12">
+                        <label for="email">Email Address<!--<span>(Optional)</span>--></label>
                         <input id="email" class="form-control" name="email" type="email"
                         [(ngModel)]="Registration.email" [ngClass]="{'input-validation-error': fieldErrors.Email}" />
                         <span *ngIf="fieldErrors.Email" class="field-validation-error white-space-pre">{{fieldErrors.Email}}</span>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-lg-6 col-md-12">
                         <label for="gender">Gender</label>
                         <label class="radio-control">
                             <input class="form-control" name="gender" type="radio" value="Female" [(ngModel)]="Registration.gender"/>
@@ -49,15 +74,11 @@
                         </label>
                         <span *ngIf="fieldErrors.Gender" class="field-validation-error white-space-pre">{{fieldErrors.Gender}}</span>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-lg-6 col-md-12">
                         <label for="email">Course</label>
-                        <label class="radio-control">
-                            <input class="form-control" name="selectedProgram" type="radio" value="1" [(ngModel)]="Registration.selectedProgram"/>
-                            <span>Web Design and Development</span>
-                        </label>
-                        <label class="radio-control">
-                            <input class="form-control" name="selectedProgram" type="radio" value="2" [(ngModel)]="Registration.selectedProgram"/>
-                            <span>Graphics Design and Animation</span>
+                        <label class="radio-control" *ngFor="let Program of Project.academy_Programs">
+                            <input class="form-control" name="selectedProgram" type="radio" value="{{Program.id}}" [(ngModel)]="Registration.programId"/>
+                            <span>{{Program.name}}</span>
                         </label>
                         <span *ngIf="fieldErrors.SelectedProgram" class="field-validation-error white-space-pre">{{fieldErrors.SelectedProgram}}</span>
                     </div>
