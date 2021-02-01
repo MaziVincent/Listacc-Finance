@@ -78,5 +78,16 @@ namespace ListaccFinance.API.Repo
                             .ToListAsync();
             return projects;
         }
+
+        public async Task<bool> StudentAleardyExists(string Email)
+        {
+            Email = Email.ToLower();
+            var exists =  await _context.Academy_Students.AsQueryable()
+                          .Where(p => p.Email.CompareTo(Email) == 0 
+                                || p.PhoneNumber.CompareTo(Email) == 0)
+                                .AnyAsync();
+
+            return exists;
+        }
     }
 }

@@ -11,6 +11,8 @@ namespace ListaccFinance.API.Interfaces
          Task<Academy_Program> GetAcademy_Program(int Id);
          Task<ICollection<Academy_Project>> GetAllUpComingProjects();
          Task<ICollection<Academy_Project>> GetMostRecentProject();
+         Task<bool> StudentAleardyExists(string EmailOrPhone);
+
 
         void Add<T>(T entity) where T: class;
         void Delete<T>(T entity) where T: class;

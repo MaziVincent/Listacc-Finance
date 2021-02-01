@@ -57,10 +57,13 @@ namespace ListaccFinance.API.Controllers.Academy
 
         if(null == program)
         return BadRequest(new { Error = "Invalid program selected!" });
-
-        var result = await _userManager.CreateAsync(student);
-        if(result.Succeeded)
+        if(await _iProgramRepo.StudentAleardyExists(student.Email))
         {
+             var result = await _userManager.CreateAsync(student);
+             if(!result.Succeeded)
+             return BadRequest(new { Error = "Sorry, We had a challenge registering you!" });
+        }
+
             Academy_Registraion reg = new Academy_Registraion{
                 Academy_Stuent = student,
                 Academy_Program = program
@@ -73,7 +76,6 @@ namespace ListaccFinance.API.Controllers.Academy
                 return NoContent();
             }
 
-        }
 
         return BadRequest(new { Error = "Sorry Your registration was not successful" });
         // var token  = await _tokGen.GenerateStudentRegistrationToken(stdReg);
