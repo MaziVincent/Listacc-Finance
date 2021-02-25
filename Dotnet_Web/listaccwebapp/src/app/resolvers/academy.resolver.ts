@@ -22,7 +22,7 @@ export class AcademyResolver implements Resolve<any>{
                 };
             }),
             catchError((error) => {
-                this.notify.error('Problem loading topics!');
+                // this.notify.error('Problem loading topics!');
                 return of(
                     {
                         upcomingProjects : null

@@ -1,0 +1,24 @@
+<div id="academy-registration">
+   <div class="modal-header no-border-bottom">
+      <h4 class="modal-title text-capitalize text-center width-100" id="modal-basic-title">
+         <i class="fa fa-check-circle"></i><br/>
+         Congratulations!
+      </h4>
+      <a class="close cursor-pointer" aria-label="Close" (click)="close()">
+         <span aria-hidden="true">&times;</span>
+      </a>
+   </div>
+   <div class="modal-body">
+      <div class="body-container">
+         <p class="slim">You have registered successfully for the <b>{{Project.name}}</b>.</p>
+         <p class="slim">Come to <b>Third Floor, Dreamlink Investment Ltd, Mile 50, Abakaliki</b> by <b>9:00am </b>
+         <span *ngIf="!Past">on <b>{{Project.startDate | date: 'EEEE, dd MMMM, yyyy'}}</b> </span>
+         <b *ngIf="Past">Tomorrow</b> 
+         to begin your training!</p>
+         <p class="slim">See you soon!!!</p>
+      </div>
+   </div>
+   <div class="modal-footer">
+         <button type="button" class="btn green" (click)="close()">OK</button>
+   </div>
+</div>

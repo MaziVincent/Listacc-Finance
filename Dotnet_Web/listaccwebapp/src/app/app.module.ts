@@ -29,6 +29,7 @@ import { CountdownModule } from 'ngx-date-countdown';
 import { AcademyService } from './services/academy.service';
 import { BasicRoutesLayoutComponent } from './components/basic-routes-layout/basic-routes-layout.component';
 import { AcademyResolver } from './resolvers/academy.resolver';
+import { AcademyRegistrationSuccessComponent } from './components/academy/components/academy-registration-success/academy-registration-success.component';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import { AcademyResolver } from './resolvers/academy.resolver';
       PortalComponent,
       FinanceRootComponent,
       BasicRoutesLayoutComponent,
-      AcademyRegistrationComponent
+      AcademyRegistrationComponent,
+      AcademyRegistrationSuccessComponent
    ],
    imports: [
       ToastrModule.forRoot({
@@ -69,7 +71,8 @@ import { AcademyResolver } from './resolvers/academy.resolver';
       CountdownModule
    ],
    entryComponents: [
-      AcademyRegistrationComponent
+      AcademyRegistrationComponent,
+      AcademyRegistrationSuccessComponent
    ],
    exports: [
       BsDropdownModule

@@ -1547,10 +1547,10 @@ function windowLoadInit() {
 	}
 
 	//page preloader
-	$(".basic-app-layout .preloader_image").fadeOut(150);
+	/*$(".basic-app-layout .preloader_image").fadeOut(150);
 	$(".basic-app-layout .preloader").fadeOut(150).delay(50, function(){
 		$(this).remove();
-	});
+	});*/
 }//eof windowLoadInit
 
 $(document).ready(function() {

@@ -109,7 +109,7 @@
                         <span *ngIf="PastProject">ago!</span>
                     </h2>
                 </div>
-                <button type="button" class="btn" (click)="open()">
+                <button type="button" class="btn" (click)="openRegistrationModal()" *ngIf="UpcomingProject || PastProject">
                     REGISTER NOW
                 </button>
             </div>

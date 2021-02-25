@@ -5,6 +5,7 @@ import { Component, OnInit, TemplateRef, ViewChild, AfterViewInit, OnDestroy } f
 import { NgbModal, NgbModalOptions, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { AcademyRegistrationComponent } from './components/academy-registration/academy-registration.component';
 import { Subscription, timer } from 'rxjs';
+import { AcademyRegistrationSuccessComponent } from './components/academy-registration-success/academy-registration-success.component';
 
 @Component({
     selector: 'app-academy',
@@ -36,6 +37,11 @@ export class AcademyComponent implements OnInit, AfterViewInit, OnDestroy {
         keyboard: true,
         backdrop: 'static'
     };
+    successModalConfig: NgbModalOptions = {
+        centered: true,
+        keyboard: true,
+        backdrop: 'static'
+    };
 
     constructor(private modalService: NgbModal,
                 private notify: NotificationService,
@@ -51,15 +57,20 @@ export class AcademyComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit(): void {
         // open the modal popup when the page becomes visible
         setTimeout(() => {
-            this.open();
+            this.openRegistrationModal();
         });
     }
 
     ngOnDestroy(): void {
-        this.subscription.unsubscribe();
+        if(this.subscription) {
+            this.subscription.unsubscribe();
+        }
+        if (this.modalRef) {
+            this.modalRef.close();
+        }
     }
 
-    open() {
+    openRegistrationModal() {
         if (this.UpcomingProject || this.PastProject) {
             this.modalRef = this.modalService.open(AcademyRegistrationComponent, this.modalConfig);
             this.modalRef.componentInstance.initialState = {
@@ -71,7 +82,9 @@ export class AcademyComponent implements OnInit, AfterViewInit, OnDestroy {
                     if (this.modalRef) {
                         this.modalRef.dismiss();
                     }
-                    this.notify.success('Registration was completed successfully!');
+                    // this.notify.success('Registration was completed successfully!');
+                    // show success info and next steps
+                    this.openSuccessModal();
                 }
             );
         }
@@ -115,6 +128,14 @@ export class AcademyComponent implements OnInit, AfterViewInit, OnDestroy {
         const datePart = dateArr[0].split('-');
         const newDateStr = this.months[Number.parseInt(datePart[1], 10) - 1]  + ' ' + datePart[2] + ', ' + datePart[0] + ' ' + dateArr[1];
         return newDateStr;
+    }
+
+    openSuccessModal() {
+        this.modalRef = this.modalService.open(AcademyRegistrationSuccessComponent, this.successModalConfig);
+        this.modalRef.componentInstance.initialState = {
+            Project: this.UpcomingProject ? this.UpcomingProject : this.PastProject,
+            Past: new Date(this.Projects[0].startDate) < new Date()
+        };
     }
 
 }
